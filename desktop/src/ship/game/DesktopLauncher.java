@@ -6,10 +6,12 @@ import ship.game.Game;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
-	public static void main (String[] arg) {
-		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(60);
-		config.setTitle("ShipGame");
-		new Lwjgl3Application(new Game(), config);
-	}
+    public static void main(String[] arg) {
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setTitle("ShipGame");
+        config.setWindowedMode(800, 480);
+        config.useVsync(true);
+        config.setForegroundFPS(60);
+        new Lwjgl3Application(new Game(), config);
+    }
 }
