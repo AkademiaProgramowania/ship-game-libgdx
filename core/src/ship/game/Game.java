@@ -21,6 +21,9 @@ public class Game {
         createListOfCannonCards();
     }
 
+    // nie powielać przechowywania obiektów - niepotrzebne przechowywanie w osobnych listach, zwracać metodami listę i dodawać do all od razu.
+    // pominięcie etapu przechowywania w listach
+
     private void createListOfShips() {
         shipCards.add(new Card("S1", 1));
         shipCards.add(new Card("S1", 2));
@@ -70,7 +73,6 @@ public class Game {
     }
 
     public List<Card> getAllCards() {
-
         List<Card> allCards = new ArrayList<>();
         allCards.addAll(getShipCards());
         allCards.addAll(getStormCards());

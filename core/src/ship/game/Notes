@@ -1,0 +1,4 @@
+- zmieniać nazwę klasy Game na CardFacotry. Zobaczyć w internecie jak się robi card factory
+- zmniejszyć liczbę list w klasie Game (zminimalizowane przechowywanie)
+- klasę Game zrobić jako logikę biznesową z rozgrywką
+- klasa factory nic nie przechowuje tylko produkuje. Listy (kard i staków) ma mieć klasa Game
