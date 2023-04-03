@@ -105,42 +105,44 @@ public class GameScreen implements Screen {
         while (iter.hasNext()) {
             Rectangle raindrop = iter.next();
             raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-            if (raindrop.y + 64 < 0)
+            if (raindrop.y + 64 < 0) {
                 iter.remove();
-            if (raindrop.overlaps(bucket))
+            }
+            if (raindrop.overlaps(bucket)) {
                 dropsGathered++;
-            dropSound.play();
-            iter.remove();
+                dropSound.play();
+                iter.remove();
+            }
         }
     }
 
-    @Override
-    public void show() {
-        // when the screen is shown start background music
-        rainMusic.play();
-    }
+        @Override
+        public void show () {
+            // when the screen is shown start background music
+            rainMusic.play();
+        }
 
-    @Override
-    public void resize(int width, int height) {
-    }
+        @Override
+        public void resize ( int width, int height){
+        }
 
-    @Override
-    public void pause() {
-    }
+        @Override
+        public void pause () {
+        }
 
-    @Override
-    public void resume() {
-    }
+        @Override
+        public void resume () {
+        }
 
-    @Override
-    public void hide() {
-    }
+        @Override
+        public void hide () {
+        }
 
-    @Override
-    public void dispose() {
-        dropImage.dispose();
-        bucketImage.dispose();
-        dropSound.dispose();
-        rainMusic.dispose();
+        @Override
+        public void dispose () {
+            dropImage.dispose();
+            bucketImage.dispose();
+            dropSound.dispose();
+            rainMusic.dispose();
+        }
     }
-}
