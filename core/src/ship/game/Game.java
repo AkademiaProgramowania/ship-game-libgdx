@@ -1,8 +1,6 @@
 package ship.game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Game {
 
@@ -82,16 +80,8 @@ public class Game {
     }
 
     public List<Card> shuffle(){
-        // jak nadać randomowy index pozycjom w zbiorze all
-        // jakaś funkcja typu push w mapach?
-
         List<Card> all = getAllCards();
-        Random random = new Random();
-        int arrayIndex = random.nextInt(all.size());
-
-        for (int i = 0; i < all.size(); i++) {
-             i = arrayIndex;
-        }
+        Collections.shuffle(Arrays.asList(all));
         return all;
     }
 
