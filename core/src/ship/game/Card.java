@@ -4,13 +4,21 @@ import java.util.List;
 
 public class Card {
     private String type; // ship, storm, cannon, coin
-    private String color; // only of ship
+    private int num;
 
-    private List<Card> shipCards; // 24 ship cards (6 x 4 colors)
-    private List<Card> stormCards; // 8 pcs
-    private List<Card> coinCards; // 20 pcs
-    private List<Card> cannonCards; // 3 pcs
+    // private pole z wstawionym assetem jpg?
 
 
+    public Card(String type, int num) {
+        this.type = type;
+        this.num = num;
+    }
 
+    @Override
+    public String toString() {
+        return "Card{" +
+                "type='" + type + '\'' +
+                ", num=" + num +
+                '}';
+    }
 }
