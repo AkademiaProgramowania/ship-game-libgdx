@@ -14,6 +14,14 @@ public class Card {
         this.num = num;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
     @Override
     public String toString() {
         return "Card{" +

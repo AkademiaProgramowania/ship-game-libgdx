@@ -1,102 +1,53 @@
 package ship.game;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class Game {
+public class Game{
 
-    int shipCardQuantity = 24;
-    int stormCardQuantity = 8;
-    int coinCardQuantity = 20;
-    int cannonCardQuantity = 3;
-
-    private final List<Card> shipCards = new ArrayList<>(shipCardQuantity); // 4 ship types consisting of 6 pcs, 1-3 top row, 4-6 bottom row
-    private final List<Card> stormCards = new ArrayList<>(stormCardQuantity); // 8 pcs
-    private final List<Card> coinCards = new ArrayList<>(coinCardQuantity); // 20 pcs
-    private final List<Card> cannonCards = new ArrayList<>(cannonCardQuantity); // 3 pcs
+    private CardFactory factory = new CardFactory();
+    private List<Card> allCards;
+    private List<Card> mainStack = new ArrayList<>(); // stos główny
+    private List<Card> temporaryStack = new ArrayList<>(); // stos tymczasowy, tu są odkładane karty zanim stos głowny
+    // się skończy i będzie nowe tasowanie
 
     public Game() {
-        createListOfShips();
-        createListOfStormCards();
-        createListOfCoinCards();
-        createListOfCannonCards();
+        allCards = factory.createCards(); // createCards() zamiast factory.getallCards żeby za każdym razem robić nowe karty
     }
 
-    // nie powielać przechowywania obiektów - niepotrzebne przechowywanie w osobnych listach, zwracać metodami listę i dodawać do all od razu.
-    // pominięcie etapu przechowywania w listach
-
-    private void createListOfShips() {
-        shipCards.add(new Card("S1", 1));
-        shipCards.add(new Card("S1", 2));
-        shipCards.add(new Card("S1", 3));
-        shipCards.add(new Card("S1", 4));
-        shipCards.add(new Card("S1", 5));
-        shipCards.add(new Card("S1", 6));
-        shipCards.add(new Card("S2", 1));
-        shipCards.add(new Card("S2", 2));
-        shipCards.add(new Card("S2", 3));
-        shipCards.add(new Card("S2", 4));
-        shipCards.add(new Card("S2", 5));
-        shipCards.add(new Card("S2", 6));
-        shipCards.add(new Card("S3", 1));
-        shipCards.add(new Card("S3", 2));
-        shipCards.add(new Card("S3", 3));
-        shipCards.add(new Card("S3", 4));
-        shipCards.add(new Card("S3", 5));
-        shipCards.add(new Card("S3", 6));
-        shipCards.add(new Card("S4", 1));
-        shipCards.add(new Card("S4", 2));
-        shipCards.add(new Card("S4", 3));
-        shipCards.add(new Card("S4", 4));
-        shipCards.add(new Card("S4", 5));
-        shipCards.add(new Card("S4", 6));
+    public List<Card> shuffle() {
+        List<Card> shuffled = allCards;
+        Collections.shuffle(shuffled);
+        return shuffled;
     }
-
-    public void createListOfStormCards() {
-        int index = 1;
-        for (int i = 0; i < stormCardQuantity; i++) {
-            stormCards.add(new Card("storm", index++));
-        }
-    }
-
-    public void createListOfCoinCards() {
-        int index = 1;
-        for (int i = 0; i < coinCardQuantity; i++) {
-            stormCards.add(new Card("coin", index++));
-        }
-    }
-
-    public void createListOfCannonCards() {
-        int index = 1;
-        for (int i = 0; i < cannonCardQuantity; i++) {
-            stormCards.add(new Card("cannon", index++));
-        }
-    }
-
     public List<Card> getAllCards() {
-        List<Card> allCards = new ArrayList<>();
-        allCards.addAll(getShipCards());
-        allCards.addAll(getStormCards());
-        allCards.addAll(getCoinCards());
-        allCards.addAll(getCannonCards());
         return allCards;
     }
 
-    public List<Card> shuffle(){
-        List<Card> all = getAllCards();
-        Collections.shuffle(Arrays.asList(all));
-        return all;
+    public Card findCardByTypeAndInt(String type, int num) {
+        for (Card card : allCards) {
+            if(card.getType().equals(type) && card.getNum() == num){
+                return card;
+            }
+        }
+        return null;
     }
 
-    public List<Card> getShipCards() {
-        return shipCards;
+    public Card findCardByType(String type) { // metoda wynajdzie pierwszą kartę danego typu
+        for (Card card : allCards) {
+            if(card.getType().equals(type)){
+                return card;
+            }
+        }
+        return null;
     }
-    public List<Card> getStormCards() {
-        return stormCards;
+
+    public List<Card> getMainStack() {
+        return mainStack;
     }
-    public List<Card> getCoinCards() {
-        return coinCards;
-    }
-    public List<Card> getCannonCards() {
-        return cannonCards;
+
+    public List<Card> getTemporaryStack() {
+        return temporaryStack;
     }
 }

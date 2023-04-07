@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-
+// do przerobienia dziedziczenie, póki co dziedziczy Game z badlogic
 public class ShipGame extends Game {
 
     private SpriteBatch batch;
