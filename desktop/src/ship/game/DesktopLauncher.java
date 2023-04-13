@@ -16,7 +16,7 @@ public class DesktopLauncher {
         //player1.draw();
 
         Controller controller = new Controller();
-        controller.chooseStack();
+        controller.putDrawnCardInOwnStack();
 
 
 

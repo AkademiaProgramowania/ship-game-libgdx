@@ -1,13 +1,12 @@
-- klasa Controller, metoda chooseStack - jak zautomatyzować typ karty (nie wpisywać ręcznie)
-- zrobić jako enum
 - klasa Controller, metoda chooseStack - dopisać obliczanie ile jeszcze brakuje cześci statku do colekcji
-- czy "S%" daje każdy string zaczynający się na S? Zamieniłam na contains.("S")
-- poprawić logikę, póki co wszystko jest w Controller. Powinno być jakoś przez metodę play()
+- dodać różnicowanie kart statków na zbierane i wolne (metodę checkIfShipCardIsToCollect)
+- zrobić zeby Game miało playera nie odwrotnie. Teraz Controller ma playera
+-
+- czy "S%" daje każdy string zaczynający się na S? Zamieniłam na contains.("S") - spr
+- poprawić logikę, póki co wszystko jest w Controller. Powinno być jakoś przez metodę play() albo game()
 - nie działa wybieranie kart do zwrotu - spr czy przypadkiem nie wybieram do zeotu czegoś, czego nie ma
 (obsłużyć taki przypadek)
-
-
-- gdzie umieścić metody filtrującą karty (findCard()) - w Playerze? albo Game
+- chooseWhichToReturn - dodać wyjątek żeby nie była to karta of you choice
 - przerobić createListOfShips() na pętle
 
 - póki co w Game dwie metody wybierające karty (po typie i typie + num) możliwe że w rozgrywce nie będzie potrzebne filtrowanie z numerem karty
@@ -20,6 +19,8 @@ wtedy klasa Config dostarcza odpowiednich talii kart. Póki co jest prosta konfi
 - klasę Game zrobić jako logikę biznesową z rozgrywką
 - zobaczyć w internecie wzorzec factory
 
+ZROBIONE:
+- v przerobić metody wyszukujące kartę na obsługujące enumy
 - v w CardFactory usunięte wielokrotne wywoływanie pola allCards, oraz pole allCards (factory nic nie przechowuje). Za to dodane lokale zmienne Listy, przechwytywane do zbioru
 cards w nowej metodzie createCards. Następnie meotda createCards() wywołana w Game zamiast .getallCards (lepiej facotry mieć bezstanową, bez pierwotnego pola allCards).
 - v zrobić getery do poszczególnych typów kart (gdzie je wsadzić? w Config?) póki co w CardFactory
