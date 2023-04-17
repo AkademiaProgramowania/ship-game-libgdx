@@ -6,10 +6,16 @@ import java.util.Scanner;
 
 public class Controller {
     Scanner scanner = new Scanner(System.in);
-    Player player1 = new Player();
-    private final Card drawn = player1.draw();
+    Player player;
+    private final Card drawn = null;
     boolean available = true;
-    private final List<Card> ownStack = player1.game.getOwnStack();
+    private final List<Card> ownStack = new ArrayList<>();
+    private Game game;
+
+    public Controller(Game game, Player player) {
+        this.game = game;
+        this.player = player;
+    }
 
     public void putDrawnCardInOwnStack() { // zmienić nazwę
          // czy drawn przekazywać w argumencie? Musi być dostępne dla innych metod
@@ -34,7 +40,7 @@ public class Controller {
         showOwnStack();
     }
 
-        public void checkIfShipCardIsToCollect(String shipNum) { // zdecydować kiedy dzielimy karty w stacku na SHIP oraz shipNum
+    public void checkIfShipCardIsToCollect(String shipNum) { // zdecydować kiedy dzielimy karty w stacku na osobne zbiory po SHIP oraz shipNum
         // przy pierwszym wyciągnięciu SHIP jego shipNum staje się "collected",
         // pozostałe SHIP shipNum są available
         if (drawn.getType().equals(Card.Type.SHIP)) { // jeśli wyciągnie ship, to
@@ -43,7 +49,6 @@ public class Controller {
                 }
             }
         }
-
     }
 
     public void chooseWhichToReturn() {
@@ -59,9 +64,9 @@ public class Controller {
             System.out.println("For a cannon enter 3");
             int entered = scanner.nextInt();
 
-            Card cardShip = player1.game.findCardByTypeInOwnStack(Card.Type.SHIP); // filtrować available czy nie potrzeba - spr
-            Card cardCoin = player1.game.findCardByTypeInOwnStack(Card.Type.COIN);
-            Card cardCannon = player1.game.findCardByTypeInOwnStack(Card.Type.CANNON);
+            Card cardShip = player.findCardByTypeInOwnStack(Card.Type.SHIP); // filtrować available czy nie potrzeba - spr
+            Card cardCoin = player.findCardByTypeInOwnStack(Card.Type.COIN);
+            Card cardCannon = player.findCardByTypeInOwnStack(Card.Type.CANNON);
             switch (entered) {
                 case 1:
                     toReturn.add(cardShip);
@@ -78,7 +83,7 @@ public class Controller {
                 System.out.println(card);
             }
         }
-        player1.game.getMainStack().addAll(toReturn);
+        game.getMainStack().addAll(toReturn);
         //spr czy w mainStack jest zawartość toReturn
     }
 
@@ -87,13 +92,13 @@ public class Controller {
         List<Card> coins = new ArrayList<>();
         List<Card> cannons = new ArrayList<>();
         for (Card card : ownStack) {
-            if (card.equals(player1.game.findCardByTypeInOwnStack(Card.Type.SHIP))) {
+            if (card.equals(player.findCardByTypeInOwnStack(Card.Type.SHIP))) {
                 ships.add(card);
             }
-            if (card.equals(player1.game.findCardByTypeInOwnStack(Card.Type.COIN))) {
+            if (card.equals(player.findCardByTypeInOwnStack(Card.Type.COIN))) {
                 coins.add(card);
             }
-            if (card.equals(player1.game.findCardByTypeInOwnStack(Card.Type.CANNON))) {
+            if (card.equals(player.findCardByTypeInOwnStack(Card.Type.CANNON))) {
                 cannons.add(card);
             }
         }
@@ -108,6 +113,7 @@ public class Controller {
         }
     }
 }
+
 
     /*case 1:
             player1.game.getMainStack().add(cardShip);

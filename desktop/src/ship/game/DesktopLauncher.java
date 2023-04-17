@@ -5,22 +5,6 @@ public class DesktopLauncher {
 
     public static void main(String[] arg) {
 
-       /* Game game = new Game();
-        System.out.println("ilość " + game.getAllCards().size());
-        System.out.println(game.getAllCards());
-
-        System.out.println("po tasowaniu");
-        System.out.println(game.shuffle());*/
-
-        //Player player1 = new Player();
-        //player1.draw();
-
-        Controller controller = new Controller();
-        controller.putDrawnCardInOwnStack();
-
-
-
-        // assert that w shuffled nie ma wylosowanej karty
 
     }
 

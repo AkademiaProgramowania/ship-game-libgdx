@@ -1,15 +1,18 @@
+- poprawić logikę, póki co wszystko jest w Controller. Powinno być jakoś przez metodę play() w kolejnej klasie sterującej poszczególnymi rozgrywkami (Play)
+- klasa Play ma w polach: CardFactory (jednorazowe dostarcznie kart), Game (serwis), Player1, Player2, Controller. play() wywolywana w mainie
+- nie może być new Game w kilku miejscach bo powoduje nowe tworzenie nowych kart.
+- poprzenosić metody do właściwych klas
+- constructor dependency injection spr
+
 - klasa Controller, metoda chooseStack - dopisać obliczanie ile jeszcze brakuje cześci statku do colekcji
 - dodać różnicowanie kart statków na zbierane i wolne (metodę checkIfShipCardIsToCollect)
 - zrobić zeby Game miało playera nie odwrotnie. Teraz Controller ma playera
--
-- czy "S%" daje każdy string zaczynający się na S? Zamieniłam na contains.("S") - spr
-- poprawić logikę, póki co wszystko jest w Controller. Powinno być jakoś przez metodę play() albo game()
+
 - nie działa wybieranie kart do zwrotu - spr czy przypadkiem nie wybieram do zeotu czegoś, czego nie ma
 (obsłużyć taki przypadek)
 - chooseWhichToReturn - dodać wyjątek żeby nie była to karta of you choice
 - przerobić createListOfShips() na pętle
 
-- póki co w Game dwie metody wybierające karty (po typie i typie + num) możliwe że w rozgrywce nie będzie potrzebne filtrowanie z numerem karty
 - przerobić na streamy (find any albo find first)
 
 - do rozważenia klasa Config z CardFacrory factory = new CardFactory, new Game (factory.createCards...)

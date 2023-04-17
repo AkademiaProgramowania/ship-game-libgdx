@@ -8,7 +8,7 @@ public class CardFactory {
     private static final int stormCardQuantity = 8;
     private static final int coinCardQuantity = 20;
     private static final int cannonCardQuantity = 3;
-    
+
     public List<Card> createCards(){
         List<Card> cards = new ArrayList<>();
         cards.addAll(createListOfShips());
@@ -23,6 +23,7 @@ public class CardFactory {
 
     private List<Card> createListOfShips() {
         List<Card> ships = new ArrayList<>();
+        // redfactor, every ship - color should be initialized by a loop
         ships.add(new Card(Card.Type.SHIP,"S1", 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 2));
         ships.add(new Card(Card.Type.SHIP,"S1", 3));
