@@ -4,6 +4,10 @@ package ship.game;
 public class DesktopLauncher {
 
     public static void main(String[] arg) {
+        Launcher launcher = new Launcher();
+        launcher.play();
+
+
 
 
     }

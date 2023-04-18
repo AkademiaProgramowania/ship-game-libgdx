@@ -1,34 +1,20 @@
-- poprawić logikę, póki co wszystko jest w Controller. Powinno być jakoś przez metodę play() w kolejnej klasie sterującej poszczególnymi rozgrywkami (Play)
-- klasa Play ma w polach: CardFactory (jednorazowe dostarcznie kart), Game (serwis), Player1, Player2, Controller. play() wywolywana w mainie
-- nie może być new Game w kilku miejscach bo powoduje nowe tworzenie nowych kart.
-- poprzenosić metody do właściwych klas
+- eventy spr - controller komunikuje się z gamem tylk pprzez eventy - ptrzerobić
+- eventy: do każdej karty i do zmiany gracza, końca statku, decyzji o kontynuacji
+- gdzie decyzja o kontynuacji?
+- gdzie umieścić metodę toReturn żeby mieć dostęp? Póki co w Controllerze
+
+- była zduplikowana lista ownStak (Player i Game). Teraz w Player. Usunięta inicjalizacja Game z konstruktora Player
 - constructor dependency injection spr
 
 - klasa Controller, metoda chooseStack - dopisać obliczanie ile jeszcze brakuje cześci statku do colekcji
 - dodać różnicowanie kart statków na zbierane i wolne (metodę checkIfShipCardIsToCollect)
-- zrobić zeby Game miało playera nie odwrotnie. Teraz Controller ma playera
 
 - nie działa wybieranie kart do zwrotu - spr czy przypadkiem nie wybieram do zeotu czegoś, czego nie ma
 (obsłużyć taki przypadek)
 - chooseWhichToReturn - dodać wyjątek żeby nie była to karta of you choice
 - przerobić createListOfShips() na pętle
-
 - przerobić na streamy (find any albo find first)
-
-- do rozważenia klasa Config z CardFacrory factory = new CardFactory, new Game (factory.createCards...)
-wtedy klasa Config dostarcza odpowiednich talii kart. Póki co jest prosta konfiuracja i może  być  Game to co jest
-
-- klasa factory nic nie przechowuje tylko produkuje. Listy (kart i staków) ma mieć klasa Game
-- klasę Game zrobić jako logikę biznesową z rozgrywką
-- zobaczyć w internecie wzorzec factory
-
-ZROBIONE:
-- v przerobić metody wyszukujące kartę na obsługujące enumy
-- v w CardFactory usunięte wielokrotne wywoływanie pola allCards, oraz pole allCards (factory nic nie przechowuje). Za to dodane lokale zmienne Listy, przechwytywane do zbioru
-cards w nowej metodzie createCards. Następnie meotda createCards() wywołana w Game zamiast .getallCards (lepiej facotry mieć bezstanową, bez pierwotnego pola allCards).
-- v zrobić getery do poszczególnych typów kart (gdzie je wsadzić? w Config?) póki co w CardFactory
-- v zmienić nazwę klasy Game na CardFactory
-- v zmniejszyć liczbę list w klasie Game (zminimalizowane przechowywanie)
+- spr wzorzec factory
 
 Card types:
-boat (consists of 6 pieces) x 4 colors, storm, coin, cannon
+boat (6 pieces x 4 colors = 24 pcs), storm, coin, cannon

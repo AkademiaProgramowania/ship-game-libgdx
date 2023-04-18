@@ -1,46 +1,43 @@
 package ship.game;
 
+import ship.game.events.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Controller {
+public class Controller implements EventListener {
     Scanner scanner = new Scanner(System.in);
-    Player player;
-    private final Card drawn = null;
-    boolean available = true;
-    private final List<Card> ownStack = new ArrayList<>();
+
     private Game game;
 
-    public Controller(Game game, Player player) {
+    public Controller(Game game) {
         this.game = game;
-        this.player = player;
+        EventBus.subscribe(EventType.CARD_DRAWN,this);
     }
 
-    public void putDrawnCardInOwnStack() { // zmienić nazwę
-         // czy drawn przekazywać w argumencie? Musi być dostępne dla innych metod
-        // i nie powtarzać metody draw
-        System.out.println("Drawn " + drawn);
-
-        // karta jest wyciągana ze stosu
-        // i jest przekazywana do odp podzbioru w ownStack
-        // wszystkie karty ship najpierw idą do ownStack i są spr czy available w metodzie toReturn
-        // jak spr czy to piersza karta statku? Przy karcie statku iterowac po zbiorze i spr czy jest SHIP + shipNum
-
-        if (drawn.getType().equals(Card.Type.SHIP) || drawn.getType().equals(Card.Type.COIN) || drawn.getType().equals(Card.Type.CANNON)) {
-            ownStack.add(drawn);
-            System.out.println("A card " + drawn + " goes to your stack");
-        }
-        if (drawn.getType().equals(Card.Type.STORM)) {
-            System.out.println("A storm has come! You must return three cards back to the pile");
-            chooseWhichToReturn();
-        }
-
-        System.out.println("Pokaz zbior");
-        showOwnStack();
+    public void play() {
+        playTurn();
+        playTurn();
+        playTurn();
+        playTurn();
     }
 
-    public void checkIfShipCardIsToCollect(String shipNum) { // zdecydować kiedy dzielimy karty w stacku na osobne zbiory po SHIP oraz shipNum
+    public void playTurn() {
+        game.passToAPlayerIfNotStorm();
+        decideOnContinuation();
+
+    }
+
+    public void decideOnContinuation() {
+        System.out.println("Want to pass? 1 yes, 2 no");
+        if (scanner.nextInt() == 1) {
+            game.pass();
+        }
+    }
+
+
+   /* public void checkIfShipCardIsToCollect(String shipNum) { // zdecydować kiedy dzielimy karty w stacku na osobne zbiory po SHIP oraz shipNum
         // przy pierwszym wyciągnięciu SHIP jego shipNum staje się "collected",
         // pozostałe SHIP shipNum są available
         if (drawn.getType().equals(Card.Type.SHIP)) { // jeśli wyciągnie ship, to
@@ -49,10 +46,10 @@ public class Controller {
                 }
             }
         }
-    }
+    }*/
 
-    public void chooseWhichToReturn() {
-        showOwnStack();
+    public void chooseWhichToReturn() { // gdzie umieścić metodę żeby mieć dostęp?
+        //showOwnStack();
         List<Card> toReturn = new ArrayList<>();
         int num = 0;
 
@@ -64,9 +61,9 @@ public class Controller {
             System.out.println("For a cannon enter 3");
             int entered = scanner.nextInt();
 
-            Card cardShip = player.findCardByTypeInOwnStack(Card.Type.SHIP); // filtrować available czy nie potrzeba - spr
-            Card cardCoin = player.findCardByTypeInOwnStack(Card.Type.COIN);
-            Card cardCannon = player.findCardByTypeInOwnStack(Card.Type.CANNON);
+            Card cardShip = game.getCurrentPlayer().findShipCardToReturn();
+            Card cardCoin = game.getCurrentPlayer().findCardByTypeInOwnStack(Card.Type.COIN);
+            Card cardCannon = game.getCurrentPlayer().findCardByTypeInOwnStack(Card.Type.CANNON);
             switch (entered) {
                 case 1:
                     toReturn.add(cardShip);
@@ -87,18 +84,25 @@ public class Controller {
         //spr czy w mainStack jest zawartość toReturn
     }
 
-    public void showOwnStack() {
+    @Override
+    public void react(Event event) {
+        if (event.getType()==EventType.CARD_DRAWN) {
+            System.out.println("Drawn " + event.getCard());
+        }
+    }
+
+/*    public void showOwnStack() {
         List<Card> ships = new ArrayList<>();
         List<Card> coins = new ArrayList<>();
         List<Card> cannons = new ArrayList<>();
         for (Card card : ownStack) {
-            if (card.equals(player.findCardByTypeInOwnStack(Card.Type.SHIP))) {
+            if (card.equals(game.getCurrentPlayer().findCardByTypeInOwnStack(Card.Type.SHIP))) {
                 ships.add(card);
             }
-            if (card.equals(player.findCardByTypeInOwnStack(Card.Type.COIN))) {
+            if (card.equals(game.getCurrentPlayer().findCardByTypeInOwnStack(Card.Type.COIN))) {
                 coins.add(card);
             }
-            if (card.equals(player.findCardByTypeInOwnStack(Card.Type.CANNON))) {
+            if (card.equals(game.getCurrentPlayer().findCardByTypeInOwnStack(Card.Type.CANNON))) {
                 cannons.add(card);
             }
         }
@@ -111,7 +115,7 @@ public class Controller {
         for (Card card1 : cannons) {
             System.out.println("cannon " + card1);
         }
-    }
+    }*/
 }
 
 

@@ -1,7 +1,5 @@
 package ship.game;
 
-import java.util.List;
-
 public class Card {
 
     public enum Type {
@@ -12,7 +10,7 @@ public class Card {
     }
 
     private final Card.Type type;
-    private String shipNum;
+    private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4"
     private int num;
 
     // private pole z wstawionym assetem jpg?
@@ -23,29 +21,30 @@ public class Card {
         this.num = num;
     }
 
-    public Card(Card.Type type, String shipNum, int num) { // for ship
+    public Card(Card.Type type, String secondShipType, int num) { // for ship
         this.type = type;
-        this.shipNum = shipNum;
+        this.secondShipType = secondShipType;
         this.num = num;
     }
 
-    public String getShipNum() {
-        return shipNum;
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getSecondShipType() {
+        return secondShipType;
     }
 
     public int getNum() {
         return num;
     }
 
-    public Type getType() {
-        return type;
-    }
-
     @Override
     public String toString() {
         return "Card{" +
                 "type=" + type +
-                ", shipNum='" + shipNum + '\'' +
+                ", shipNum='" + secondShipType + '\'' +
                 ", num=" + num +
                 '}';
     }
