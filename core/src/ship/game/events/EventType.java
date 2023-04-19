@@ -8,5 +8,10 @@ public enum EventType {
     SHIP_COLLECTED, // zebrane 6 części statku
     PLAYER_SWITCHED, // zmiana na gracza gdy kńćzy rundę lub zadecyduje że pas
     STORM_CAME,
+    SHOW_CARD,
+    SHOW_STACK,
+    RETURNED_CARDS,
+    CARD_PURCHASE,
+    CURRENT_PLAYER,
     STACK_FILLED;
 }

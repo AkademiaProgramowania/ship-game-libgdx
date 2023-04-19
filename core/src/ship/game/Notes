@@ -1,17 +1,8 @@
 - eventy spr - controller komunikuje się z gamem tylk pprzez eventy - ptrzerobić
-- eventy: do każdej karty i do zmiany gracza, końca statku, decyzji o kontynuacji
-- gdzie decyzja o kontynuacji?
-- gdzie umieścić metodę toReturn żeby mieć dostęp? Póki co w Controllerze
-
-- była zduplikowana lista ownStak (Player i Game). Teraz w Player. Usunięta inicjalizacja Game z konstruktora Player
+- chooseCardsToReturn - usunąć souty (Event?)
+- gdzie subskrybować Eventy? Póki co tylk ow Controllerze
+- playTurn - gdzie możliwość dalszego ciągnięcia kart (play turn na końcu metody decideOnNextTurn?)
 - constructor dependency injection spr
-
-- klasa Controller, metoda chooseStack - dopisać obliczanie ile jeszcze brakuje cześci statku do colekcji
-- dodać różnicowanie kart statków na zbierane i wolne (metodę checkIfShipCardIsToCollect)
-
-- nie działa wybieranie kart do zwrotu - spr czy przypadkiem nie wybieram do zeotu czegoś, czego nie ma
-(obsłużyć taki przypadek)
-- chooseWhichToReturn - dodać wyjątek żeby nie była to karta of you choice
 - przerobić createListOfShips() na pętle
 - przerobić na streamy (find any albo find first)
 - spr wzorzec factory
