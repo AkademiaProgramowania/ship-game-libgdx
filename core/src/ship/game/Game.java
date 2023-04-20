@@ -2,13 +2,14 @@ package ship.game;
 
 import ship.game.events.Event;
 import ship.game.events.EventBus;
+import ship.game.events.EventListener;
 import ship.game.events.EventType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Game {
+public class Game implements EventListener {
 
     private List<Card> mainStack = new ArrayList<>(); // stos główny
     private List<Card> temporaryStack = new ArrayList<>(); // stos tymczasowy, tu są odkładane karty zanim stos głowny
@@ -21,6 +22,14 @@ public class Game {
     public Game() {
         CardFactory factory = new CardFactory();
         mainStack = factory.createCards();
+        EventBus.subscribe(EventType.CARD_DRAWN, this);
+        EventBus.subscribe(EventType.CURRENT_PLAYER, this);
+        EventBus.subscribe(EventType.STORM_CAME, this);
+        EventBus.subscribe(EventType.SHOW_STACK, this);
+        EventBus.subscribe(EventType.PLAYER_SWITCHED, this);
+        EventBus.subscribe(EventType.CARD_PURCHASE, this);
+        EventBus.subscribe(EventType.SHIP_COLLECTED, this); // zebrane 6 części statku - dopisać
+        EventBus.subscribe(EventType.GAME_END, this); // koniec gry - dopisać
     }
 
     public void addPlayer(Player player) {
@@ -35,7 +44,7 @@ public class Game {
         return drawn;
     }
 
-    public void checkIfMainStackIsOut(){
+    public void checkIfMainStackIsOut() {
         if (mainStack.isEmpty()) {
             shuffle();
         }
@@ -51,7 +60,7 @@ public class Game {
         Card drawn = draw(); // karta jest wyciągana ze stosu i przekazywana do odp podzbioru w ownStack:
 
         if (drawn.getType().equals(Card.Type.COIN) || drawn.getType().equals(Card.Type.CANNON)) {
-            getCurrentPlayer().addToOwnStack(drawn); // do ownStack
+            getCurrentPlayer().addToOwnStack(drawn);
             EventBus.notify(new Event(EventType.CURRENT_PLAYER));
         }
         if (drawn.getType().equals(Card.Type.SHIP)) {
@@ -61,7 +70,7 @@ public class Game {
             EventBus.notify(new Event(EventType.CURRENT_PLAYER));
         }
         if (drawn.getType().equals(Card.Type.STORM)) {
-            EventBus.notify(new Event(EventType.STORM_CAME));
+            EventBus.notify(new Event(EventType.STORM_CAME)); // kod zależny od STORM_CAME przenosimy do react?
             getCurrentPlayer().chooseCardsToReturn();
             addReturnedToTemporaryStack();
             switchToNextPlayer();
@@ -93,10 +102,10 @@ public class Game {
             getPlayer(playerIndex).addToOwnStack(coin);
             num++;
         }
-        EventBus.notify(new Event(EventType.CARD_PURCHASE));
+        EventBus.notify(new Event(EventType.CARD_PURCHASE, purchased));
     }
 
-    public int giveNumberOfMissingShipCards(){
+    public int giveNumberOfMissingShipCards() {
         List<Card> cards = getCurrentPlayer().getOwnStack();
         int num = 0;
         int requiredPieces = 6;
@@ -118,5 +127,27 @@ public class Game {
 
     public Player getPlayer(int requiredIndex) {
         return players.get(requiredIndex);
+    }
+
+    @Override
+    public void react(Event event) {
+        if (event.getType() == EventType.CARD_DRAWN) {
+            System.out.println("Card drawn " + event.getCard());
+        }
+        if (event.getType() == EventType.CURRENT_PLAYER) {
+            System.out.println("Current player " + getCurrentPlayer());
+        }
+        if (event.getType() == EventType.STORM_CAME) {
+            System.out.println("A storm is coming. Give back 3 cards to avoid damages!");
+        }
+        if (event.getType() == EventType.SHOW_STACK) {
+            System.out.println("Show stack");
+        }
+        if (event.getType() == EventType.PLAYER_SWITCHED) {
+            System.out.println("Next player turn");
+        }
+        if (event.getType() == EventType.CARD_PURCHASE) {
+            System.out.println("Purchased " + event.getCard());
+        }
     }
 }

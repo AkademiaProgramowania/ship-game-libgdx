@@ -2,17 +2,27 @@ package ship.game;
 
 import ship.game.events.Event;
 import ship.game.events.EventBus;
+import ship.game.events.EventListener;
 import ship.game.events.EventType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Player {
+public class Player implements EventListener {
 
     String collectedShipType;
     private final List<Card> ownStack = new ArrayList<>(); // bez przypisania new ArrayList zbior jest zawsze null (brak listy).
     // gdy próbuję dodać co do listy null to mam NullPointerExc
+
+    public Player() {
+        EventBus.subscribe(EventType.STACK_FILLED, this);
+        EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
+        EventBus.subscribe(EventType.SHOW_CARD, this);
+        EventBus.subscribe(EventType.SHOW_STACK, this);
+        EventBus.subscribe(EventType.RETURNED_CARDS, this);
+
+    }
 
     public void addToOwnStack(Card card) {
         ownStack.add(card);
@@ -54,10 +64,11 @@ public class Player {
         }
     }
 
-    public void showOwnStack() {
+    public Card showOwnStack() {
         List<Card> ships = new ArrayList<>();
         List<Card> coins = new ArrayList<>();
         List<Card> cannons = new ArrayList<>();
+
         for (Card card : ownStack) {
             if (card.equals(findCardByTypeInOwnStack(Card.Type.SHIP))) {
                 ships.add(card);
@@ -69,19 +80,25 @@ public class Player {
                 cannons.add(card);
             }
         }
-        for (Card card1 : ships) {
-            EventBus.notify(new Event(EventType.SHOW_CARD, card1));
+        for (Card cardToShow : ships) {
+            EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
+            return cardToShow;
         }
-        for (Card card1 : coins) {
-            EventBus.notify(new Event(EventType.SHOW_CARD, card1));
+        for (Card cardToShow : coins) {
+            EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
+            return cardToShow;
         }
-        for (Card card1 : cannons) {
-            EventBus.notify(new Event(EventType.SHOW_CARD, card1));
+        for (Card cardToShow : cannons) {
+            EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
+            return cardToShow;
         }
+        return null;
     }
 
     public List<Card> chooseCardsToReturn() {
+        EventBus.notify(new Event(EventType.SHOW_STACK));
         showOwnStack();
+
         List<Card> toReturn = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         int num = 0;
@@ -109,7 +126,6 @@ public class Player {
                     num++;
             }
             EventBus.notify(new Event(EventType.RETURNED_CARDS));
-            System.out.println("3 cards are back to the main stack: ");
             for (Card card : toReturn) {
                 System.out.println(card);
             }
@@ -148,5 +164,24 @@ public class Player {
         return "Player{" +
                 "ownStack=" + ownStack +
                 '}';
+    }
+
+    @Override
+    public void react(Event event) {
+        if (event.getType() == EventType.STACK_FILLED) {
+            System.out.println("Card added to your stack");
+        }
+        if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
+            System.out.println("It's your ship type to collect: " + collectedShipType);
+        }
+        if (event.getType() == EventType.SHOW_CARD) {
+            System.out.println(event.getCard());
+        }
+        if (event.getType() == EventType.SHOW_STACK) {
+            System.out.println("Your stack");
+        }
+        if (event.getType() == EventType.RETURNED_CARDS) {
+            System.out.println("3 cards are back to the main stack: ");
+        }
     }
 }
