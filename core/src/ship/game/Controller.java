@@ -1,38 +1,34 @@
 package ship.game;
 
-import ship.game.events.*;
-
 import java.util.Scanner;
 
-public class Controller implements EventListener {
+public class Controller {
     Scanner scanner = new Scanner(System.in);
 
     private Game game;
 
     public Controller(Game game) {
         this.game = game;
-        EventBus.subscribe(EventType.CARD_DRAWN, this);
     }
 
     public void play() {
-        playTurn();
-        playTurn();
-        playTurn();
+        game.shuffle(game.getMainStack());
         playTurn();
     }
 
     public void playTurn() {
-        game.passCardToAPlayerIfNotStorm();
+        System.out.println("Player " + game.getCurrentPlayer().getPlayerNum());
+        int missing = game.checkNumberOfMissingShipCards();
+        System.out.println("You need " + missing + " ship pieces");
+        game.passCardToAPlayerIfNotStorm(); // tu jest draw()
         decideOnNextTurn();
 
     }
 
     public void decideOnNextTurn() {
-        int missing = game.giveNumberOfMissingShipCards();
-        System.out.println("You miss" + missing + " ship pieces");
-        System.out.println("1 - end your turn, 2 - buy ship card");
+        System.out.println("1 - draw a card, 2 - buy ship card, 3 - end your turn");
         if (scanner.nextInt() == 1) {
-            game.endTurn();
+            playTurn();
         }
         if (scanner.nextInt() == 2) {
             System.out.println("Choose a player");
@@ -40,12 +36,8 @@ public class Controller implements EventListener {
             String requested = game.getCurrentPlayer().collectedShipType;
             game.buyShipCard(player, requested);
         }
-    }
-
-    @Override
-    public void react(Event event) {
-        if (event.getType() == EventType.CARD_DRAWN) {
-            System.out.println("Drawn " + event.getCard());
+        if (scanner.nextInt() == 3) {
+            game.endTurn();
         }
     }
 }

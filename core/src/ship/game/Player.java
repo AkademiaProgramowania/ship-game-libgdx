@@ -12,15 +12,16 @@ import java.util.Scanner;
 public class Player implements EventListener {
 
     String collectedShipType;
+    int playerNum;
     private final List<Card> ownStack = new ArrayList<>(); // bez przypisania new ArrayList zbior jest zawsze null (brak listy).
     // gdy próbuję dodać co do listy null to mam NullPointerExc
 
-    public Player() {
-        EventBus.subscribe(EventType.STACK_FILLED, this);
-        EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
-        EventBus.subscribe(EventType.SHOW_CARD, this);
+    public Player(int playerNum) {
+        this.playerNum = playerNum;
         EventBus.subscribe(EventType.SHOW_STACK, this);
         EventBus.subscribe(EventType.RETURNED_CARDS, this);
+        EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
+
 
     }
 
@@ -47,52 +48,60 @@ public class Player implements EventListener {
         return null;
     }
 
-    public void checkIfFirstShipCardAndSetCollected(Card card) {
-        for (Card card1 : ownStack) { // każda karta z ownStack
-            if (!card1.getType().equals(Card.Type.SHIP)) { // jeśli żadna karta w stacku nie ma typu SHIP
-                collectedShipType = card1.getSecondShipType();// i ustawia jej typ jako zbierany
-                EventBus.notify(new Event(EventType.SHIP_TYPE_TO_COLLECT));
+    public void checkIfFirstShipCardAndSetCollected(Card card) { // przekazuję drawn żeby z niej pobrać typ
+        if (collectedShipType == null) {
+            for (Card card1 : ownStack) {
+                if (!card1.getType().equals(Card.Type.SHIP)) {
+                }
             }
+            collectedShipType = card.getSecondShipType();
+            EventBus.notify(new Event(EventType.SHIP_TYPE_TO_COLLECT));
+        } else {
+            System.out.println("typ ustawiony: " + collectedShipType);
         }
     }
+    // jeśli collected nie jest ustawione to spr każdą obecną w ownStack czy jest typu SHIP
+    // i jeśli nie, to ustawia collected na second type z przekazanej karty w parametrze
 
-    public void checkIfSetShipCardsAsCollected() {
-        for (Card card : ownStack) {
+
+/*    public void checkIfSetShipCardsAsCollected() {
+        for (Card card : ownStack) { // każda karta
             if (card.getSecondShipType().equals(collectedShipType)) {
+                // jeśli jej drugi typ jest taki sam jak ustawiony na kolekcjonowanie
                 collectedShipType = card.getSecondShipType();
             }
         }
-    }
+    }*/
 
-    public Card showOwnStack() {
+    public void showOwnStack() {
+        System.out.println("Stack - player " + getPlayerNum() + ":");
         List<Card> ships = new ArrayList<>();
         List<Card> coins = new ArrayList<>();
         List<Card> cannons = new ArrayList<>();
 
         for (Card card : ownStack) {
-            if (card.equals(findCardByTypeInOwnStack(Card.Type.SHIP))) {
+            if (card.getType().equals(Card.Type.SHIP)) {
                 ships.add(card);
             }
-            if (card.equals(findCardByTypeInOwnStack(Card.Type.COIN))) {
+            if (card.getType().equals(Card.Type.COIN)) {
                 coins.add(card);
             }
-            if (card.equals(findCardByTypeInOwnStack(Card.Type.CANNON))) {
+            if (card.getType().equals(Card.Type.CANNON)) {
                 cannons.add(card);
             }
         }
         for (Card cardToShow : ships) {
+            System.out.println(cardToShow);
             EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
-            return cardToShow;
         }
         for (Card cardToShow : coins) {
+            System.out.println(cardToShow);
             EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
-            return cardToShow;
         }
         for (Card cardToShow : cannons) {
+            System.out.println(cardToShow);
             EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
-            return cardToShow;
         }
-        return null;
     }
 
     public List<Card> chooseCardsToReturn() {
@@ -151,6 +160,10 @@ public class Player implements EventListener {
         return null;
     }
 
+    public int getPlayerNum() {
+        return playerNum;
+    }
+
     public List<Card> getOwnStack() {
         return ownStack;
     }
@@ -162,26 +175,24 @@ public class Player implements EventListener {
     @Override
     public String toString() {
         return "Player{" +
-                "ownStack=" + ownStack +
+                "playerNum=" + playerNum +
+                ", ownStack=" + ownStack +
                 '}';
     }
 
     @Override
     public void react(Event event) {
         if (event.getType() == EventType.STACK_FILLED) {
-            System.out.println("Card added to your stack");
-        }
-        if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
-            System.out.println("It's your ship type to collect: " + collectedShipType);
-        }
-        if (event.getType() == EventType.SHOW_CARD) {
-            System.out.println(event.getCard());
+            System.out.println("Stack filled with " + event.getCard());
         }
         if (event.getType() == EventType.SHOW_STACK) {
             System.out.println("Your stack");
         }
         if (event.getType() == EventType.RETURNED_CARDS) {
             System.out.println("3 cards are back to the main stack: ");
+        }
+        if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
+            System.out.println("Ship type set to collect player " + getPlayerNum() + " - " + collectedShipType);
         }
     }
 }

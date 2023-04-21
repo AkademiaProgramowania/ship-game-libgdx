@@ -1,7 +1,18 @@
 - eventy spr - controller komunikuje się z gamem tylk pprzez eventy - ptrzerobić
 - chooseCardsToReturn - usunąć souty (Event?)
-- gdzie subskrybować Eventy? Póki co tylk ow Controllerze
 - playTurn - gdzie możliwość dalszego ciągnięcia kart (play turn na końcu metody decideOnNextTurn?)
+- po end turn nie ma kontynuacji do kolejnego playera
+- spr showOwnStack, są dwa eventy - na cały stak (sout) i na poszczególne karty (zwraca kartę)
+
+TESTY
+- działa przypadek gdy piersza kartę wybierze STORM. Oddaje storm i przechodzi do nast gracza
+- po wybraniu coin i cannon, gdy wybieram 1 (draw again) psuje się
+- nie przechodzi do kolejnego playera po endTurn()
+- po wybraniu kolejnego SHIP, ustawia się collectedShipNum na bieżący (kolejny)
+- po poprawkach w ogóle nie działa ustawianie collectedShipNum
+- obsłużyć przypadek gdy wybierze buyShipCard a nie ma kart do oddania
+
+
 - constructor dependency injection spr
 - przerobić createListOfShips() na pętle
 - przerobić na streamy (find any albo find first)
