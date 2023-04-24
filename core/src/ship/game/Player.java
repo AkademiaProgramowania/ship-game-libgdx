@@ -13,7 +13,7 @@ public class Player implements EventListener {
 
     String collectedShipType;
     int playerNum;
-    private final List<Card> ownStack = new ArrayList<>(); // bez przypisania new ArrayList zbior jest zawsze null (brak listy).
+    private List<Card> ownStack = new ArrayList<>(); // bez przypisania new ArrayList zbior jest zawsze null (brak listy).
     // gdy próbuję dodać co do listy null to mam NullPointerExc
 
     public Player(int playerNum) {
@@ -30,7 +30,7 @@ public class Player implements EventListener {
         EventBus.notify(new Event(EventType.STACK_FILLED, card));
     }
 
-    public Card findCardByTypeInOwnStack(Card.Type type) { // metoda da pierwszą kartę danego typu
+    public Card findCardByTypeInOwnStack(Card.Type type) { // uwaga! Metoda da pierwszą kartę danego typu
         for (Card card : ownStack) {
             if (card.getType().equals(type)) {
                 return card;
@@ -39,10 +39,22 @@ public class Player implements EventListener {
         return null;
     }
 
-    public Card findShipCardToReturn() { // sa SHIP a nie są collectedShipCards
+    public Card findShipCardToReturn() { // w pierwszej kolejności oddawać te, które nie są collectedShipCards
+        List<Card> toReturn = new ArrayList<>();
         for (Card card : ownStack) {
-            if (card.getType().equals(Card.Type.SHIP) && !card.getSecondShipType().equals(collectedShipType)) {
+            if (card.getType().equals(Card.Type.SHIP) && (!card.getSecondShipType().equals(collectedShipType))) {
+                toReturn.add(card);
+            }
+        }
+        if (toReturn.size() > 0) {
+            for (Card card : toReturn) {
                 return card;
+            }
+        } else {
+            for (Card card : ownStack) {
+                if (card.getType().equals(Card.Type.SHIP)) {
+                    return card; // dodać usuwanie z ownStack?
+                }
             }
         }
         return null;
@@ -75,13 +87,17 @@ public class Player implements EventListener {
 
     public void showOwnStack() {
         System.out.println("Stack - player " + getPlayerNum() + ":");
-        List<Card> ships = new ArrayList<>();
+        List<Card> shipsCollected = new ArrayList<>();
+        List<Card> shipsToReturn = new ArrayList<>();
         List<Card> coins = new ArrayList<>();
         List<Card> cannons = new ArrayList<>();
 
         for (Card card : ownStack) {
-            if (card.getType().equals(Card.Type.SHIP)) {
-                ships.add(card);
+            if (card.getType().equals(Card.Type.SHIP) && (!card.getSecondShipType().equals(collectedShipType))) {
+                shipsCollected.add(card);
+            }
+            if (card.getType().equals(Card.Type.SHIP) && (card.getSecondShipType().equals(collectedShipType))) {
+                shipsToReturn.add(card);
             }
             if (card.getType().equals(Card.Type.COIN)) {
                 coins.add(card);
@@ -90,7 +106,11 @@ public class Player implements EventListener {
                 cannons.add(card);
             }
         }
-        for (Card cardToShow : ships) {
+        for (Card cardToShow : shipsCollected) {
+            System.out.println(cardToShow);
+            EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
+        }
+        for (Card cardToShow : shipsToReturn) {
             System.out.println(cardToShow);
             EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
         }
@@ -113,7 +133,6 @@ public class Player implements EventListener {
         int num = 0;
 
         while (num <= 3) {
-            System.out.println("Choose a card to return");
             System.out.println("You need " + (3 - num) + " cards more");
             System.out.println("For a ship enter 1");
             System.out.println("For a coin enter 2");

@@ -17,9 +17,9 @@ public class Controller {
     }
 
     public void playTurn() {
-        System.out.println("Player " + game.getCurrentPlayer().getPlayerNum());
+        /*System.out.println("Player " + game.getCurrentPlayer().getPlayerNum());
         int missing = game.checkNumberOfMissingShipCards();
-        System.out.println("You need " + missing + " ship pieces");
+        System.out.println("You need " + missing + " ship pieces");*/
         game.passCardToAPlayerIfNotStorm(); // tu jest draw()
         decideOnNextTurn();
 
@@ -37,6 +37,7 @@ public class Controller {
             game.buyShipCard(player, requested);
         }
         if (scanner.nextInt() == 3) {
+            System.out.println("Your turn ends");
             game.endTurn();
         }
     }

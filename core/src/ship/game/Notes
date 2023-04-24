@@ -1,6 +1,5 @@
 - eventy spr - controller komunikuje się z gamem tylk pprzez eventy - ptrzerobić
 - chooseCardsToReturn - usunąć souty (Event?)
-- playTurn - gdzie możliwość dalszego ciągnięcia kart (play turn na końcu metody decideOnNextTurn?)
 - po end turn nie ma kontynuacji do kolejnego playera
 - spr showOwnStack, są dwa eventy - na cały stak (sout) i na poszczególne karty (zwraca kartę)
 
@@ -8,10 +7,8 @@ TESTY
 - działa przypadek gdy piersza kartę wybierze STORM. Oddaje storm i przechodzi do nast gracza
 - po wybraniu coin i cannon, gdy wybieram 1 (draw again) psuje się
 - nie przechodzi do kolejnego playera po endTurn()
-- po wybraniu kolejnego SHIP, ustawia się collectedShipNum na bieżący (kolejny)
-- po poprawkach w ogóle nie działa ustawianie collectedShipNum
 - obsłużyć przypadek gdy wybierze buyShipCard a nie ma kart do oddania
-
+- popr findShipCardToReturn (w pierwszej kolejności oddawać te, które nie są collectedShipCards)
 
 - constructor dependency injection spr
 - przerobić createListOfShips() na pętle
@@ -19,4 +16,57 @@ TESTY
 - spr wzorzec factory
 
 Card types:
-boat (6 pieces x 4 colors = 24 pcs), storm, coin, cannon
+boat (6 pieces x 4 colors = 24 pcs), storm, coin, cannon.
+normal card - no storm
+wartość kart: 1 pkt, działo - 3pkt, burza 0pkt
+
+- tasowanie talii - widać pierwszą kartę z talii, zakrytą, wskazanie na aktualnego gracza
+- uruchomienie gry (1 gracz)
+- 3 opcje: ciągnięcie karty (przycisk), kupno karty statku (przycisk), pas (przycisk)
+- 1: karta (moneta, statek lub działo) po wyvciągnięciu jest dodawana do konta gracza
+- 1b: gdy burza: player musi oddać 3 karty lub poświęcić działo, zmiana gracza
+- 2 : kupno karty statku / gdy są 3 monety - wybór gracza, żądana karta idzie do staku, zmiana gracza
+- pas - zmiana gracza
+
+Eventy:
+1. GAME_START -> controller
+- przygotowanie kart, graczy i talii,
+- tasowanie talii
+2. TURN_START (który gracz) -> game
+- wskazanie aktualnego gracza -> controller
+- uruchamia przyciski podejmowania decyzji
+3a. PAS_DECISION -> controller (po naciśnięciu pasowania)
+- gra zmienia gracza
+- powrót do pkt 2 (turn start, kolejny gracz) gra wskazuje na kolejnego gracza
+3b. DRAW_CARD_DECISION -> controller (po naciśnięciu talii)
+- gra:
+    - zabiera wierzchnią kartę z talii i spr jaka to karta
+    - gra dodaje kartę do staka bieżącego gracza jeśli to nie burza
+    - DRAW_CARD (card) -> game
+    - jeśli ostatnia karta statku to GAME_END -> game
+- controller:
+    - reakcja na DRAW_CARD:
+        - zależnie od typu karty:
+        - jeśli normalna karta - animacja przemieszczenia karty na odpowiedni stos
+        - jeśli burza - przejście w stan burzy
+        - stan burzy: zablokowana możliwość robirenia zwykłych akcji, zaprezentowanie burzy, umożliwienie akcji:
+            - klikamy na swoje karty tak długo jak nie oddamy kart o wartości 3 pkt
+            lub nie skońćzą sie karty (kliknięcie na właściwe karty ze stosu). Działo warte 3 punkty (kliki)
+            - gdy wymóg zostanie spełniony, automatycznie puszczamy event PAS_DECISION
+    - reakcja na GAME_END (wskazanie który gracz wygrał): menu główne/ranking/ coś inengo
+3c. - gdy gracz kliknie na kartę innego gracza
+    controller:
+        - jeśli nie masz dosć moent, nic sie nie dzieje / ew. animacja pokazująca brak monet
+        - jeśłi cię stać: znikają twoje 3 monety
+        - kliknięta karta trafia do odp. staka - ponownie wykorzystać metody przy DRAW_CARD
+        - CARD_PURCHASE_DECISION (który gracz, która karta) -> controller
+        - PAS_DECISION -> controller
+    game:
+        - reaGOWANIE NA card_purchase_decision
+        - zabranie wskazanej karty graczowi
+        - zabranei 3 monet biezącemu graczowi
+        - przekazanie wskazanej karty bieżącemu graczowi
+
+
+
+

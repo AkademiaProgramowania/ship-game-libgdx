@@ -65,23 +65,22 @@ public class Game implements EventListener {
     public void passCardToAPlayerIfNotStorm() {
         Card drawn = draw(); // karta jest wyciągana ze stosu i przekazywana do odp podzbioru w ownStack:
 
-       /* if (drawn.getType().equals(Card.Type.COIN) || drawn.getType().equals(Card.Type.CANNON)) {
+        if (drawn.getType().equals(Card.Type.COIN) || drawn.getType().equals(Card.Type.CANNON)) {
             getCurrentPlayer().addToOwnStack(drawn);
             EventBus.notify(new Event(EventType.STACK_FILLED));
-        }*/
+        }
         if (drawn.getType().equals(Card.Type.SHIP)) {
             getCurrentPlayer().addToOwnStack(drawn);
-            System.out.println("spr czy own stack jest poprawny");
-            getCurrentPlayer().showOwnStack();
             getCurrentPlayer().checkIfFirstShipCardAndSetCollected(drawn);
-           //getCurrentPlayer().checkIfSetShipCardsAsCollected();
+            //getCurrentPlayer().checkIfSetShipCardsAsCollected();
         }
         if (drawn.getType().equals(Card.Type.STORM)) {
+            temporaryStack.add(drawn);
             EventBus.notify(new Event(EventType.STORM_CAME));
-            if (getCurrentPlayer().getOwnStack().size() < 3) {
-                temporaryStack.add(drawn);
+            if (getCurrentPlayer().getOwnStack().size() <= 3) {
                 EventBus.notify(new Event(EventType.STORM_NO_CARDS));
-                EventBus.notify(new Event(EventType.SHOW_CARD_RETURNED, drawn));
+                EventBus.notify(new Event(EventType.SHOW_CARD_RETURNED));
+                temporaryStack.addAll(getCurrentPlayer().getOwnStack());
                 switchToNextPlayer();
                 return;
             }
@@ -163,12 +162,13 @@ public class Game implements EventListener {
             System.out.println(getCurrentPlayer().getPlayerNum() + " it's your ship type to collect: " + getCurrentPlayer().collectedShipType);
         }*/
         if (event.getType() == EventType.STORM_CAME) {
-            System.out.println("A storm is coming. Give back 3 cards to avoid damages!");
+            System.out.println("A storm is coming. Give back 3 cards");
         }
         if (event.getType() == EventType.STORM_NO_CARDS) {
-            System.out.println("To little cards on stack. Give what you have");
+            System.out.println("To little cards on stack.");
         }
         if (event.getType() == EventType.SHOW_CARD_RETURNED) {
+
             System.out.println("Card given back " + event.getCard());
         }
         if (event.getType() == EventType.PLAYER_SWITCHED) {
