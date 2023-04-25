@@ -25,9 +25,7 @@ public class Game implements EventListener {
         EventBus.subscribe(EventType.GAME_START, this);
         EventBus.subscribe(EventType.DRAW_CARD_DECISION, this);
 
-
         // stare:
-
 
         EventBus.subscribe(EventType.DRAW_CARD, this);
         EventBus.subscribe(EventType.STACK_SHUFFLED, this);
@@ -145,6 +143,7 @@ public class Game implements EventListener {
         return requiredPieces - num;
     }
 
+
     public void endTurn() {
         switchToNextPlayer();
     }
@@ -170,16 +169,23 @@ public class Game implements EventListener {
             Card drawn = draw();
             if (drawn.getType().equals(Card.Type.SHIP)) {
                 getCurrentPlayer().checkIfFirstShipCardAndSetCollected(drawn);
+                if (getCurrentPlayer().checkIfLastShipCard()) {
+                    Event endGame = new Event(EventType.GAME_END);
+                    endGame.setPlayer(getCurrentPlayer());
+                    EventBus.notify(endGame);
             }
-            if (!drawn.getType().equals(Card.Type.STORM)) {
+            if (!drawn.getType().equals(Card.Type.STORM)) { // todo - obsłużyć przypadek STORM
                 getCurrentPlayer().addToOwnStack(drawn);
             }
             Event drawCardEvent = new Event(EventType.DRAW_CARD);
             drawCardEvent.setCard(drawn);
             drawCardEvent.setPlayer(getCurrentPlayer());
             EventBus.notify(drawCardEvent);
-            //todo    - jeśli ostatnia karta statku to GAME_END -> game
+            }
+
+
         }
+
 
 
         if (event.getType() == EventType.DRAW_CARD) { // spr gdzie jest ten event i zakomentować - zmiana nazwy

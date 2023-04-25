@@ -16,14 +16,15 @@ public class Controller implements EventListener {
     public Controller(Game game) {
         this.game = game;
         EventBus.subscribe(EventType.TURN_START, this);
+        EventBus.subscribe(EventType.GAME_END, this);
+        EventBus.subscribe(EventType.DRAW_CARD, this);
 
 
     }
 
     public void play() {
         EventBus.notify(new Event(EventType.GAME_START));
-        System.out.println("Widzisz talie i graczy o nazwach X, Y, Z");
-
+        System.out.println("Widzisz talie i graczy o numerach 1, 2");
     }
 
     public void playTurn(Event event) {
@@ -41,6 +42,7 @@ public class Controller implements EventListener {
         decideOnNextTurn();
 */
     }
+
 
     public void decideOnNextTurn() {
         System.out.println("1 - draw a card, 2 - buy ship card, 3 - end your turn");
@@ -60,11 +62,34 @@ public class Controller implements EventListener {
         }
     }
 
+    public void endGame(Event event) {
+        System.out.println("Game ends. Player " + event.getPlayer().playerNum + " wins");
+    }
+
     @Override
     public void react(Event event) {
         if (event.getType() == EventType.TURN_START) {
             playTurn(event);
         }
-
+        if (event.getType() == EventType.GAME_END) {
+            endGame(event);
+        }
+        if (event.getType() == EventType.DRAW_CARD) {
+            if (event.getCard().getType().equals(Card.Type.COIN)) {
+                System.out.println("Animacja przejścia na stos monet");
+            }
+            if (event.getCard().getType().equals(Card.Type.CANNON)) {
+                System.out.println("Animacja przejścia na stos dział");
+            }
+            if (event.getCard().getType().equals(Card.Type.SHIP) && (!event.getCard().getSecondShipType().equals(currentPlayer.collectedShipType))) {
+                System.out.println("Animacja przejścia na stos statków do handlu");
+            }
+            if (event.getCard().getType().equals(Card.Type.SHIP) && (event.getCard().getSecondShipType().equals(currentPlayer.collectedShipType))) {
+                System.out.println("Animacja przejscia na stos statków do kolekcjonowania");
+            }
+            if (event.getCard().getType().equals(Card.Type.STORM)) {
+                System.out.println("Animacja burzy");
+            }
+        }
     }
 }

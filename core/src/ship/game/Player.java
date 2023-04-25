@@ -166,6 +166,20 @@ public class Player implements EventListener {
         return null;
     }
 
+    public boolean checkIfLastShipCard() {
+        boolean last = false;
+        int num = 0;
+        for (Card card : ownStack) {
+            if (card.getSecondShipType().equals(collectedShipType)){
+                num++;
+            }
+        }
+        if (num == 5) {
+            last = true;
+        }
+        return last;
+    }
+
     public Card giveCoinCard() {
         for (Card card1 : ownStack) {
             if (card1.getType().equals(Card.Type.COIN)) {

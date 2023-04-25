@@ -4,13 +4,13 @@ public enum EventType {
     GAME_START,
     TURN_START,
     DRAW_CARD_DECISION,
-
-
+    GAME_END,
+    PASS_CARD_DECISION,
 
 
     DRAW_CARD,
     SHIP_TYPE_TO_COLLECT, // Typy: "S1"/"S2"/"S3"/"S4"
-    GAME_END,
+
     SHIP_COLLECTED, // zebrane 6 części statku
     PLAYER_SWITCHED, // zmiana na gracza gdy kńćzy rundę lub zadecyduje że pas
     STORM_CAME,

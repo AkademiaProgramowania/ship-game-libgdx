@@ -17,6 +17,7 @@ TESTY
 
 Card types:
 boat (6 pieces x 4 colors = 24 pcs), storm, coin, cannon.
+
 normal card - no storm
 wartość kart: 1 pkt, działo - 3pkt, burza 0pkt
 
@@ -46,9 +47,9 @@ Eventy:
 - gra:
     - zabiera wierzchnią kartę z talii i spr jaka to karta
     - jeśli to jest pierwszy statek to oznacza kolekcjonowany statek w danym graczu
+    - jeśli ostatnia karta statku to GAME_END -> game
     - gra dodaje kartę do staka bieżącego gracza jeśli to nie burza
     - DRAW_CARD (card) -> game
-    - jeśli ostatnia karta statku to GAME_END -> game
 - controller:
     - reakcja na DRAW_CARD:
         - zależnie od typu karty:
