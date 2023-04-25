@@ -30,17 +30,22 @@ wartość kart: 1 pkt, działo - 3pkt, burza 0pkt
 
 Eventy:
 1. GAME_START -> controller
-- przygotowanie kart, graczy i talii,
-- tasowanie talii
+- wyświetlenie gry, przycisków, talii, i nazwy graczy
+    - game (reakcja na GAME_START):
+    - przygotowanie kart, graczy i talii,
+     - tasowanie talii
+     - wysłanie eventu TURN_START
 2. TURN_START (który gracz) -> game
 - wskazanie aktualnego gracza -> controller
-- uruchamia przyciski podejmowania decyzji
+- DRAW_CARD_DECISION automatycznie -> controller
+- odblokowanie przycisków podejmowania decyzji (nie można pasować przed wyciągnięceim peirwszej karty)
 3a. PAS_DECISION -> controller (po naciśnięciu pasowania)
 - gra zmienia gracza
 - powrót do pkt 2 (turn start, kolejny gracz) gra wskazuje na kolejnego gracza
 3b. DRAW_CARD_DECISION -> controller (po naciśnięciu talii)
 - gra:
     - zabiera wierzchnią kartę z talii i spr jaka to karta
+    - jeśli to jest pierwszy statek to oznacza kolekcjonowany statek w danym graczu
     - gra dodaje kartę do staka bieżącego gracza jeśli to nie burza
     - DRAW_CARD (card) -> game
     - jeśli ostatnia karta statku to GAME_END -> game
@@ -62,7 +67,7 @@ Eventy:
         - CARD_PURCHASE_DECISION (który gracz, która karta) -> controller
         - PAS_DECISION -> controller
     game:
-        - reaGOWANIE NA card_purchase_decision
+        - reagowanie na CARD_PURCHASE_DECISION
         - zabranie wskazanej karty graczowi
         - zabranei 3 monet biezącemu graczowi
         - przekazanie wskazanej karty bieżącemu graczowi

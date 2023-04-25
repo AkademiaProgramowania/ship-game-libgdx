@@ -1,7 +1,14 @@
 package ship.game.events;
 
 public enum EventType {
-    CARD_DRAWN,
+    GAME_START,
+    TURN_START,
+    DRAW_CARD_DECISION,
+
+
+
+
+    DRAW_CARD,
     SHIP_TYPE_TO_COLLECT, // Typy: "S1"/"S2"/"S3"/"S4"
     GAME_END,
     SHIP_COLLECTED, // zebrane 6 części statku

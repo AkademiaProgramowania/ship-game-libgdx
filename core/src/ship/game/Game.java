@@ -22,7 +22,14 @@ public class Game implements EventListener {
     public Game() {
         CardFactory factory = new CardFactory();
         mainStack = factory.createCards();
-        EventBus.subscribe(EventType.CARD_DRAWN, this);
+        EventBus.subscribe(EventType.GAME_START, this);
+        EventBus.subscribe(EventType.DRAW_CARD_DECISION, this);
+
+
+        // stare:
+
+
+        EventBus.subscribe(EventType.DRAW_CARD, this);
         EventBus.subscribe(EventType.STACK_SHUFFLED, this);
         EventBus.subscribe(EventType.STACK_FILLED, this);
         EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
@@ -42,18 +49,26 @@ public class Game implements EventListener {
         players.add(player);
     }
 
+    public void gameStart() { // tu prześledzić setowanie playera w evencie - event wyciągnięty
+        // do zmiennej by móc to zrobić
+        shuffle(getMainStack());
+        Event event = new Event(EventType.TURN_START);
+        event.setPlayer(getCurrentPlayer());
+        EventBus.notify(event);
+
+    }
+
     public Card draw() {
         checkIfMainStackIsOut();
         Card drawn = mainStack.get(0);
         mainStack.remove(0);
-        EventBus.notify(new Event(EventType.CARD_DRAWN, drawn));
         return drawn;
     }
 
     public void checkIfMainStackIsOut() {
         if (mainStack.isEmpty()) {
             mainStack = shuffle(temporaryStack);
-            EventBus.notify(new Event(EventType.STACK_SHUFFLED));
+            // EventBus.notify(new Event(EventType.STACK_SHUFFLED));
         }
     }
 
@@ -62,7 +77,7 @@ public class Game implements EventListener {
         return list;
     }
 
-    public void passCardToAPlayerIfNotStorm() {
+  /*  public void passCardToAPlayerIfNotStorm() {
         Card drawn = draw(); // karta jest wyciągana ze stosu i przekazywana do odp podzbioru w ownStack:
 
         if (drawn.getType().equals(Card.Type.COIN) || drawn.getType().equals(Card.Type.CANNON)) {
@@ -89,7 +104,7 @@ public class Game implements EventListener {
             switchToNextPlayer();
         }
         getCurrentPlayer().showOwnStack();
-    }
+    }*/
 
     public void addReturnedToTemporaryStack() {
         temporaryStack.addAll(getCurrentPlayer().chooseCardsToReturn());
@@ -113,7 +128,9 @@ public class Game implements EventListener {
             getPlayer(playerIndex).addToOwnStack(coin);
             num++;
         }
-        EventBus.notify(new Event(EventType.CARD_PURCHASE, purchased));
+        Event event = new Event(EventType.CARD_PURCHASE);
+        event.setCard(purchased);
+        EventBus.notify(event);
     }
 
     public int checkNumberOfMissingShipCards() {
@@ -146,36 +163,55 @@ public class Game implements EventListener {
 
     @Override
     public void react(Event event) {
-        if (event.getType() == EventType.CARD_DRAWN) {
-            System.out.println("Card drawn: " + event.getCard());
+        if (event.getType() == EventType.GAME_START) {
+            gameStart();
+        }
+        if (event.getType() == EventType.DRAW_CARD_DECISION) { // przenieść stąd do metody
+            Card drawn = draw();
+            if (drawn.getType().equals(Card.Type.SHIP)) {
+                getCurrentPlayer().checkIfFirstShipCardAndSetCollected(drawn);
+            }
+            if (!drawn.getType().equals(Card.Type.STORM)) {
+                getCurrentPlayer().addToOwnStack(drawn);
+            }
+            Event drawCardEvent = new Event(EventType.DRAW_CARD);
+            drawCardEvent.setCard(drawn);
+            drawCardEvent.setPlayer(getCurrentPlayer());
+            EventBus.notify(drawCardEvent);
+            //todo    - jeśli ostatnia karta statku to GAME_END -> game
+        }
+
+
+        if (event.getType() == EventType.DRAW_CARD) { // spr gdzie jest ten event i zakomentować - zmiana nazwy
+            //System.out.println("Card drawn: " + event.getCard());
         }
         if (event.getType() == EventType.STACK_SHUFFLED) {
-            System.out.println("Cards have been shuffled");
+            //System.out.println("Cards have been shuffled");
         }
         if (event.getType() == EventType.STACK_FILLED) {
-            System.out.println("Stack filled with " + event.getCard());
+            //System.out.println("Stack filled with " + event.getCard());
         }
         if (event.getType() == EventType.CURRENT_PLAYER) {
-            System.out.println("Current player " + getCurrentPlayer().getPlayerNum());
+            // System.out.println("Current player " + getCurrentPlayer().getPlayerNum());
         }
         /*if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
             System.out.println(getCurrentPlayer().getPlayerNum() + " it's your ship type to collect: " + getCurrentPlayer().collectedShipType);
         }*/
         if (event.getType() == EventType.STORM_CAME) {
-            System.out.println("A storm is coming. Give back 3 cards");
+            //System.out.println("A storm is coming. Give back 3 cards");
         }
         if (event.getType() == EventType.STORM_NO_CARDS) {
-            System.out.println("To little cards on stack.");
+            //System.out.println("To little cards on stack.");
         }
         if (event.getType() == EventType.SHOW_CARD_RETURNED) {
 
-            System.out.println("Card given back " + event.getCard());
+            //System.out.println("Card given back " + event.getCard());
         }
         if (event.getType() == EventType.PLAYER_SWITCHED) {
-            System.out.println("Next player turn");
+            //System.out.println("Next player turn");
         }
         if (event.getType() == EventType.CARD_PURCHASE) {
-            System.out.println("Purchased " + event.getCard());
+            //System.out.println("Purchased " + event.getCard());
         }
     }
 }

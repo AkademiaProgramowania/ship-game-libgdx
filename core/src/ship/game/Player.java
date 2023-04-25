@@ -27,7 +27,7 @@ public class Player implements EventListener {
 
     public void addToOwnStack(Card card) {
         ownStack.add(card);
-        EventBus.notify(new Event(EventType.STACK_FILLED, card));
+       // EventBus.notify(new Event(EventType.STACK_FILLED));
     }
 
     public Card findCardByTypeInOwnStack(Card.Type type) { // uwaga! Metoda da pierwszą kartę danego typu
@@ -62,15 +62,11 @@ public class Player implements EventListener {
 
     public void checkIfFirstShipCardAndSetCollected(Card card) { // przekazuję drawn żeby z niej pobrać typ
         if (collectedShipType == null) {
-            for (Card card1 : ownStack) {
-                if (!card1.getType().equals(Card.Type.SHIP)) {
-                }
-            }
             collectedShipType = card.getSecondShipType();
-            EventBus.notify(new Event(EventType.SHIP_TYPE_TO_COLLECT));
-        } else {
+           // EventBus.notify(new Event(EventType.SHIP_TYPE_TO_COLLECT));
+        } /*else {
             System.out.println("typ ustawiony: " + collectedShipType);
-        }
+        }*/
     }
     // jeśli collected nie jest ustawione to spr każdą obecną w ownStack czy jest typu SHIP
     // i jeśli nie, to ustawia collected na second type z przekazanej karty w parametrze
@@ -108,19 +104,19 @@ public class Player implements EventListener {
         }
         for (Card cardToShow : shipsCollected) {
             System.out.println(cardToShow);
-            EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
+           // EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
         }
         for (Card cardToShow : shipsToReturn) {
             System.out.println(cardToShow);
-            EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
+            //EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
         }
         for (Card cardToShow : coins) {
             System.out.println(cardToShow);
-            EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
+            //EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
         }
         for (Card cardToShow : cannons) {
             System.out.println(cardToShow);
-            EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
+            //EventBus.notify(new Event(EventType.SHOW_CARD, cardToShow));
         }
     }
 
