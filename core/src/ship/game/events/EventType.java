@@ -6,9 +6,18 @@ public enum EventType {
     DRAW_CARD_DECISION,
     GAME_END,
     PASS_CARD_DECISION,
-
-
     DRAW_CARD,
+    CLICK_ON_COIN,
+    CLICK_ON_CANNON,
+    CLICK_ON_SHIP,
+    CLICK_ON_SHIP_COLLECTED,
+    DO_STORM,
+
+
+
+
+    // stare:
+
     SHIP_TYPE_TO_COLLECT, // Typy: "S1"/"S2"/"S3"/"S4"
 
     SHIP_COLLECTED, // zebrane 6 części statku

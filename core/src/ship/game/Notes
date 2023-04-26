@@ -34,8 +34,8 @@ Eventy:
 - wyświetlenie gry, przycisków, talii, i nazwy graczy
     - game (reakcja na GAME_START):
     - przygotowanie kart, graczy i talii,
-     - tasowanie talii
-     - wysłanie eventu TURN_START
+    - tasowanie talii
+    - wysłanie eventu TURN_START
 2. TURN_START (który gracz) -> game
 - wskazanie aktualnego gracza -> controller
 - DRAW_CARD_DECISION automatycznie -> controller

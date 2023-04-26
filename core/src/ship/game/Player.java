@@ -16,8 +16,14 @@ public class Player implements EventListener {
     private List<Card> ownStack = new ArrayList<>(); // bez przypisania new ArrayList zbior jest zawsze null (brak listy).
     // gdy próbuję dodać co do listy null to mam NullPointerExc
 
+    private List<Card> toReturn = new ArrayList<>();
+
     public Player(int playerNum) {
         this.playerNum = playerNum;
+
+
+
+        //stare:
         EventBus.subscribe(EventType.SHOW_STACK, this);
         EventBus.subscribe(EventType.RETURNED_CARDS, this);
         EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
@@ -39,7 +45,9 @@ public class Player implements EventListener {
         return null;
     }
 
-    public Card findShipCardToReturn() { // w pierwszej kolejności oddawać te, które nie są collectedShipCards
+
+
+/*    public Card findShipCardToReturn() { // w pierwszej kolejności oddawać te, które nie są collectedShipCards
         List<Card> toReturn = new ArrayList<>();
         for (Card card : ownStack) {
             if (card.getType().equals(Card.Type.SHIP) && (!card.getSecondShipType().equals(collectedShipType))) {
@@ -58,7 +66,8 @@ public class Player implements EventListener {
             }
         }
         return null;
-    }
+    }*/
+
 
     public void checkIfFirstShipCardAndSetCollected(Card card) { // przekazuję drawn żeby z niej pobrać typ
         if (collectedShipType == null) {
@@ -120,7 +129,7 @@ public class Player implements EventListener {
         }
     }
 
-    public List<Card> chooseCardsToReturn() {
+/*    public List<Card> chooseCardsToReturn() {
         EventBus.notify(new Event(EventType.SHOW_STACK));
         showOwnStack();
 
@@ -155,6 +164,38 @@ public class Player implements EventListener {
             }
         }
         return toReturn;
+    }*/
+
+
+    public Card findCoinToReturn() {
+        Card card = findCardByTypeInOwnStack(Card.Type.COIN);
+        ownStack.remove(card);
+        return card;
+    }
+    public Card findCannonToReturn() {
+        Card card = findCardByTypeInOwnStack(Card.Type.CANNON);
+        ownStack.remove(card);
+        return card;
+    }
+
+    public Card findShipToReturn() {
+        for (Card card : ownStack) {
+            if (card.getType().equals(Card.Type.SHIP) && (!card.getSecondShipType().equals(collectedShipType))) {
+                ownStack.remove(card);
+                return card;
+            }
+        }
+        return null;
+    }
+
+    public Card findCollectedShipToReturn() {
+        for (Card card : ownStack) {
+            if (card.getSecondShipType().equals(collectedShipType)) {
+                ownStack.remove(card);
+                return card;
+            }
+        }
+        return null;
     }
 
     public Card giveRequestedShipCard(String type) { // działa player o wskazanym indeksie
@@ -195,6 +236,10 @@ public class Player implements EventListener {
 
     public List<Card> getOwnStack() {
         return ownStack;
+    }
+
+    public List<Card> getToReturn() {
+        return toReturn;
     }
 
     public String getCollectedShipType() {
