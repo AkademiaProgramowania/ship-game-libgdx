@@ -9,8 +9,6 @@ import java.util.Scanner;
 
 public class Controller implements EventListener {
     Scanner scanner = new Scanner(System.in);
-    Player currentPlayer;
-
     private Game game;
 
     public Controller(Game game) {
@@ -20,6 +18,8 @@ public class Controller implements EventListener {
         EventBus.subscribe(EventType.DRAW_CARD, this);
         EventBus.subscribe(EventType.DO_STORM, this);
         EventBus.subscribe(EventType.PLAYER_SWITCHED, this);
+        EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
+
 
     }
 
@@ -39,6 +39,7 @@ public class Controller implements EventListener {
         decideOnNextTurn();
 */
     }
+
     public void doStorm() {
         // tylko kliki
         // wartość zwrócinych kart zlicza game
@@ -95,16 +96,16 @@ public class Controller implements EventListener {
         }
         if (event.getType() == EventType.DRAW_CARD) {
             if (event.getCard().getType().equals(Card.Type.COIN)) {
-                System.out.println("Animacja przejścia na stos monet");
+                System.out.println("Animacja przejscia na stos monet");
             }
             if (event.getCard().getType().equals(Card.Type.CANNON)) {
-                System.out.println("Animacja przejścia na stos dział");
+                System.out.println("Animacja przejscia na stos dzial");
             }
-            if (event.getCard().getType().equals(Card.Type.SHIP) && (!event.getCard().getSecondShipType().equals(currentPlayer.collectedShipType))) {
-                System.out.println("Animacja przejścia na stos statków do handlu");
+            if (event.getCard().getType().equals(Card.Type.SHIP) && (!event.getCard().getSecondShipType().equals(event.getPlayer().collectedShipType))) {
+                System.out.println("Animacja przejscia na stos statkow do handlu");
             }
-            if (event.getCard().getType().equals(Card.Type.SHIP) && (event.getCard().getSecondShipType().equals(currentPlayer.collectedShipType))) {
-                System.out.println("Animacja przejscia na stos statków do kolekcjonowania");
+            if (event.getCard().getType().equals(Card.Type.SHIP) && (event.getCard().getSecondShipType().equals(event.getPlayer().collectedShipType))) {
+                System.out.println("Animacja przejscia na stos statkow do kolekcjonowania");
             }
             if (event.getCard().getType().equals(Card.Type.STORM)) {
                 System.out.println("Animacja burzy");
@@ -116,6 +117,9 @@ public class Controller implements EventListener {
         }
         if (event.getType() == EventType.PLAYER_SWITCHED) {
             System.out.println("Zmiana gracza na " + event.getPlayer().playerNum);
+        }
+        if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
+            System.out.println(event.getPlayer().getCollectedShipType() + " type set for player " + event.getPlayer().getPlayerNum());
         }
     }
 }

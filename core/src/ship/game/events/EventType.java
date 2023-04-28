@@ -30,6 +30,6 @@ public enum EventType {
     RETURNED_CARDS,
     CARD_PURCHASE,
     STACK_SHUFFLED,
-    CURRENT_PLAYER,
-    STACK_FILLED;
+    CURRENT_PLAYER;
+
 }

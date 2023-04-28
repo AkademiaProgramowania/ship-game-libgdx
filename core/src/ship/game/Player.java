@@ -7,7 +7,6 @@ import ship.game.events.EventType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Player implements EventListener {
 
@@ -22,18 +21,17 @@ public class Player implements EventListener {
         this.playerNum = playerNum;
 
 
-
         //stare:
         EventBus.subscribe(EventType.SHOW_STACK, this);
         EventBus.subscribe(EventType.RETURNED_CARDS, this);
-        EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
 
 
     }
 
     public void addToOwnStack(Card card) {
         ownStack.add(card);
-       // EventBus.notify(new Event(EventType.STACK_FILLED));
+        showOwnStack();
+        //EventBus.notify(new Event(EventType.STACK_FILLED));
     }
 
     public Card findCardByTypeInOwnStack(Card.Type type) { // uwaga! Metoda da pierwszą kartę danego typu
@@ -69,17 +67,12 @@ public class Player implements EventListener {
     }*/
 
 
-    public void checkIfFirstShipCardAndSetCollected(Card card) { // przekazuję drawn żeby z niej pobrać typ
+    public boolean checkIfFirstShipCardAndSetCollected(Card card) { // przekazuję drawn żeby z niej pobrać typ
         if (collectedShipType == null) {
             collectedShipType = card.getSecondShipType();
-           // EventBus.notify(new Event(EventType.SHIP_TYPE_TO_COLLECT));
-        } /*else {
-            System.out.println("typ ustawiony: " + collectedShipType);
-        }*/
+        }
+        return false;
     }
-    // jeśli collected nie jest ustawione to spr każdą obecną w ownStack czy jest typu SHIP
-    // i jeśli nie, to ustawia collected na second type z przekazanej karty w parametrze
-
 
 /*    public void checkIfSetShipCardsAsCollected() {
         for (Card card : ownStack) { // każda karta
@@ -211,7 +204,7 @@ public class Player implements EventListener {
         boolean last = false;
         int num = 0;
         for (Card card : ownStack) {
-            if (card.getSecondShipType().equals(collectedShipType)){
+            if (card.getType().equals(Card.Type.SHIP) && (card.getSecondShipType().equals(collectedShipType))) {
                 num++;
             }
         }
@@ -238,10 +231,6 @@ public class Player implements EventListener {
         return ownStack;
     }
 
-    public List<Card> getToReturn() {
-        return toReturn;
-    }
-
     public String getCollectedShipType() {
         return collectedShipType;
     }
@@ -256,17 +245,14 @@ public class Player implements EventListener {
 
     @Override
     public void react(Event event) {
-        if (event.getType() == EventType.STACK_FILLED) {
-            System.out.println("Stack filled with " + event.getCard());
-        }
         if (event.getType() == EventType.SHOW_STACK) {
             System.out.println("Your stack");
         }
         if (event.getType() == EventType.RETURNED_CARDS) {
             System.out.println("3 cards are back to the main stack: ");
         }
-        if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
+        /*if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
             System.out.println("Ship type set to collect player " + getPlayerNum() + " - " + collectedShipType);
-        }
+        }*/
     }
 }

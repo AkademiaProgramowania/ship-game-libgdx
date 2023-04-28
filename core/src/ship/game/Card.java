@@ -52,7 +52,6 @@ public class Card {
         return "Card{" +
                 "type=" + type +
                 ", secondShipType='" + secondShipType + '\'' +
-                ", num=" + num +
                 ", value=" + value +
                 '}';
     }

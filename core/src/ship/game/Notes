@@ -1,7 +1,5 @@
-- eventy spr - controller komunikuje się z gamem tylk pprzez eventy - ptrzerobić
-- chooseCardsToReturn - usunąć souty (Event?)
-- po end turn nie ma kontynuacji do kolejnego playera
-- spr showOwnStack, są dwa eventy - na cały stak (sout) i na poszczególne karty (zwraca kartę)
+- wywala się na if storm (game, drawAndAssign) - to be fixed
+
 
 TESTY
 - działa przypadek gdy piersza kartę wybierze STORM. Oddaje storm i przechodzi do nast gracza
@@ -16,7 +14,7 @@ TESTY
 - spr wzorzec factory
 
 Card types:
-boat (6 pieces x 4 colors = 24 pcs), storm, coin, cannon.
+ship (6 pieces x 4 colors = 24 pcs), storm, coin, cannon.
 
 normal card - no storm
 wartość kart: 1 pkt, działo - 3pkt, burza 0pkt
