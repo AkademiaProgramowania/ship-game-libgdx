@@ -29,7 +29,7 @@ public class Controller implements EventListener {
     }
 
     public void playTurn(Event event) {
-        System.out.println("Rozpoczyna gre gracz " + event.getPlayer().playerNum);
+        System.out.println("Gra gracz " + event.getPlayer().playerNum);
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
 
         /*System.out.println("Player " + game.getCurrentPlayer().getPlayerNum());
@@ -41,10 +41,9 @@ public class Controller implements EventListener {
     }
 
     public void doStorm() {
-        // tylko kliki
-        // wartość zwrócinych kart zlicza game
-
-        System.out.println("Click on a card to return it");
+        // tu tylko kliki
+        // wartość zwróconych kart zlicza game
+        System.out.println("Select a card to return it");
         System.out.println("1 - coin, 2 - cannon, 3 - ship, 4 - ship collected");
         switch (scanner.nextInt()) {
             case 1:
@@ -108,15 +107,15 @@ public class Controller implements EventListener {
                 System.out.println("Animacja przejscia na stos statkow do kolekcjonowania");
             }
             if (event.getCard().getType().equals(Card.Type.STORM)) {
-                System.out.println("Animacja burzy");
-                doStorm();
+                System.out.println("Reakcja na wyciagniecie karty - animacja burzy");
             }
         }
-        if (event.getType() == EventType.DO_STORM) {
+        if (event.getType() == EventType.DO_STORM) { // polecenie z game countCardsToReturn
             doStorm();
         }
         if (event.getType() == EventType.PLAYER_SWITCHED) {
             System.out.println("Zmiana gracza na " + event.getPlayer().playerNum);
+            playTurn(event);
         }
         if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
             System.out.println(event.getPlayer().getCollectedShipType() + " type set for player " + event.getPlayer().getPlayerNum());

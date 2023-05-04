@@ -65,7 +65,7 @@ public class Game implements EventListener {
         return list;
     }
 
-    public void drawAndAssign(){
+    public void drawAndAssign() {
         Card drawn = draw();
         System.out.println("Drawn: " + drawn);
 
@@ -80,12 +80,13 @@ public class Game implements EventListener {
         } else { // gdy drawn == STORM
             temporaryStack.add(drawn);
             System.out.println("Temporary stack: " + temporaryStack.toString());
-            if (!toReturn.isEmpty()) {
+            if (toReturn.isEmpty()) {
+                switchToNextPlayer();
+            } else { // jeżeli toReturn nie jest empty
+                System.out.println("Spr co jest w toReturn" + toReturn);
                 countCardsToReturn(); // wywołuje doStorm() w controllerze
-                //System.out.println("To return " + toReturn);
                 temporaryStack.addAll(toReturn);
             }
-            switchToNextPlayer();
         }
         if (getCurrentPlayer().checkIfLastShipCard()) {
             Event endGame = new Event(EventType.GAME_END);
@@ -138,7 +139,9 @@ public class Game implements EventListener {
         } else {
             currentPlayerIndex++;
         }
-        EventBus.notify(new Event(EventType.PLAYER_SWITCHED));
+        Event event = new Event(EventType.PLAYER_SWITCHED);
+        event.setPlayer(getCurrentPlayer());
+        EventBus.notify(event);
     }
 
     public void buyShipCard(int playerIndex, String requestedType) {
@@ -176,7 +179,6 @@ public class Game implements EventListener {
             for (Card card : toReturn) {
                 int value = card.getValue();
                 sumValue = sumValue + value;
-               // EventBus.notify(new Event(EventType.DO_STORM));
                 System.out.println(sumValue);
 
                 Event doStorm = new Event(EventType.DO_STORM);

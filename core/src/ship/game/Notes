@@ -1,12 +1,13 @@
-- wywala się na if storm (game, drawAndAssign) - to be fixed
+- dopisać w countCards licznik i info ile jeszcze brakuje (czy potrzebne?)
+- "Reakcja na wyciagniecie karty - animacja burzy" wyświetla sie za późno (event DRAW_CARD ustawiony na koniec kodu
+- dopisać kontynuację gry po wyciągnięciu zwykłej karty
+- dodane playTurn w evencie playerSwitched w controllerze
 
+- fixed: wywala się na if storm (game, drawAndAssign) - fixed (potrzebny był event bus z setowaniem playera - inaczej Null pointer exc)
 
-TESTY
-- działa przypadek gdy piersza kartę wybierze STORM. Oddaje storm i przechodzi do nast gracza
-- po wybraniu coin i cannon, gdy wybieram 1 (draw again) psuje się
-- nie przechodzi do kolejnego playera po endTurn()
-- obsłużyć przypadek gdy wybierze buyShipCard a nie ma kart do oddania
-- popr findShipCardToReturn (w pierwszej kolejności oddawać te, które nie są collectedShipCards)
+- fixed: po playerSwitched jest nadal wyświetlenie Animacja burzy i select a card to return - fixed (usunięte doStorm z
+eventu DRAW_CARD , i opcji STORM w controllerze)
+
 
 - constructor dependency injection spr
 - przerobić createListOfShips() na pętle
