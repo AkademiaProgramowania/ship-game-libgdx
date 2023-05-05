@@ -16,7 +16,7 @@ public class Controller implements EventListener {
         EventBus.subscribe(EventType.TURN_START, this);
         EventBus.subscribe(EventType.GAME_END, this);
         EventBus.subscribe(EventType.DRAW_CARD, this);
-        EventBus.subscribe(EventType.DO_STORM, this);
+        EventBus.subscribe(EventType.SELECT_CARDS_TO_RETURN, this);
         EventBus.subscribe(EventType.PLAYER_SWITCHED, this);
         EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
 
@@ -31,6 +31,7 @@ public class Controller implements EventListener {
     public void playTurn(Event event) {
         System.out.println("Gra gracz " + event.getPlayer().playerNum);
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
+        decideOnNextTurn();
 
         /*System.out.println("Player " + game.getCurrentPlayer().getPlayerNum());
         int missing = game.checkNumberOfMissingShipCards();
@@ -40,7 +41,7 @@ public class Controller implements EventListener {
 */
     }
 
-    public void doStorm() {
+    public void selectCardsToReturn() {
         // tu tylko kliki
         // wartość zwróconych kart zlicza game
         System.out.println("Select a card to return it");
@@ -63,9 +64,22 @@ public class Controller implements EventListener {
         }
     }
 
-/*    public void decideOnNextTurn() {
+    public void decideOnNextTurn() {
         System.out.println("1 - draw a card, 2 - buy ship card, 3 - end your turn");
-        if (scanner.nextInt() == 1) {
+        switch (scanner.nextInt()) {
+            case 1:
+                EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
+                break;
+            case 2:
+                // jak przekazać dane z konsoli do game? player (player index), card (type, num)
+                EventBus.notify(new Event(EventType.CARD_PURCHASE_DECISION));
+                break;
+            case 3:
+                EventBus.notify(new Event(EventType.PASS_DECISION));
+                break;
+        }
+
+       /* if (scanner.nextInt() == 1) {
             //playTurn();
             // tu event z decyzjami
         }
@@ -78,8 +92,8 @@ public class Controller implements EventListener {
         if (scanner.nextInt() == 3) {
             System.out.println("Your turn ends");
             game.endTurn();
-        }
-    }*/
+        }*/
+    }
 
     public void endGame(Event event) {
         System.out.println("Game ends. Player " + event.getPlayer().playerNum + " wins");
@@ -104,14 +118,14 @@ public class Controller implements EventListener {
                 System.out.println("Animacja przejscia na stos statkow do handlu");
             }
             if (event.getCard().getType().equals(Card.Type.SHIP) && (event.getCard().getSecondShipType().equals(event.getPlayer().collectedShipType))) {
-                System.out.println("Animacja przejscia na stos statkow do kolekcjonowania");
+                System.out.println("Animacja przejscia na stos statku do kolekcjonowania");
             }
             if (event.getCard().getType().equals(Card.Type.STORM)) {
                 System.out.println("Reakcja na wyciagniecie karty - animacja burzy");
             }
         }
-        if (event.getType() == EventType.DO_STORM) { // polecenie z game countCardsToReturn
-            doStorm();
+        if (event.getType() == EventType.SELECT_CARDS_TO_RETURN) { // polecenie z game countCardsToReturn
+            selectCardsToReturn();
         }
         if (event.getType() == EventType.PLAYER_SWITCHED) {
             System.out.println("Zmiana gracza na " + event.getPlayer().playerNum);

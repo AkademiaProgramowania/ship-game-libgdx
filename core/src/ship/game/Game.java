@@ -1,6 +1,5 @@
 package ship.game;
 
-import com.badlogic.gdx.utils.compression.lz.BinTree;
 import ship.game.events.Event;
 import ship.game.events.EventBus;
 import ship.game.events.EventListener;
@@ -31,6 +30,8 @@ public class Game implements EventListener {
         EventBus.subscribe(EventType.CLICK_ON_CANNON, this);
         EventBus.subscribe(EventType.CLICK_ON_SHIP, this);
         EventBus.subscribe(EventType.CLICK_ON_SHIP_COLLECTED, this);
+        EventBus.subscribe(EventType.CARD_PURCHASE_DECISION, this);
+
     }
 
     public void addPlayer(Player player) {
@@ -79,21 +80,22 @@ public class Game implements EventListener {
             getCurrentPlayer().addToOwnStack(drawn);
         } else { // gdy drawn == STORM
             temporaryStack.add(drawn);
-            System.out.println("Temporary stack: " + temporaryStack.toString());
-            if (toReturn.isEmpty()) {
-                switchToNextPlayer();
-            } else { // jeżeli toReturn nie jest empty
-                System.out.println("Spr co jest w toReturn" + toReturn);
-                countCardsToReturn(); // wywołuje doStorm() w controllerze
+            if (howMuchValueInOwnStack() <= 3) { // jeśli kart jest mniej niż za 3pkt
+                temporaryStack.addAll(getCurrentPlayer().getOwnStack()); // zwraca wszystkie
+                System.out.println("Temporary stack: " + temporaryStack.toString());
+                // w temporary stack powinno być: drawn + wszystkie karty z ownStack gdy ich wartość < 3
+            } else { // jesli kart jest więcej niż za 3 pkt
+                selectCardsToReturn(); // select w controllerze, wybrane dodają się do toReturn w game
                 temporaryStack.addAll(toReturn);
             }
+            switchToNextPlayer(); // gdy storm, po zakońćzeniu oddawania kart w obu opcjach powyżej
         }
         if (getCurrentPlayer().checkIfLastShipCard()) {
             Event endGame = new Event(EventType.GAME_END);
             endGame.setPlayer(getCurrentPlayer());
             EventBus.notify(endGame);
         }
-
+        // przenieść na początek bloku by uniknać zbyt późnego wyświetlenia reakcji?
         Event drawCardEvent = new Event(EventType.DRAW_CARD);
         drawCardEvent.setCard(drawn);
         drawCardEvent.setPlayer(getCurrentPlayer());
@@ -144,7 +146,13 @@ public class Game implements EventListener {
         EventBus.notify(event);
     }
 
-    public void buyShipCard(int playerIndex, String requestedType) {
+    public void buyShipCard() {
+        int coinsNum = getCurrentPlayer().checkHowManyCoins();
+        if (coinsNum >= 3) {
+            // wskazana w controllerze karta idzie na stos statku do kolekcjonowania
+
+        }
+/*        int playerIndex =
         Card purchased = getPlayer(playerIndex).giveRequestedShipCard(requestedType);
         getCurrentPlayer().addToOwnStack(purchased);
         int num = 0;
@@ -155,7 +163,7 @@ public class Game implements EventListener {
         }
         Event event = new Event(EventType.CARD_PURCHASE);
         event.setCard(purchased);
-        EventBus.notify(event);
+        EventBus.notify(event);*/
     }
 
     public int checkNumberOfMissingShipCards() {
@@ -170,25 +178,42 @@ public class Game implements EventListener {
         return requiredPieces - num;
     }
 
-    public void countCardsToReturn() {
+    public void selectCardsToReturn() {
         // licz wartość zwróconych kart i dopóki nie będzie 3,
         // wysyłaj event do controllera
-        System.out.println("wywolana metoda count cards");
+
         int sumValue = 0;
         while (sumValue < 3)
-            for (Card card : toReturn) {
+            for (Card card : toReturn) { // w toReturn są karty klikane w controller/selectCardsToReturn
                 int value = card.getValue();
                 sumValue = sumValue + value;
                 System.out.println(sumValue);
 
-                Event doStorm = new Event(EventType.DO_STORM);
-                doStorm.setPlayer(getCurrentPlayer());
-                EventBus.notify(doStorm);
+                Event selectCards = new Event(EventType.SELECT_CARDS_TO_RETURN);
+                selectCards.setPlayer(getCurrentPlayer());
+                EventBus.notify(selectCards);
             }
     }
-
-    public void endTurn() {
-        switchToNextPlayer();
+    public int howMuchValueInOwnStack() {
+        // co to ma robić?
+        // spr na jaką łączną wartośc jest kart w staku
+        // jeśli na mniej niż 3,
+        int sumaTymczasWarttosci = 0; // suma
+        for (Card card : getCurrentPlayer().getOwnStack()) {
+            int value = card.getValue();
+            sumaTymczasWarttosci = sumaTymczasWarttosci + value; // dla kazdej karty bierze value i dodaje
+        }
+        return sumaTymczasWarttosci;
+    }
+    public void returnCardsIfLessThan3() {
+        int sumaTymczasWarttosci = 0;
+        for (Card card : getCurrentPlayer().getOwnStack()) {
+            int value = card.getValue();
+            sumaTymczasWarttosci = sumaTymczasWarttosci + value;
+        }
+        if (sumaTymczasWarttosci < 3) {
+            temporaryStack.addAll(getCurrentPlayer().getOwnStack());
+        }
     }
 
     public Player getCurrentPlayer() {
@@ -210,6 +235,13 @@ public class Game implements EventListener {
         }
         if (event.getType() == EventType.DRAW_CARD_DECISION) {
             drawAndAssign();
+        }
+        if (event.getType() == EventType.CARD_PURCHASE_DECISION) {
+            buyShipCard();
+
+        }
+        if (event.getType() == EventType.PASS_DECISION) {
+            switchToNextPlayer();
         }
 
         if (event.getType() == EventType.CLICK_ON_COIN) {

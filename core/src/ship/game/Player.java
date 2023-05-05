@@ -20,12 +20,9 @@ public class Player implements EventListener {
     public Player(int playerNum) {
         this.playerNum = playerNum;
 
-
         //stare:
         EventBus.subscribe(EventType.SHOW_STACK, this);
         EventBus.subscribe(EventType.RETURNED_CARDS, this);
-
-
     }
 
     public void addToOwnStack(Card card) {
@@ -179,6 +176,16 @@ public class Player implements EventListener {
             }
         }
         return null;
+    }
+
+    public int checkHowManyCoins() {
+        int num = 0;
+        for (Card card : ownStack) {
+            if (card.getType().equals(Card.Type.COIN)) {
+                num++;
+            }
+        }
+        return num;
     }
 
     public Card findCollectedShipToReturn() {

@@ -1,13 +1,16 @@
+- dopisać CARD_PURCHASE_DECISION (jak przekazać dane z konsoli do game o karcie?)
+- w kontynuacji (playTurn) brak pętli do decideOnNextTurn. Wywołuje raz.
+- w stanie burzy dopisać automatyczny zwrot wszystkich kart gdy ich value<3
 - dopisać w countCards licznik i info ile jeszcze brakuje (czy potrzebne?)
 - "Reakcja na wyciagniecie karty - animacja burzy" wyświetla sie za późno (event DRAW_CARD ustawiony na koniec kodu
-- dopisać kontynuację gry po wyciągnięciu zwykłej karty
 - dodane playTurn w evencie playerSwitched w controllerze
 
-- fixed: wywala się na if storm (game, drawAndAssign) - fixed (potrzebny był event bus z setowaniem playera - inaczej Null pointer exc)
+- done: w stanie burzy dopisać automatyczny zwrot wszystkich kart gdy ich value<3
+- done: kontynuacja gry po wyciągnięciu zwykłej karty
 
+- fixed: wywala się na if storm (game, drawAndAssign) - fixed (potrzebny był event bus z setowaniem playera - inaczej Null pointer exc)
 - fixed: po playerSwitched jest nadal wyświetlenie Animacja burzy i select a card to return - fixed (usunięte doStorm z
 eventu DRAW_CARD , i opcji STORM w controllerze)
-
 
 - constructor dependency injection spr
 - przerobić createListOfShips() na pętle
@@ -59,7 +62,7 @@ Eventy:
             lub nie skońćzą sie karty (kliknięcie na właściwe karty ze stosu). Działo warte 3 punkty (kliki)
             - gdy wymóg zostanie spełniony, automatycznie puszczamy event PAS_DECISION
     - reakcja na GAME_END (wskazanie który gracz wygrał): menu główne/ranking/ coś inengo
-3c. - gdy gracz kliknie na kartę innego gracza
+3c. - gdy gracz kliknie na kartę innego gracza CARD_PURCHASE_DECISION
     controller:
         - jeśli nie masz dosć moent, nic sie nie dzieje / ew. animacja pokazująca brak monet
         - jeśłi cię stać: znikają twoje 3 monety
