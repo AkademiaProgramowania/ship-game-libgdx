@@ -90,6 +90,8 @@ public class Game implements EventListener {
             if (getCurrentPlayer().cannons.size() > 0) {
                 temporaryStack.add(getCurrentPlayer().cannons.get(0));
             }
+            switchToNextPlayer(); // gdy storm, po zakońćzeniu oddawania kart w obu opcjach powyżej
+
         }
         // spr czy jest cannon, jeśli nie to daj dowolne 3 inne karty
         /*if (howMuchValueInOwnStack() <= 3) { // jeśli kart jest mniej niż za 3pkt
@@ -100,7 +102,6 @@ public class Game implements EventListener {
             selectCardsToReturn(); // select w controllerze, wybrane dodają się do toReturn w game
             temporaryStack.addAll(toReturn);
         }*/
-        switchToNextPlayer(); // gdy storm, po zakońćzeniu oddawania kart w obu opcjach powyżej
 
         {
             Event endGame = new Event(EventType.GAME_END);
@@ -117,39 +118,6 @@ public class Game implements EventListener {
         EventBus.notify(drawCardEvent);
     }
 
-  /*  public void passCardToAPlayerIfNotStorm() {
-        Card drawn = draw(); // karta jest wyciągana ze stosu i przekazywana do odp podzbioru w ownStack:
-
-        if (drawn.getType().equals(Card.Type.COIN) || drawn.getType().equals(Card.Type.CANNON)) {
-            getCurrentPlayer().addToOwnStack(drawn);
-            EventBus.notify(new Event(EventType.STACK_FILLED));
-        }
-        if (drawn.getType().equals(Card.Type.SHIP)) {
-            getCurrentPlayer().addToOwnStack(drawn);
-            getCurrentPlayer().checkIfFirstShipCardAndSetCollected(drawn);
-            //getCurrentPlayer().checkIfSetShipCardsAsCollected();
-        }
-        if (drawn.getType().equals(Card.Type.STORM)) {
-            temporaryStack.add(drawn);
-            EventBus.notify(new Event(EventType.STORM_CAME));
-            if (getCurrentPlayer().getOwnStack().size() <= 3) {
-                EventBus.notify(new Event(EventType.STORM_NO_CARDS));
-                EventBus.notify(new Event(EventType.SHOW_CARD_RETURNED));
-                temporaryStack.addAll(getCurrentPlayer().getOwnStack());
-                switchToNextPlayer();
-                return;
-            }
-            getCurrentPlayer().chooseCardsToReturn();
-            addReturnedToTemporaryStack();
-            switchToNextPlayer();
-        }
-        getCurrentPlayer().showOwnStack();
-    }*/
-
-/*    public void addReturnedToTemporaryStack() {
-        temporaryStack.addAll(getCurrentPlayer().chooseCardsToReturn());
-    }*/
-
     public void switchToNextPlayer() {
         if (currentPlayerIndex == players.size() - 1) { // jeżeli aktualny jest ostatni
             currentPlayerIndex = 0; // to przestaw na pierwszego
@@ -160,7 +128,6 @@ public class Game implements EventListener {
         event.setPlayer(getCurrentPlayer());
         EventBus.notify(event);
         event.getPlayer().stillPlaying(true); // spr czy działa w dobra stronę
-
     }
 
     public void buyShipCard() {
@@ -180,7 +147,6 @@ public class Game implements EventListener {
         event.setCard(purchased);
         EventBus.notify(event);*/
     }
-
 
     public void selectCardsToReturn() {
         // licz wartość zwróconych kart i dopóki nie będzie 3,
@@ -236,37 +202,35 @@ public class Game implements EventListener {
 
     @Override
     public void react(Event event) {
-        if (event.getType() == EventType.GAME_START) {
-            gameStart();
-        }
-        if (event.getType() == EventType.DRAW_CARD_DECISION) {
-            drawAndAssign();
-        }
-        if (event.getType() == EventType.CARD_PURCHASE_DECISION) {
-            buyShipCard();
-            switchToNextPlayer();
-
-        }
-        if (event.getType() == EventType.PASS_DECISION) {
-            switchToNextPlayer();
-        }
-
-        if (event.getType() == EventType.CLICK_ON_COIN) {
-            Card card = event.getPlayer().coins.get(0);
-            toReturn.add(card);
-            // czy kartę z ownStack ma usuwac player (obecnie) czy game?
-        }
-        if (event.getType() == EventType.CLICK_ON_CANNON) {
-            Card card = event.getPlayer().cannons.get(0);
-            toReturn.add(card);
-        }
-        if (event.getType() == EventType.CLICK_ON_SHIP) {
-            Card card = event.getPlayer().shipsToReturn.get(0);
-            toReturn.add(card);
-        }
-        if (event.getType() == EventType.CLICK_ON_SHIP_COLLECTED) {
-            Card card = event.getPlayer().shipsCollected.get(0);
-            toReturn.add(card);
+        switch (event.getType()) {
+            case GAME_START:
+                gameStart();
+                break;
+            case DRAW_CARD_DECISION:
+                drawAndAssign();
+                break;
+            case CARD_PURCHASE_DECISION:
+                buyShipCard();
+                switchToNextPlayer();
+                break;
+            case PASS_DECISION:
+                switchToNextPlayer();
+                break;
+            case CLICK_ON_COIN:
+                Card card = event.getPlayer().coins.get(0);
+                toReturn.add(card);
+                break;
+            case CLICK_ON_CANNON:
+                Card card1 = event.getPlayer().cannons.get(0);
+                toReturn.add(card1);
+                break;
+            case CLICK_ON_SHIP:
+                Card card2 = event.getPlayer().shipsToReturn.get(0);
+                toReturn.add(card2);
+                break;
+            case CLICK_ON_SHIP_COLLECTED:
+                Card card3 = event.getPlayer().shipsCollected.get(0);
+                toReturn.add(card3);
         }
     }
 }
