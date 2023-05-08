@@ -8,14 +8,12 @@ public class Card {
         COIN,
         CANNON
     }
-
     private final Card.Type type;
     private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4"
     private int num;
     private int value;
 
     // private pole z wstawionym assetem jpg?
-
 
     public Card(Card.Type type, int num, int value) { // for storm, coin, cannon
         this.type = type;
@@ -29,7 +27,6 @@ public class Card {
         this.num = num;
         this.value = value;
     }
-
 
     public Type getType() {
         return type;

@@ -87,9 +87,13 @@ public class Game implements EventListener {
         }
         if (drawn.getType().equals(Card.Type.STORM)) {
             temporaryStack.add(drawn);
-            if (getCurrentPlayer().cannons.size() > 0) {
-                temporaryStack.add(getCurrentPlayer().cannons.get(0));
-            }
+            int value = 0; // to samo zliczanie w selectCardsToReturn()
+            do {
+                selectCardsToReturn();
+                for (Card card : toReturn) {
+                    value = value + card.getValue();
+                }
+            } while (value < 3);
             switchToNextPlayer(); // gdy storm, po zakońćzeniu oddawania kart w obu opcjach powyżej
 
         }
@@ -108,13 +112,10 @@ public class Game implements EventListener {
             endGame.setPlayer(getCurrentPlayer());
             EventBus.notify(endGame);
         }
-
         // czy przenieść na początek bloku by uniknać zbyt późnego wyświetlenia reakcji?
         Event drawCardEvent = new Event(EventType.DRAW_CARD);
         drawCardEvent.setCard(drawn);
-        drawCardEvent.setPlayer(
-
-                getCurrentPlayer());
+        drawCardEvent.setPlayer(getCurrentPlayer());
         EventBus.notify(drawCardEvent);
     }
 
@@ -133,6 +134,7 @@ public class Game implements EventListener {
     public void buyShipCard() {
         if (getCurrentPlayer().coins.size() >= 3) {
             // wskazana w controllerze karta idzie na stos statku do kolekcjonowania
+            // póki co nie piszę tu kodu
         }
 /*        int playerIndex =
         Card purchased = getPlayer(playerIndex).giveRequestedShipCard(requestedType);
@@ -149,9 +151,9 @@ public class Game implements EventListener {
     }
 
     public void selectCardsToReturn() {
+        System.out.println(toReturn.toString());
         // licz wartość zwróconych kart i dopóki nie będzie 3,
         // wysyłaj event do controllera
-
         int sumValue = 0;
         while (sumValue < 3)
             for (Card card : toReturn) { // w toReturn są karty klikane w controller/selectCardsToReturn
@@ -217,20 +219,36 @@ public class Game implements EventListener {
                 switchToNextPlayer();
                 break;
             case CLICK_ON_COIN:
-                Card card = event.getPlayer().coins.get(0);
-                toReturn.add(card);
+                if (event.getPlayer().coins.size() > 0) {
+                    Card card = event.getPlayer().coins.get(0);
+                    toReturn.add(card);
+                } else {
+                    selectCardsToReturn();
+                }
                 break;
             case CLICK_ON_CANNON:
-                Card card1 = event.getPlayer().cannons.get(0);
-                toReturn.add(card1);
+                if (event.getPlayer().cannons.size() > 0) {
+                    Card card1 = event.getPlayer().cannons.get(0);
+                    toReturn.add(card1);
+                } else {
+                    selectCardsToReturn();
+                }
                 break;
             case CLICK_ON_SHIP:
-                Card card2 = event.getPlayer().shipsToReturn.get(0);
-                toReturn.add(card2);
+                if (event.getPlayer().shipsToReturn.size() > 0) {
+                    Card card2 = event.getPlayer().shipsToReturn.get(0);
+                    toReturn.add(card2);
+                } else {
+                    selectCardsToReturn();
+                }
                 break;
             case CLICK_ON_SHIP_COLLECTED:
-                Card card3 = event.getPlayer().shipsCollected.get(0);
-                toReturn.add(card3);
+                if (event.getPlayer().shipsCollected.size() > 0) {
+                    Card card3 = event.getPlayer().shipsCollected.get(0);
+                    toReturn.add(card3);
+                } else {
+                    selectCardsToReturn();
+                }
         }
     }
 }

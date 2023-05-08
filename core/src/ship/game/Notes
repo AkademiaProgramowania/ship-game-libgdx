@@ -1,5 +1,6 @@
 - spr czy stillPlaying jest dobrze ustawione
-- popr przypadek storm w game
+- popr przypadek storm w game, napisać returnCards() póki co jest selectCardsToReturn() - powtórka
+- card value - zamiast pola w Card wyliczac na podst typu karty (?) spr
 - popr w stanie burzy automatyczny zwrot wszystkich kart gdy ich value<3
 - (?) dopisać CARD_PURCHASE_DECISION (jak przekazać dane z konsoli do game o karcie?)
 - dopisać w countCards licznik i info ile jeszcze brakuje (czy potrzebne?)
