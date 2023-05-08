@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Controller implements EventListener {
     Scanner scanner = new Scanner(System.in);
-    private Game game;
+    private Game game;  // do we need to have reference to game or all only EventBus connection?
 
     public Controller(Game game) {
         this.game = game;
@@ -18,9 +18,7 @@ public class Controller implements EventListener {
         EventBus.subscribe(EventType.DRAW_CARD, this);
         EventBus.subscribe(EventType.SELECT_CARDS_TO_RETURN, this);
         EventBus.subscribe(EventType.PLAYER_SWITCHED, this);
-        EventBus.subscribe(EventType.SHIP_TYPE_TO_COLLECT, this);
-
-
+        EventBus.subscribe(EventType.SET_SHIP_TYPE_TO_COLLECT, this);
     }
 
     public void play() {
@@ -31,7 +29,9 @@ public class Controller implements EventListener {
     public void playTurn(Event event) {
         System.out.println("Gra gracz " + event.getPlayer().playerNum);
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
-        decideOnNextTurn();
+        do {
+            decideOnNextTurn();
+        } while (event.getPlayer().stillPlaying); // pole w Playerze
 
         /*System.out.println("Player " + game.getCurrentPlayer().getPlayerNum());
         int missing = game.checkNumberOfMissingShipCards();
@@ -40,6 +40,8 @@ public class Controller implements EventListener {
         decideOnNextTurn();
 */
     }
+
+
 
     public void selectCardsToReturn() {
         // tu tylko kliki
@@ -65,6 +67,7 @@ public class Controller implements EventListener {
     }
 
     public void decideOnNextTurn() {
+        System.out.println("You need " + game.getCurrentPlayer().checkNumberOfMissingShipCards() + " ship cards");
         System.out.println("1 - draw a card, 2 - buy ship card, 3 - end your turn");
         switch (scanner.nextInt()) {
             case 1:
@@ -108,6 +111,7 @@ public class Controller implements EventListener {
             endGame(event);
         }
         if (event.getType() == EventType.DRAW_CARD) {
+            // here reactions on event in backend or only in front
             if (event.getCard().getType().equals(Card.Type.COIN)) {
                 System.out.println("Animacja przejscia na stos monet");
             }
@@ -131,7 +135,7 @@ public class Controller implements EventListener {
             System.out.println("Zmiana gracza na " + event.getPlayer().playerNum);
             playTurn(event);
         }
-        if (event.getType() == EventType.SHIP_TYPE_TO_COLLECT) {
+        if (event.getType() == EventType.SET_SHIP_TYPE_TO_COLLECT) {
             System.out.println(event.getPlayer().getCollectedShipType() + " type set for player " + event.getPlayer().getPlayerNum());
         }
     }

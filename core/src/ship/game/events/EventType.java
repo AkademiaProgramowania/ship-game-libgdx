@@ -19,7 +19,7 @@ public enum EventType {
 
     // stare:
 
-    SHIP_TYPE_TO_COLLECT, // Typy: "S1"/"S2"/"S3"/"S4"
+    SET_SHIP_TYPE_TO_COLLECT, // Typy: "S1"/"S2"/"S3"/"S4"
 
     SHIP_COLLECTED, // zebrane 6 części statku
     PLAYER_SWITCHED, // zmiana na gracza gdy kńćzy rundę lub zadecyduje że pas
@@ -28,7 +28,6 @@ public enum EventType {
     SHOW_CARD,
     SHOW_CARD_RETURNED,
     SHOW_STACK,
-    RETURNED_CARDS,
     CARD_PURCHASE,
     STACK_SHUFFLED,
     CURRENT_PLAYER;
