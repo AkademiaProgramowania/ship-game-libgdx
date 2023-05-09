@@ -41,8 +41,6 @@ public class Controller implements EventListener {
 */
     }
 
-
-
     public void selectCardsToReturn() {
         // tu tylko kliki
         // wartość zwróconych kart zlicza game
@@ -64,6 +62,7 @@ public class Controller implements EventListener {
             default:
                 System.out.println("Click to return cards");
         }
+        System.out.println("Selected: " + game.getToReturn().toString() + " total value: " + game.getToReturnValue());
     }
 
     public void decideOnNextTurn() {

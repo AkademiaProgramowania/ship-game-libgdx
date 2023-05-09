@@ -1,12 +1,13 @@
 - spr czy stillPlaying jest dobrze ustawione
-- popr przypadek storm w game, napisać returnCards() póki co jest selectCardsToReturn() - powtórka
+- spr STORM - testy
 - card value - zamiast pola w Card wyliczac na podst typu karty (?) spr
 - popr w stanie burzy automatyczny zwrot wszystkich kart gdy ich value<3
 - (?) dopisać CARD_PURCHASE_DECISION (jak przekazać dane z konsoli do game o karcie?)
-- dopisać w countCards licznik i info ile jeszcze brakuje (czy potrzebne?)
 - "Reakcja na wyciagniecie karty - animacja burzy" wyświetla sie za późno (event DRAW_CARD ustawiony na koniec kodu
 - dodane playTurn w evencie playerSwitched w controllerze - spr czy tu ma być sterowanie uruchomieniem rundy
 
+- done: Storm - selectCardsToReturn
+- done: Storn - returnIfLessThan3
 - done: w kontynuacji (playTurn) pętla do decideOnNextTurn.
 - done: kontynuacja gry po wyciągnięciu zwykłej karty
 

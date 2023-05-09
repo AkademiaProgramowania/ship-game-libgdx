@@ -15,11 +15,12 @@ public class Game implements EventListener {
     private List<Card> temporaryStack = new ArrayList<>(); // stos tymczasowy, tu są odkładane karty zanim stos głowny
     // się skończy i będzie nowe tasowanie
 
-    private List<Card> toReturn = new ArrayList<>();
+    private List<Card> toReturn = new ArrayList<>(); // jest w game, bo to zawsze tymczasowy zbiór, niezwiązany z playerem
 
     private List<Player> players = new ArrayList<>(); // pole do przechowywania zainicjalizowane w konstruktorze
 
     private int currentPlayerIndex = 0;
+    private int valueToReturnIfStorm = 3;
 
     public Game() {
         CardFactory factory = new CardFactory();
@@ -75,6 +76,11 @@ public class Game implements EventListener {
                 Event collected = new Event(EventType.SET_SHIP_TYPE_TO_COLLECT);
                 collected.setPlayer(getCurrentPlayer());
                 EventBus.notify(collected);
+                if (getCurrentPlayer().checkIfLastShipCard()) {
+                    Event endGame = new Event(EventType.GAME_END);
+                    endGame.setPlayer(getCurrentPlayer());
+                    EventBus.notify(endGame);
+                }
             } else {// spr czy tu dochodzi program
                 getCurrentPlayer().shipsToReturn.add(drawn);
             }
@@ -87,30 +93,16 @@ public class Game implements EventListener {
         }
         if (drawn.getType().equals(Card.Type.STORM)) {
             temporaryStack.add(drawn);
-            int value = 0; // to samo zliczanie w selectCardsToReturn()
+            returnIfLessThan3();
+            int sum = 0;
+
             do {
                 selectCardsToReturn();
                 for (Card card : toReturn) {
-                    value = value + card.getValue();
+                    sum = sum + card.getValue();
                 }
-            } while (value < 3);
+            } while (sum < 3);
             switchToNextPlayer(); // gdy storm, po zakońćzeniu oddawania kart w obu opcjach powyżej
-
-        }
-        // spr czy jest cannon, jeśli nie to daj dowolne 3 inne karty
-        /*if (howMuchValueInOwnStack() <= 3) { // jeśli kart jest mniej niż za 3pkt
-            temporaryStack.addAll(getCurrentPlayer().getOwnStack()); // zwraca wszystkie
-            System.out.println("Temporary stack: " + temporaryStack.toString());
-            // w temporary stack powinno być: drawn + wszystkie karty z ownStack gdy ich wartość < 3
-        } else { // jesli kart jest więcej niż za 3 pkt
-            selectCardsToReturn(); // select w controllerze, wybrane dodają się do toReturn w game
-            temporaryStack.addAll(toReturn);
-        }*/
-
-        {
-            Event endGame = new Event(EventType.GAME_END);
-            endGame.setPlayer(getCurrentPlayer());
-            EventBus.notify(endGame);
         }
         // czy przenieść na początek bloku by uniknać zbyt późnego wyświetlenia reakcji?
         Event drawCardEvent = new Event(EventType.DRAW_CARD);
@@ -152,43 +144,25 @@ public class Game implements EventListener {
 
     public void selectCardsToReturn() {
         System.out.println(toReturn.toString());
-        // licz wartość zwróconych kart i dopóki nie będzie 3,
-        // wysyłaj event do controllera
-        int sumValue = 0;
-        while (sumValue < 3)
-            for (Card card : toReturn) { // w toReturn są karty klikane w controller/selectCardsToReturn
-                int value = card.getValue();
-                sumValue = sumValue + value;
-                System.out.println(sumValue);
-
-                Event selectCards = new Event(EventType.SELECT_CARDS_TO_RETURN);
-                selectCards.setPlayer(getCurrentPlayer());
-                EventBus.notify(selectCards);
-            }
+        Event selectCards = new Event(EventType.SELECT_CARDS_TO_RETURN);
+        selectCards.setPlayer(getCurrentPlayer());
+        EventBus.notify(selectCards);
     }
 
-/*    public int howMuchValueInOwnStack() {
-        // co to ma robić?
-        // spr na jaką łączną wartośc jest kart w staku
-        // jeśli na mniej niż 3,
-        int sumaTymczasWarttosci = 0; // suma
-        for (Card card : getCurrentPlayer().getOwnStack()) {
-            int value = card.getValue();
-            sumaTymczasWarttosci = sumaTymczasWarttosci + value; // dla kazdej karty bierze value i dodaje
+    public void returnIfLessThan3() {     // jeśli wszystkich kart jest mniej niż za 3pkt
+        int allCardsValue = 0;
+        List<Card> all = new ArrayList<>();
+        all.addAll(getCurrentPlayer().cannons);
+        all.addAll(getCurrentPlayer().coins);
+        all.addAll(getCurrentPlayer().shipsToReturn);
+        all.addAll(getCurrentPlayer().shipsCollected);
+        for (Card card : all) {
+            allCardsValue = allCardsValue + card.getValue();
         }
-        return sumaTymczasWarttosci;
-    }*/
-
-/*    public void returnCardsIfLessThan3() {
-        int sumaTymczasWarttosci = 0;
-        for (Card card : getCurrentPlayer().getOwnStack()) {
-            int value = card.getValue();
-            sumaTymczasWarttosci = sumaTymczasWarttosci + value;
+        if (allCardsValue <= valueToReturnIfStorm) {
+            temporaryStack.addAll(all);
         }
-        if (sumaTymczasWarttosci < 3) {
-            temporaryStack.addAll(getCurrentPlayer().getOwnStack());
-        }
-    }*/
+    }
 
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
@@ -200,6 +174,18 @@ public class Game implements EventListener {
 
     public List<Card> getMainStack() {
         return mainStack;
+    }
+
+    public List<Card> getToReturn() {
+        return toReturn;
+    }
+
+    public int getToReturnValue() {
+        int value = 0;
+        for (Card card : toReturn) {
+            value = value + card.getValue();
+        }
+        return value;
     }
 
     @Override
