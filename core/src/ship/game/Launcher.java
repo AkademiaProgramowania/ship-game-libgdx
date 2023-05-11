@@ -7,7 +7,6 @@ public class Launcher {
         Player player1 = new Player(1);
         Player player2 = new Player(2);
         Controller controller = new Controller(game);
-
         game.addPlayer(player1);
         game.addPlayer(player2);
 
