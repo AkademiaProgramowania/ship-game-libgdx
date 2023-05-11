@@ -5,11 +5,13 @@ import ship.game.events.EventBus;
 import ship.game.events.EventListener;
 import ship.game.events.EventType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Controller implements EventListener {
     Scanner scanner = new Scanner(System.in);
-    private Game game;  // do we need to have reference to game or all only EventBus connection?
+    private Game game;  // czy potrzebna tu referencja doi gry skoro mamy eventy?
 
     public Controller(Game game) {
         this.game = game;
@@ -31,38 +33,11 @@ public class Controller implements EventListener {
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
-        } while (event.getPlayer().stillPlaying); // pole w Playerze
-
-        /*System.out.println("Player " + game.getCurrentPlayer().getPlayerNum());
-        int missing = game.checkNumberOfMissingShipCards();
-        System.out.println("You need " + missing + " ship pieces");*/
-        /*game.passCardToAPlayerIfNotStorm(); // tu jest draw()
-        decideOnNextTurn();
-*/
+        } while (event.getPlayer().stillPlaying);
     }
 
     public void selectCardsToReturn() {
-        // tu tylko kliki
-        // wartość zwróconych kart zlicza game
-        System.out.println("Select a card to return it");
-        System.out.println("1 - coin, 2 - cannon, 3 - ship, 4 - ship collected");
-        switch (scanner.nextInt()) {
-            case 1:
-                EventBus.notify(new Event(EventType.CLICK_ON_COIN));
-                break;
-            case 2:
-                EventBus.notify(new Event(EventType.CLICK_ON_CANNON));
-                break;
-            case 3:
-                EventBus.notify(new Event(EventType.CLICK_ON_SHIP));
-                break;
-            case 4:
-                EventBus.notify(new Event(EventType.CLICK_ON_SHIP_COLLECTED));
-                break;
-            default:
-                System.out.println("Click to return cards");
-        }
-        System.out.println("Selected: " + game.getToReturn().toString() + " total value: " + game.getToReturnValue());
+
     }
 
     public void decideOnNextTurn() {
@@ -80,21 +55,49 @@ public class Controller implements EventListener {
                 EventBus.notify(new Event(EventType.PASS_DECISION));
                 break;
         }
+    }
 
-       /* if (scanner.nextInt() == 1) {
-            //playTurn();
-            // tu event z decyzjami
-        }
-        if (scanner.nextInt() == 2) {
-            System.out.println("Choose a player");
-            int player = scanner.nextInt();
-            String requested = game.getCurrentPlayer().collectedShipType;
-            game.buyShipCard(player, requested);
-        }
-        if (scanner.nextInt() == 3) {
-            System.out.println("Your turn ends");
-            game.endTurn();
-        }*/
+    //zrobić najłatwiej jak się da
+    public void doStorm(Player player) {
+        int sum = 0;
+        do {
+            // tu tylko kliki, wartość zwróconych kart zlicza game
+            System.out.println("Select a card to return it");
+            System.out.println("1 - coin, 2 - cannon, 3 - ship, 4 - ship collected");
+            //wyswietlanie ile masz czego
+            switch (scanner.nextInt()) {
+                case 1:
+                    if (!player.getCards(Card.Type.COIN).isEmpty()) {
+                        Card card = player.getCards(Card.Type.COIN).get(0);
+                        player.removeCard(card);
+                        sum++;
+                    }
+                    break;
+                case 2:
+                    if (!player.getCards(Card.Type.CANNON).isEmpty()) {
+                        Card card = player.getCards(Card.Type.CANNON).get(0);
+                        player.removeCard(card);
+                        sum += 3;
+                    }
+                    break;
+                case 3:
+                    if (!player.getShipsCollected(true).isEmpty()) {
+                        Card card = player.getShipsCollected(true).get(0);
+                        player.removeCard(card);
+                        sum++;
+                    }
+                    break;
+                case 4:
+                    if (!player.getShipsCollected(false).isEmpty()) {
+                        Card card = player.getShipsCollected(false).get(0);
+                        player.removeCard(card);
+                        sum++;
+                    }
+                    break;
+                default:
+                    System.out.println("Click to return cards");
+            }
+        } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
     }
 
     public void endGame(Event event) {
@@ -103,39 +106,35 @@ public class Controller implements EventListener {
 
     @Override
     public void react(Event event) {
-        if (event.getType() == EventType.TURN_START) {
+        EventType eventType = event.getType();
+        if (eventType == EventType.TURN_START) {
             playTurn(event);
         }
-        if (event.getType() == EventType.GAME_END) {
+        if (eventType == EventType.GAME_END) {
             endGame(event);
         }
-        if (event.getType() == EventType.DRAW_CARD) {
-            // here reactions on event in backend or only in front
-            if (event.getCard().getType().equals(Card.Type.COIN)) {
+        if (eventType == EventType.DRAW_CARD) {
+            Card card = event.getCard();
+            if (card.getType().equals(Card.Type.COIN)) {
                 System.out.println("Animacja przejscia na stos monet");
-            }
-            if (event.getCard().getType().equals(Card.Type.CANNON)) {
+            } else if (card.getType().equals(Card.Type.CANNON)) {
                 System.out.println("Animacja przejscia na stos dzial");
-            }
-            if (event.getCard().getType().equals(Card.Type.SHIP) && (!event.getCard().getSecondShipType().equals(event.getPlayer().collectedShipType))) {
+            } else if (card.getType().equals(Card.Type.STORM)) {
+                System.out.println("Reakcja na wyciagniecie karty - animacja burzy");
+                doStorm(event.getPlayer());
+            } else if (card.getType().equals(Card.Type.SHIP) && event.getPlayer().isCollectingThisShip(card)) {
+                System.out.println("Animacja przejscia na stos statku do kolekcjonowania");
+            } else {
                 System.out.println("Animacja przejscia na stos statkow do handlu");
             }
-            if (event.getCard().getType().equals(Card.Type.SHIP) && (event.getCard().getSecondShipType().equals(event.getPlayer().collectedShipType))) {
-                System.out.println("Animacja przejscia na stos statku do kolekcjonowania");
-            }
-            if (event.getCard().getType().equals(Card.Type.STORM)) {
-                System.out.println("Reakcja na wyciagniecie karty - animacja burzy");
-            }
         }
-        if (event.getType() == EventType.SELECT_CARDS_TO_RETURN) { // polecenie z game countCardsToReturn
+        if (eventType == EventType.SELECT_CARDS_TO_RETURN) {
             selectCardsToReturn();
         }
-        if (event.getType() == EventType.PLAYER_SWITCHED) {
+        if (eventType == EventType.PLAYER_SWITCHED) {
             System.out.println("Zmiana gracza na " + event.getPlayer().playerNum);
             playTurn(event);
         }
-        if (event.getType() == EventType.SET_SHIP_TYPE_TO_COLLECT) {
-            System.out.println(event.getPlayer().getCollectedShipType() + " type set for player " + event.getPlayer().getPlayerNum());
-        }
+        // test : zmiana event.getPlayer().get... na game.getCurrentPlayer.get...
     }
 }
