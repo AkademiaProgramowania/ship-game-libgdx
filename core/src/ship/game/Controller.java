@@ -5,8 +5,6 @@ import ship.game.events.EventBus;
 import ship.game.events.EventListener;
 import ship.game.events.EventType;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Controller implements EventListener {
