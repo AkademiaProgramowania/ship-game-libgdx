@@ -36,6 +36,7 @@ Eventy:
 3a. PAS_DECISION -> controller (po naciśnięciu pasowania)
 - gra zmienia gracza
 - powrót do pkt 2 (turn start, kolejny gracz) gra wskazuje na kolejnego gracza
+
 3b. DRAW_CARD_DECISION -> controller (po naciśnięciu talii)
 - gra:
     - zabiera wierzchnią kartę z talii i spr jaka to karta
@@ -53,6 +54,7 @@ Eventy:
             lub nie skońćzą sie karty (kliknięcie na właściwe karty ze stosu). Działo warte 3 punkty (kliki)
             - gdy wymóg zostanie spełniony, automatycznie puszczamy event PAS_DECISION
     - reakcja na GAME_END (wskazanie który gracz wygrał): menu główne/ranking/ coś inengo
+
 3c. - gdy gracz kliknie na kartę innego gracza CARD_PURCHASE_DECISION
     controller:
         - jeśli nie masz dosć moent, nic sie nie dzieje / ew. animacja pokazująca brak monet

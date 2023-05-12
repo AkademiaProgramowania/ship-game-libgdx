@@ -46,9 +46,19 @@ public class Player {
        return result; // zwraca jeden result
     }
 
-    public void addShipCard(Card card) {
+     public void addShipCard(Card card) {
         setIfFirstCollected(card);
         ownStack.add(card);
+    }
+
+    public Card getSelectedShipCard(String givenType) {
+        List<Card> ships = getCards(Card.Type.SHIP);
+        for (Card ship : ships) {
+            if (ship.getSecondShipType().equals(givenType)) {
+                return ship;
+            }
+        }
+        return null;
     }
 
     private void setIfFirstCollected(Card card) {
@@ -83,7 +93,7 @@ public class Player {
         return ownStack.size() > 0;
     }
 
-    public void removeIfPresent(Card card) { // spr co powórnywać. Typ i numer (coin, cannon) lub typ, drugi typ i numer (ship)
+/*    public void removeIfPresent(Card card) { // spr co powórnywać. Typ i numer (coin, cannon) lub typ, drugi typ i numer (ship)
         for (Card card1 : ownStack) {
             if ((card1.getType().equals(card.getType()) && (card1.getNum() == card.getNum())) ||
                     (card1.getType().equals(card.getType()) && card1.getSecondShipType().equals(card.getSecondShipType()) &&
@@ -91,7 +101,7 @@ public class Player {
                 ownStack.remove(card1);
             }
         }
-    }
+    }*/
 
     public boolean stillPlaying(boolean stillPlaying) {
         return stillPlaying;
@@ -103,10 +113,6 @@ public class Player {
 
     public int getPlayerNum() {
         return playerNum;
-    }
-
-    public String getCollectedShipType() {
-        return collectedShipType;
     }
 
     @Override

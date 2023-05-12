@@ -11,16 +11,13 @@ import java.util.List;
 
 public class Game implements EventListener {
 
-    private List<Card> mainStack = new ArrayList<>();
+    private List<Card> mainStack;
     private List<Card> temporaryStack = new ArrayList<>(); // stos tymczasowy, tu są odkładane karty zanim stos głowny
     // się skończy i będzie nowe tasowanie
-
-    private List<Card> toReturn = new ArrayList<>(); // jest w game, bo to zawsze tymczasowy zbiór, niezwiązany z playerem
 
     private List<Player> players = new ArrayList<>(); // pole do przechowywania zainicjalizowane w konstruktorze
 
     private int currentPlayerIndex = 0;
-    private int valueToReturnIfStorm = 3;
 
     public Game() {
         CardFactory factory = new CardFactory();
@@ -32,7 +29,6 @@ public class Game implements EventListener {
         EventBus.subscribe(EventType.CLICK_ON_SHIP, this);
         EventBus.subscribe(EventType.CLICK_ON_SHIP_COLLECTED, this);
         EventBus.subscribe(EventType.CARD_PURCHASE_DECISION, this);
-
     }
 
     public void addPlayer(Player player) {
@@ -108,51 +104,18 @@ public class Game implements EventListener {
 
     }
 
-    public void buyShipCard() {
-        if (getCurrentPlayer().getCards(Card.Type.COIN).size() >= 3) {
-            // wskazana w controllerze karta idzie na stos statku do kolekcjonowania
-            // póki co nie piszę tu kodu
-        }
-/*        int playerIndex =
-        Card purchased = getPlayer(playerIndex).giveRequestedShipCard(requestedType);
-        getCurrentPlayer().addToOwnStack(purchased);
+    public void buyCard(Event event) {
+        event.getPlayer().removeCard(event.getCard());
+        getCurrentPlayer().addCard(event.getCard());
         int num = 0;
-        while (num <= 3) {
-            Card coin = getCurrentPlayer().giveCoinCard();
-            getPlayer(playerIndex).addToOwnStack(coin);
+        do {
+            getCurrentPlayer().getCards(Card.Type.COIN).remove(0);
             num++;
-        }
-        Event event = new Event(EventType.CARD_PURCHASE);
-        event.setCard(purchased);
-        EventBus.notify(event);*/
+        } while (num <= 2);
+        System.out.println("Spr - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
+        System.out.println("Spr - statki: " + getCurrentPlayer().getShipsCollected(true));
+
     }
-
-/*    public void selectCardsToReturn() {
-        Event selectCards = new Event(EventType.SELECT_CARDS_TO_RETURN);
-        selectCards.setPlayer(getCurrentPlayer());
-        EventBus.notify(selectCards);
-        System.out.println("Selected: " + getToReturn().toString() + " total value: " + getToReturnValue());
-
-    }*/
-
-   /* public boolean checkiIfLessThan3AndReturn() {
-        int allCardsValue = 0;
-        boolean less = false;
-        List<Card> all = new ArrayList<>();
-        all.addAll(getCurrentPlayer().cannons);
-        all.addAll(getCurrentPlayer().coins);
-        all.addAll(getCurrentPlayer().shipsToReturn);
-        all.addAll(getCurrentPlayer().shipsCollected);
-        for (Card card : all) {
-            allCardsValue = allCardsValue + card.getValue();
-        }
-        if (allCardsValue <= valueToReturnIfStorm) {
-            temporaryStack.addAll(all);
-            less = true;
-        }
-
-        return less;
-    }*/
 
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
@@ -162,21 +125,13 @@ public class Game implements EventListener {
         return players.get(requiredIndex);
     }
 
-    public List<Card> getMainStack() {
-        return mainStack;
-    }
-
-    public List<Card> getToReturn() {
-        return toReturn;
-    }
-
-    public int getToReturnValue() {
+/*    public int getToReturnValue() {
         int value = 0;
         for (Card card : toReturn) {
             value = value + card.getValue();
         }
         return value;
-    }
+    }*/
 
     @Override
     public void react(Event event) {
@@ -188,48 +143,13 @@ public class Game implements EventListener {
                 drawAndAssign();
                 break;
             case CARD_PURCHASE_DECISION:
-                buyShipCard();
+                buyCard(event);
                 switchToNextPlayer();
                 break;
             case PASS_DECISION:
                 switchToNextPlayer();
                 break;
-            case CLICK_ON_COIN: // przez event.getPlayer nie działało bo controller nie setował playera przy tworzeniu eventu
-               /* if (getCurrentPlayer().coins.size() > 0) {
-                    Card card = getCurrentPlayer().coins.get(0);
-                    toReturn.add(card);
-                    getCurrentPlayer().coins.remove(card);
-                    selectCardsToReturn();
-                } else {
-                    selectCardsToReturn();
-                }
-                break;*/
-            case CLICK_ON_CANNON:
-              /*  if (getCurrentPlayer().cannons.size() > 0) {
-                    Card card1 = getCurrentPlayer().cannons.get(0);
-                    toReturn.add(card1);
-                    getCurrentPlayer().cannons.remove(card1);
-                } else {
-                    selectCardsToReturn();
-                }
-                break;*/
-            case CLICK_ON_SHIP:
-              /*  if (getCurrentPlayer().shipsToReturn.size() > 0) {
-                    Card card2 = getCurrentPlayer().shipsToReturn.get(0);
-                    toReturn.add(card2);
-                    getCurrentPlayer().shipsToReturn.remove(card2);
-                } else {
-                    selectCardsToReturn();
-                }
-                break;*/
-            case CLICK_ON_SHIP_COLLECTED:
-              /*  if (getCurrentPlayer().shipsCollected.size() > 0) {
-                    Card card3 = getCurrentPlayer().shipsCollected.get(0);
-                    toReturn.add(card3);
-                    getCurrentPlayer().shipsCollected.remove(card3);
-                } else {
-                    selectCardsToReturn();
-                }*/
+
             default:
                 System.out.println("default w game - react");
         }

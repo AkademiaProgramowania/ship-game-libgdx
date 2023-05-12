@@ -19,6 +19,7 @@ public class Controller implements EventListener {
         EventBus.subscribe(EventType.SELECT_CARDS_TO_RETURN, this);
         EventBus.subscribe(EventType.PLAYER_SWITCHED, this);
         EventBus.subscribe(EventType.SET_SHIP_TYPE_TO_COLLECT, this);
+
     }
 
     public void play() {
@@ -42,7 +43,23 @@ public class Controller implements EventListener {
                 EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
                 break;
             case 2:
-                EventBus.notify(new Event(EventType.CARD_PURCHASE_DECISION));
+                if (game.getCurrentPlayer().getCards(Card.Type.COIN).size() >= 3) {
+                    System.out.println("Give player number");
+                    int requestedPlayer = scanner.nextInt();
+                    scanner.close();
+                    Scanner scanner = new Scanner(System.in);
+                    System.out.println("Give ship type");
+                    String type = scanner.nextLine();
+                    Card purchased = game.getPlayer(requestedPlayer).getSelectedShipCard(type);
+                    System.out.println("Selected: " + purchased);
+
+                    Event event = new Event(EventType.CARD_PURCHASE_DECISION);
+                    event.setPlayer(game.getPlayer(requestedPlayer));
+                    event.setCard(purchased);
+                    EventBus.notify(event);
+                } else {
+                    System.out.println("Not enough coins - animacja");
+                }
                 break;
             case 3:
                 EventBus.notify(new Event(EventType.PASS_DECISION));
