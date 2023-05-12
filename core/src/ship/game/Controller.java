@@ -31,11 +31,7 @@ public class Controller implements EventListener {
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
-        } while (event.getPlayer().stillPlaying);
-    }
-
-    public void selectCardsToReturn() {
-
+        } while (event.getPlayer().isStillPlaying());
     }
 
     public void decideOnNextTurn() {
@@ -46,7 +42,6 @@ public class Controller implements EventListener {
                 EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
                 break;
             case 2:
-                // jak przekazać dane z konsoli do game? player (player index), card (type, num)
                 EventBus.notify(new Event(EventType.CARD_PURCHASE_DECISION));
                 break;
             case 3:
@@ -55,11 +50,9 @@ public class Controller implements EventListener {
         }
     }
 
-    //zrobić najłatwiej jak się da
     public void doStorm(Player player) {
         int sum = 0;
         do {
-            // tu tylko kliki, wartość zwróconych kart zlicza game
             System.out.println("Select a card to return it");
             System.out.println("1 - coin, 2 - cannon, 3 - ship, 4 - ship collected");
             //wyswietlanie ile masz czego
@@ -67,15 +60,15 @@ public class Controller implements EventListener {
                 case 1:
                     if (!player.getCards(Card.Type.COIN).isEmpty()) {
                         Card card = player.getCards(Card.Type.COIN).get(0);
+                        sum++;// sumowanie dla pętli
                         player.removeCard(card);
-                        sum++;
                     }
                     break;
                 case 2:
                     if (!player.getCards(Card.Type.CANNON).isEmpty()) {
                         Card card = player.getCards(Card.Type.CANNON).get(0);
-                        player.removeCard(card);
                         sum += 3;
+                        player.removeCard(card);
                     }
                     break;
                 case 3:
@@ -93,7 +86,7 @@ public class Controller implements EventListener {
                     }
                     break;
                 default:
-                    System.out.println("Click to return cards");
+                    System.out.println("Click again");
             }
         } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
     }
@@ -113,6 +106,7 @@ public class Controller implements EventListener {
         }
         if (eventType == EventType.DRAW_CARD) {
             Card card = event.getCard();
+
             if (card.getType().equals(Card.Type.COIN)) {
                 System.out.println("Animacja przejscia na stos monet");
             } else if (card.getType().equals(Card.Type.CANNON)) {
@@ -126,13 +120,9 @@ public class Controller implements EventListener {
                 System.out.println("Animacja przejscia na stos statkow do handlu");
             }
         }
-        if (eventType == EventType.SELECT_CARDS_TO_RETURN) {
-            selectCardsToReturn();
-        }
         if (eventType == EventType.PLAYER_SWITCHED) {
-            System.out.println("Zmiana gracza na " + event.getPlayer().playerNum);
+            System.out.println("Player switched. Current: " + event.getPlayer().playerNum);
             playTurn(event);
         }
-        // test : zmiana event.getPlayer().get... na game.getCurrentPlayer.get...
     }
 }

@@ -49,13 +49,13 @@ public class Game implements EventListener {
     }
 
     public Card draw() {
-        checkIfMainStackIsOut();
+        checkIfMainStackIsOutAndShuffle();
         Card drawn = mainStack.get(0);
         mainStack.remove(0);
         return drawn;
     }
 
-    public void checkIfMainStackIsOut() {
+    public void checkIfMainStackIsOutAndShuffle() {
         if (mainStack.isEmpty()) {
             mainStack = shuffle(temporaryStack);
             System.out.println("Stack shuffled");
@@ -72,7 +72,8 @@ public class Game implements EventListener {
         System.out.println("Drawn: " + drawn);
 
         if (drawn.getType().equals(Card.Type.SHIP)) {
-            getCurrentPlayer().storeShipCard(drawn);
+            getCurrentPlayer().addShipCard(drawn);
+
             if (getCurrentPlayer().checkIfLastShipCard()) {
                 Event endGame = new Event(EventType.GAME_END);
                 endGame.setPlayer(getCurrentPlayer());
@@ -84,36 +85,14 @@ public class Game implements EventListener {
         }
         if (drawn.getType().equals(Card.Type.STORM)) {
             temporaryStack.add(drawn);
-
-           /* if (checkiIfLessThan3AndReturn()) {
-                System.out.println("<= 3 cards to return");
-                System.out.println("Zwrocone: " + temporaryStack.toString());
-                // brakuje usuwania ze staku gracza
-                System.out.println("Aktualny gracz ma");
-                getCurrentPlayer().showOwnStack();
-                switchToNextPlayer();
-            }
-            int sum = 0;
-            selectCardsToReturn();
-            for (Card card : toReturn) {
-                sum = sum + card.getValue();
-            }
-            System.out.println("Zawartosc toReturn: " + toReturn.toString());
-            if (getToReturnValue() == 3) {
-                temporaryStack.addAll(toReturn);
-                toReturn.clear();
-                System.out.println("Temporary: " + temporaryStack.toString());
-                switchToNextPlayer();
-            } else {
-                selectCardsToReturn();
-            }*/
         }
+
         Event drawCardEvent = new Event(EventType.DRAW_CARD);
         drawCardEvent.setCard(drawn);
         drawCardEvent.setPlayer(getCurrentPlayer());
         EventBus.notify(drawCardEvent);
 
-        getCurrentPlayer().showOwnStack(); //for debug
+        getCurrentPlayer().showOwnStack(); //to debug
     }
 
     public void switchToNextPlayer() {
@@ -148,13 +127,13 @@ public class Game implements EventListener {
         EventBus.notify(event);*/
     }
 
-    public void selectCardsToReturn() {
+/*    public void selectCardsToReturn() {
         Event selectCards = new Event(EventType.SELECT_CARDS_TO_RETURN);
         selectCards.setPlayer(getCurrentPlayer());
         EventBus.notify(selectCards);
         System.out.println("Selected: " + getToReturn().toString() + " total value: " + getToReturnValue());
 
-    }
+    }*/
 
    /* public boolean checkiIfLessThan3AndReturn() {
         int allCardsValue = 0;

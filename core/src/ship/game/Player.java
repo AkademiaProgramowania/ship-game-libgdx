@@ -1,26 +1,18 @@
 package ship.game;
 
-import ship.game.events.Event;
-import ship.game.events.EventBus;
-import ship.game.events.EventListener;
-import ship.game.events.EventType;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player implements EventListener {
+public class Player {
 
-    String collectedShipType; //todo private + gettery
-    boolean stillPlaying = true;
+    private String collectedShipType; //todo private + gettery
+    private boolean stillPlaying = true;
     int playerNum;
 
     private List<Card> ownStack = new ArrayList<>();
 
     public Player(int playerNum) {
         this.playerNum = playerNum;
-
-        //stare:
-        EventBus.subscribe(EventType.SHOW_STACK, this);
     }
 
     public void addCard(Card card) {
@@ -30,7 +22,6 @@ public class Player implements EventListener {
     public void removeCard(Card card) {
         ownStack.remove(card);
     }
-
 
     public List<Card> getCards(Card.Type type) {
         List<Card> cards = new ArrayList<>();
@@ -42,15 +33,9 @@ public class Player implements EventListener {
         return cards;
     }
 
-    public List<Card> getOwnStack() {
-        return ownStack;
-    }
-
     public List<Card> getShipsCollected(boolean collected) {
-        List<Card> ships = getCards(Card.Type.SHIP);
+        List<Card> ships = getCards(Card.Type.SHIP); //wszystkie typu SHIP
         List<Card> result = new ArrayList<>();
-//        List<Card> collectedShips = new ArrayList<>();
-//        List<Card> notCollected = new ArrayList<>();
         for (Card card : ships) {
             if (isCollectingThisShip(card) && collected) {
                 result.add(card);
@@ -58,18 +43,22 @@ public class Player implements EventListener {
                 result.add(card);
             }
         }
-       return result;
+       return result; // zwraca jeden result
     }
 
-    public void storeShipCard(Card ship) {
-        setIfFirstCollected(ship);
-        ownStack.add(ship);
+    public void addShipCard(Card card) {
+        setIfFirstCollected(card);
+        ownStack.add(card);
     }
 
-    private void setIfFirstCollected(Card card) { // przekazuję drawn żeby z niej pobrać typ
+    private void setIfFirstCollected(Card card) {
         if (collectedShipType == null) {
             collectedShipType = card.getSecondShipType();
         }
+    }
+
+    public boolean checkIfLastShipCard() {
+        return  getShipsCollected(true).size() == 6;
     }
 
     public boolean isCollectingThisShip(Card card) {
@@ -80,33 +69,35 @@ public class Player implements EventListener {
         return 6 - getShipsCollected(true).size();
     }
 
-
     public void showOwnStack() {
         System.out.println("Stack - player " + getPlayerNum() + ":");
-
         for (Card card : ownStack) {
             System.out.println(card);
         }
-
         /*System.out.println("Statki zbierane " + shipsCollected.size() + " /Statki nie zbierane "
                 + shipsToReturn.size() + " /Monety " + coins.size() + " /Dziala " + cannons.size());
         System.out.println("Collected type: " + collectedShipType);*/
-
     }
 
     public boolean hasCards() {
         return ownStack.size() > 0;
     }
 
-    public void removeIfPresent(Card card) {
-
-    }
-
-    public boolean checkIfLastShipCard() {
-        return  getShipsCollected(true).size() == 6;
+    public void removeIfPresent(Card card) { // spr co powórnywać. Typ i numer (coin, cannon) lub typ, drugi typ i numer (ship)
+        for (Card card1 : ownStack) {
+            if ((card1.getType().equals(card.getType()) && (card1.getNum() == card.getNum())) ||
+                    (card1.getType().equals(card.getType()) && card1.getSecondShipType().equals(card.getSecondShipType()) &&
+                            (card1.getNum()) == card.getNum())) {
+                ownStack.remove(card1);
+            }
+        }
     }
 
     public boolean stillPlaying(boolean stillPlaying) {
+        return stillPlaying;
+    }
+
+    public boolean isStillPlaying() { // geter do metody stillPlaying
         return stillPlaying;
     }
 
@@ -125,13 +116,5 @@ public class Player implements EventListener {
                 ", stillPlaying=" + stillPlaying +
                 ", playerNum=" + playerNum +
                 '}';
-    }
-
-    @Override
-    public void react(Event event) {
-        if (event.getType() == EventType.SHOW_STACK) {
-            System.out.println("Your stack");
-            showOwnStack();
-        }
     }
 }
