@@ -1,0 +1,157 @@
+package ship.game;
+
+import ship.game.events.Event;
+import ship.game.events.EventBus;
+import ship.game.events.EventListener;
+import ship.game.events.EventType;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Game implements EventListener {
+
+    private List<Card> mainStack;
+    private List<Card> temporaryStack = new ArrayList<>(); // stos tymczasowy, tu są odkładane karty zanim stos głowny
+    // się skończy i będzie nowe tasowanie
+
+    private List<Player> players = new ArrayList<>(); // pole do przechowywania zainicjalizowane w konstruktorze
+
+    private int currentPlayerIndex = 0;
+
+    public Game() {
+        CardFactory factory = new CardFactory();
+        mainStack = factory.createCards();
+        EventBus.subscribe(EventType.GAME_START, this);
+        EventBus.subscribe(EventType.DRAW_CARD_DECISION, this);
+        EventBus.subscribe(EventType.CLICK_ON_COIN, this);
+        EventBus.subscribe(EventType.CLICK_ON_CANNON, this);
+        EventBus.subscribe(EventType.CLICK_ON_SHIP, this);
+        EventBus.subscribe(EventType.CLICK_ON_SHIP_COLLECTED, this);
+        EventBus.subscribe(EventType.CARD_PURCHASE_DECISION, this);
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+
+    public void gameStart() { // setowanie playera w evencie
+        // event wyciągnięty do zmiennej by móc to zrobić
+        temporaryStack.clear(); //todo raczej nie potrzebne
+        shuffle(mainStack);
+        Event event = new Event(EventType.TURN_START);
+        event.setPlayer(getCurrentPlayer());
+        EventBus.notify(event);
+    }
+
+    public Card draw() {
+        checkIfMainStackIsOutAndShuffle();
+        Card drawn = mainStack.get(0);
+        mainStack.remove(0);
+        return drawn;
+    }
+
+    public void checkIfMainStackIsOutAndShuffle() {
+        if (mainStack.isEmpty()) {
+            mainStack = shuffle(temporaryStack);
+            System.out.println("Stack shuffled");
+        }
+    }
+
+    public List<Card> shuffle(List<Card> list) {
+        Collections.shuffle(list);
+        return list;
+    }
+
+    public void drawAndAssign() {
+        Card drawn = draw();
+        System.out.println("Drawn: " + drawn);
+
+        if (drawn.getType().equals(Card.Type.SHIP)) {
+            getCurrentPlayer().addShipCard(drawn);
+
+            if (getCurrentPlayer().checkIfLastShipCard()) {
+                Event endGame = new Event(EventType.GAME_END);
+                endGame.setPlayer(getCurrentPlayer());
+                EventBus.notify(endGame);
+            }
+        }
+        if (drawn.getType().equals(Card.Type.COIN) || drawn.getType().equals(Card.Type.CANNON)) {
+            getCurrentPlayer().addCard(drawn);
+        }
+        if (drawn.getType().equals(Card.Type.STORM)) {
+            temporaryStack.add(drawn);
+        }
+
+        Event drawCardEvent = new Event(EventType.DRAW_CARD);
+        drawCardEvent.setCard(drawn);
+        drawCardEvent.setPlayer(getCurrentPlayer());
+        EventBus.notify(drawCardEvent);
+
+        getCurrentPlayer().showOwnStack(); //to debug
+    }
+
+    public void switchToNextPlayer() {
+        if (currentPlayerIndex == players.size() - 1) {
+            currentPlayerIndex = 0;
+        } else {
+            currentPlayerIndex++;
+        }
+        Event event = new Event(EventType.PLAYER_SWITCHED);
+        event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
+        EventBus.notify(event);
+        getCurrentPlayer().stillPlaying(true); // kolejny!
+
+    }
+
+    public void buyCard(Event event) {
+        event.getPlayer().removeCard(event.getCard());
+        getCurrentPlayer().addCard(event.getCard());
+        int num = 0;
+        do {
+            getCurrentPlayer().getCards(Card.Type.COIN).remove(0);
+            num++;
+        } while (num <= 2);
+        System.out.println("Spr - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
+        System.out.println("Spr - statki: " + getCurrentPlayer().getShipsCollected(true));
+
+    }
+
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayerIndex);
+    }
+
+    public Player getPlayer(int requiredIndex) {
+        return players.get(requiredIndex);
+    }
+
+/*    public int getToReturnValue() {
+        int value = 0;
+        for (Card card : toReturn) {
+            value = value + card.getValue();
+        }
+        return value;
+    }*/
+
+    @Override
+    public void react(Event event) {
+        switch (event.getType()) {
+            case GAME_START:
+                gameStart();
+                break;
+            case DRAW_CARD_DECISION:
+                drawAndAssign();
+                break;
+            case CARD_PURCHASE_DECISION:
+                buyCard(event);
+                switchToNextPlayer();
+                break;
+            case PASS_DECISION:
+                switchToNextPlayer();
+                break;
+
+            default:
+                System.out.println("default w game - react");
+        }
+    }
+}
