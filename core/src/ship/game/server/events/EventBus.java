@@ -1,4 +1,4 @@
-package ship.game.events;
+package ship.game.server.events;
 
 public class EventBus {
 

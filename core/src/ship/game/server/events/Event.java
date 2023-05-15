@@ -1,7 +1,7 @@
-package ship.game.events;
+package ship.game.server.events;
 
-import ship.game.Card;
-import ship.game.Player;
+import ship.game.server.Card;
+import ship.game.server.Player;
 
 public class Event {
     private EventType type;

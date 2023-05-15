@@ -1,4 +1,8 @@
-package ship.game;
+package ship.game.console;
+
+import ship.game.server.Controller;
+import ship.game.server.Game;
+import ship.game.server.Player;
 
 public class Launcher {
 
