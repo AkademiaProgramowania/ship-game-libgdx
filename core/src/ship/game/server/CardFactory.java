@@ -1,4 +1,4 @@
-package ship.game;
+package ship.game.server;
 
 import java.util.*;
 
