@@ -67,7 +67,6 @@ public class Player {
         return selected;
     }
 
-
     public void setIfFirstCollected(Card card) {
         if (collectedShipType == null) { // collected u tego playera, a u innych?
             collectedShipType = card.getSecondShipType();
@@ -92,7 +91,7 @@ public class Player {
 
     public boolean isCollectingThisShip(Card card) {
         boolean isCollecting = false;
-        if ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && collectedShipType.equals(card.getSecondShipType()))) {
+        if ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType))) {
             isCollecting = true;
         }
         return isCollecting;

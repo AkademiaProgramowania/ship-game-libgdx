@@ -109,9 +109,9 @@ public class Controller implements EventListener {
                             sum++;
                             game.getTemporaryStack().add(card);
                             player.removeCard(card);
-                            /*if (player.getShipsCollected(true).isEmpty()) {
+                            if (player.getShipsCollected(true).isEmpty()) {
                                 player.setCollectedShipType(null);
-                            }*/
+                            }
                         }
                         break;
                     default:
@@ -127,6 +127,7 @@ public class Controller implements EventListener {
 
     public void endGame(Event event) {
         System.out.println("Game ends. Player " + event.getPlayer().playerNum + " wins");
+        System.exit(0);
     }
 
     @Override
@@ -148,6 +149,8 @@ public class Controller implements EventListener {
             } else if (card.getType().equals(Card.Type.STORM)) {
                 System.out.println("Reakcja na wyciagniecie karty - animacja burzy");
                 doStorm(event.getPlayer());
+                event.getPlayer().showOwnStack();
+                System.out.println(event.getPlayer().getCollectedShipType());
                 game.switchToNextPlayer();
             } else if (card.getType().equals(Card.Type.SHIP) && event.getPlayer().isCollectingThisShip(card)) {
                 System.out.println("Animacja przejscia na stos statkow do kolekcjonowania");

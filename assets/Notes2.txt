@@ -1,14 +1,7 @@
-- dopisać spr w game czy typ statku jest już zbierany - dodane spr shipIsAvailable()
-- isCollectingThisShip w playerze sie wywala
-- nullowanie w doStorm powoduje nullPointerExc
-
-
 - BAZY DANYCH dodać zapisanie stanu gry + odtworzenie gry. Póki co na drugim projekcie
-- spr w instrukcji co z kolekcjonowaniem gdy sprzedam kolekcjonowany
+- gdy oddam kolekcjonowany - od nowa przydziela typ statku
 - powt. jak robić evaluate expression przy debugowaniu
 - przenieść temporarystack.clear() ?
-- dodane nullowanie collectedShipType gdy zbior collected isEmpty (w doStorm)
-
 
 - constructor dependency injection spr
 - przerobić createListOfShips() na pętle

@@ -30,7 +30,6 @@ public class Game implements EventListener {
         EventBus.subscribe(EventType.CLICK_ON_SHIP_COLLECTED, this);
         EventBus.subscribe(EventType.CARD_PURCHASE_DECISION, this);
         EventBus.subscribe(EventType.PASS_DECISION, this);
-
     }
 
     public void addPlayer(Player player) {
@@ -72,13 +71,13 @@ public class Game implements EventListener {
         if (drawn.getType().equals(Card.Type.SHIP) && shipTypeIsAvailable(drawn)) {
             getCurrentPlayer().setIfFirstCollected(drawn);
         }
-        if (drawn.getType().equals(Card.Type.COIN) || (drawn.getType().equals(Card.Type.CANNON)
-        || ((drawn.getType().equals(Card.Type.SHIP) && (!shipTypeIsAvailable(drawn)))))) {
+        if (!drawn.getType().equals(Card.Type.STORM)) {
             getCurrentPlayer().addCard(drawn);
             if (getCurrentPlayer().checkIfLastShipCard()) {
                 Event endGame = new Event(EventType.GAME_END);
                 endGame.setPlayer(getCurrentPlayer());
                 EventBus.notify(endGame);
+                return;
             }
         }
         if (drawn.getType().equals(Card.Type.STORM)) {
