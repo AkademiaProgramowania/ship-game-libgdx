@@ -109,6 +109,9 @@ public class Controller implements EventListener {
                             sum++;
                             game.getTemporaryStack().add(card);
                             player.removeCard(card);
+                            /*if (player.getShipsCollected(true).isEmpty()) {
+                                player.setCollectedShipType(null);
+                            }*/
                         }
                         break;
                     default:
