@@ -29,6 +29,8 @@ public class Game implements EventListener {
         EventBus.subscribe(EventType.CLICK_ON_SHIP, this);
         EventBus.subscribe(EventType.CLICK_ON_SHIP_COLLECTED, this);
         EventBus.subscribe(EventType.CARD_PURCHASE_DECISION, this);
+        EventBus.subscribe(EventType.PASS_DECISION , this);
+
     }
 
     public void addPlayer(Player player) {
@@ -101,6 +103,7 @@ public class Game implements EventListener {
         event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
         EventBus.notify(event);
         getCurrentPlayer().stillPlaying(true); // kolejny!
+        System.out.println("Ustawienie gracza na: " + getCurrentPlayer().toString());
 
     }
 
@@ -121,17 +124,14 @@ public class Game implements EventListener {
         return players.get(currentPlayerIndex);
     }
 
-    public Player getPlayer(int requiredIndex) {
+    public Player getPlayerByIndex(int requiredIndex) {
         return players.get(requiredIndex);
     }
 
-/*    public int getToReturnValue() {
-        int value = 0;
-        for (Card card : toReturn) {
-            value = value + card.getValue();
-        }
-        return value;
-    }*/
+
+    public List<Card> getTemporaryStack() {
+        return temporaryStack;
+    }
 
     @Override
     public void react(Event event) {

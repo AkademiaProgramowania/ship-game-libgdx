@@ -23,6 +23,7 @@ public class Player {
         ownStack.remove(card);
     }
 
+
     public List<Card> getCards(Card.Type type) {
         List<Card> cards = new ArrayList<>();
         for (Card card : ownStack) {
@@ -53,15 +54,21 @@ public class Player {
 
     public Card getSelectedShipCard(String givenType) {
         List<Card> ships = getCards(Card.Type.SHIP);
-        for (Card ship : ships) {
-            if (ship.getSecondShipType().equals(givenType)) {
-                return ship;
+        Card selected = null;
+        if (!ships.isEmpty()) {
+            for (Card ship : ships) {
+                if (ship.getSecondShipType().equals(givenType)) {
+                    selected = ship;
+                }
             }
+        } else {
+            System.out.println("Player has no requested card");
         }
-        return null;
+        return selected;
     }
 
-    private void setIfFirstCollected(Card card) {
+
+    private void setIfFirstCollected(Card card) { //todo i nie ma żadnego innego gracza który już zbiera ten statek
         if (collectedShipType == null) {
             collectedShipType = card.getSecondShipType();
         }
@@ -69,6 +76,18 @@ public class Player {
 
     public boolean checkIfLastShipCard() {
         return  getShipsCollected(true).size() == 6;
+    }
+
+    public boolean chceckIfMoreThan3() {
+        boolean more = false;
+        int val = 0;
+        for (Card card : ownStack) {
+            val = val + card.getValue();
+        }
+        if (val > 3) {
+            more = true;
+        }
+        return more;
     }
 
     public boolean isCollectingThisShip(Card card) {
@@ -113,6 +132,14 @@ public class Player {
 
     public int getPlayerNum() {
         return playerNum;
+    }
+
+    public String getCollectedShipType() {
+        return collectedShipType;
+    }
+
+    public List<Card> getOwnStack() {
+        return ownStack;
     }
 
     @Override

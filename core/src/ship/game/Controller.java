@@ -37,29 +37,29 @@ public class Controller implements EventListener {
 
     public void decideOnNextTurn() {
         System.out.println("You need " + game.getCurrentPlayer().checkNumberOfMissingShipCards() + " ship cards");
+        System.out.println("Collected ship type: " + game.getCurrentPlayer().getCollectedShipType());
         System.out.println("1 - draw a card, 2 - buy ship card, 3 - end your turn");
         switch (scanner.nextInt()) {
             case 1:
                 EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
                 break;
             case 2:
-                if (game.getCurrentPlayer().getCards(Card.Type.COIN).size() >= 3) {
-                    System.out.println("Give player number");
-                    int requestedPlayer = scanner.nextInt();
-                    scanner.close();
-                    Scanner scanner = new Scanner(System.in);
-                    System.out.println("Give ship type");
-                    String type = scanner.nextLine();
-                    Card purchased = game.getPlayer(requestedPlayer).getSelectedShipCard(type);
-                    System.out.println("Selected: " + purchased);
-
-                    Event event = new Event(EventType.CARD_PURCHASE_DECISION);
-                    event.setPlayer(game.getPlayer(requestedPlayer));
-                    event.setCard(purchased);
-                    EventBus.notify(event);
-                } else {
+                if (game.getCurrentPlayer().getCards(Card.Type.COIN).size() < 3) {
                     System.out.println("Not enough coins - animacja");
+                    break;
                 }
+                System.out.println("Give player number"); //todo żeby się nie zepsuło jak wybierze sam siebie
+                int requestedPlayer = scanner.nextInt();
+
+                Card purchased = game.getPlayerByIndex(requestedPlayer-1).getSelectedShipCard(game.getCurrentPlayer().getCollectedShipType());
+                System.out.println("Selected: " + purchased);
+                if (purchased == null) {
+                    break;
+                }
+                Event event = new Event(EventType.CARD_PURCHASE_DECISION);
+                event.setPlayer(game.getPlayerByIndex(requestedPlayer));
+                event.setCard(purchased);
+                EventBus.notify(event);
                 break;
             case 3:
                 EventBus.notify(new Event(EventType.PASS_DECISION));
@@ -68,44 +68,58 @@ public class Controller implements EventListener {
     }
 
     public void doStorm(Player player) {
+        System.out.println("Coins " + player.getCards(Card.Type.COIN).size());
+        System.out.println("Cannons " + player.getCards(Card.Type.CANNON).size());
+        System.out.println("Ships collected " + player.getShipsCollected(true).size());
+        System.out.println("Ships not collected " + player.getShipsCollected(false).size());
         int sum = 0;
-        do {
-            System.out.println("Select a card to return it");
-            System.out.println("1 - coin, 2 - cannon, 3 - ship, 4 - ship collected");
-            //wyswietlanie ile masz czego
-            switch (scanner.nextInt()) {
-                case 1:
-                    if (!player.getCards(Card.Type.COIN).isEmpty()) {
-                        Card card = player.getCards(Card.Type.COIN).get(0);
-                        sum++;// sumowanie dla pętli
-                        player.removeCard(card);
-                    }
-                    break;
-                case 2:
-                    if (!player.getCards(Card.Type.CANNON).isEmpty()) {
-                        Card card = player.getCards(Card.Type.CANNON).get(0);
-                        sum += 3;
-                        player.removeCard(card);
-                    }
-                    break;
-                case 3:
-                    if (!player.getShipsCollected(true).isEmpty()) {
-                        Card card = player.getShipsCollected(true).get(0);
-                        player.removeCard(card);
-                        sum++;
-                    }
-                    break;
-                case 4:
-                    if (!player.getShipsCollected(false).isEmpty()) {
-                        Card card = player.getShipsCollected(false).get(0);
-                        player.removeCard(card);
-                        sum++;
-                    }
-                    break;
-                default:
-                    System.out.println("Click again");
-            }
-        } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
+        if (player.chceckIfMoreThan3()) {
+            do {
+                System.out.println("Select a card and return it. Missing points:  " + (3 - sum));
+                System.out.println("1 - coin, 2 - cannon, 3 - ship, 4 - ship collected");
+                //wyswietlanie ile masz czego
+                switch (scanner.nextInt()) {
+                    case 1:
+                        if (!player.getCards(Card.Type.COIN).isEmpty()) {
+                            Card card = player.getCards(Card.Type.COIN).get(0);
+                            sum++;// sumowanie dla pętli
+                            game.getTemporaryStack().add(card);
+                            player.removeCard(card);
+                        }
+                        break;
+                    case 2:
+                        if (!player.getCards(Card.Type.CANNON).isEmpty()) {
+                            Card card = player.getCards(Card.Type.CANNON).get(0);
+                            sum += 3;
+                            game.getTemporaryStack().add(card);
+                            player.removeCard(card);
+                        }
+                        break;
+                    case 3:
+                        if (!player.getShipsCollected(false).isEmpty()) {
+                            Card card = player.getShipsCollected(false).get(0);
+                            sum++;
+                            game.getTemporaryStack().add(card);
+                            player.removeCard(card);
+                        }
+                        break;
+                    case 4:
+                        if (!player.getShipsCollected(true).isEmpty()) {
+                            Card card = player.getShipsCollected(true).get(0);
+                            sum++;
+                            game.getTemporaryStack().add(card);
+                            player.removeCard(card);
+                        }
+                        break;
+                    default:
+                        System.out.println("Choose cards");
+
+                }
+            } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
+        } else {
+            game.getTemporaryStack().addAll(player.getOwnStack());
+            player.getOwnStack().clear();
+        }
     }
 
     public void endGame(Event event) {
@@ -131,8 +145,9 @@ public class Controller implements EventListener {
             } else if (card.getType().equals(Card.Type.STORM)) {
                 System.out.println("Reakcja na wyciagniecie karty - animacja burzy");
                 doStorm(event.getPlayer());
+                game.switchToNextPlayer();
             } else if (card.getType().equals(Card.Type.SHIP) && event.getPlayer().isCollectingThisShip(card)) {
-                System.out.println("Animacja przejscia na stos statku do kolekcjonowania");
+                System.out.println("Animacja przejscia na stos statkow do kolekcjonowania");
             } else {
                 System.out.println("Animacja przejscia na stos statkow do handlu");
             }
