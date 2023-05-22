@@ -29,6 +29,7 @@ public class Game implements EventListener {
         EventBus.subscribe(EventType.CLICK_ON_SHIP, this);
         EventBus.subscribe(EventType.CLICK_ON_SHIP_COLLECTED, this);
         EventBus.subscribe(EventType.CARD_PURCHASE_DECISION, this);
+        EventBus.subscribe(EventType.PASS_DECISION, this);
     }
 
     public void addPlayer(Player player) {
@@ -67,17 +68,17 @@ public class Game implements EventListener {
         Card drawn = draw();
         System.out.println("Drawn: " + drawn);
 
-        if (drawn.getType().equals(Card.Type.SHIP)) {
-            getCurrentPlayer().addShipCard(drawn);
-
+        if (drawn.getType().equals(Card.Type.SHIP) && shipTypeIsAvailable(drawn)) {
+            getCurrentPlayer().setIfFirstCollected(drawn);
+        }
+        if (!drawn.getType().equals(Card.Type.STORM)) {
+            getCurrentPlayer().addCard(drawn);
             if (getCurrentPlayer().checkIfLastShipCard()) {
                 Event endGame = new Event(EventType.GAME_END);
                 endGame.setPlayer(getCurrentPlayer());
                 EventBus.notify(endGame);
+                return;
             }
-        }
-        if (drawn.getType().equals(Card.Type.COIN) || drawn.getType().equals(Card.Type.CANNON)) {
-            getCurrentPlayer().addCard(drawn);
         }
         if (drawn.getType().equals(Card.Type.STORM)) {
             temporaryStack.add(drawn);
@@ -91,6 +92,16 @@ public class Game implements EventListener {
         getCurrentPlayer().showOwnStack(); //to debug
     }
 
+    public boolean shipTypeIsAvailable(Card card) {
+        boolean available = true;
+        for (Player player : players) {
+            if (player.isCollectingThisShip(card)) {
+                available = false;
+            }
+        }
+        return available;
+    }
+
     public void switchToNextPlayer() {
         if (currentPlayerIndex == players.size() - 1) {
             currentPlayerIndex = 0;
@@ -101,6 +112,7 @@ public class Game implements EventListener {
         event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
         EventBus.notify(event);
         getCurrentPlayer().stillPlaying(true); // kolejny!
+        System.out.println("Ustawienie gracza na: " + getCurrentPlayer().toString());
 
     }
 
@@ -121,17 +133,14 @@ public class Game implements EventListener {
         return players.get(currentPlayerIndex);
     }
 
-    public Player getPlayer(int requiredIndex) {
+    public Player getPlayerByIndex(int requiredIndex) {
         return players.get(requiredIndex);
     }
 
-/*    public int getToReturnValue() {
-        int value = 0;
-        for (Card card : toReturn) {
-            value = value + card.getValue();
-        }
-        return value;
-    }*/
+
+    public List<Card> getTemporaryStack() {
+        return temporaryStack;
+    }
 
     @Override
     public void react(Event event) {
