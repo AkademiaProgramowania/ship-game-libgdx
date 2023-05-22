@@ -1,9 +1,9 @@
-package ship.game;
+package ship.game.server;
 
-import ship.game.events.Event;
-import ship.game.events.EventBus;
-import ship.game.events.EventListener;
-import ship.game.events.EventType;
+import ship.game.server.events.Event;
+import ship.game.server.events.EventBus;
+import ship.game.server.events.EventListener;
+import ship.game.server.events.EventType;
 
 import java.util.ArrayList;
 import java.util.Collections;
