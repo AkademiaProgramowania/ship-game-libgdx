@@ -47,6 +47,11 @@ public class Player {
         return result; // zwraca jeden result
     }
 
+    public void changeShipsIntoShipsCollected() { // spr by dotychczas zebrane statki tego typu wyświetlay się jako kolekcjonowane
+
+
+    }
+
     public void addShipCard(Card card) {
         setIfFirstCollected(card);
         ownStack.add(card);

@@ -69,7 +69,10 @@ public class Game implements EventListener {
         System.out.println("Drawn: " + drawn);
 
         if (drawn.getType().equals(Card.Type.SHIP) && shipTypeIsAvailable(drawn)) {
-            getCurrentPlayer().setIfFirstCollected(drawn);
+            getCurrentPlayer().setIfFirstCollected(drawn); // tu tylko zmiana pola collectedShipType
+            // liczbę dotychczas zebranych statków tego typu pokazuje jako kolekcjonowane w controllerze
+            // czy zmienić komunikat na info o przejściu ze staku na handel do kolekcjonowanych?
+
         }
         if (!drawn.getType().equals(Card.Type.STORM)) {
             getCurrentPlayer().addCard(drawn);

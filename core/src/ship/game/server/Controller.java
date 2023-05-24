@@ -38,6 +38,9 @@ public class Controller implements EventListener {
     public void decideOnNextTurn() {
         System.out.println("You need " + game.getCurrentPlayer().checkNumberOfMissingShipCards() + " ship cards");
         System.out.println("Collected ship type: " + game.getCurrentPlayer().getCollectedShipType());
+        if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
+            System.out.println("Collected ships: " + game.getCurrentPlayer().getShipsCollected(true).toString());
+        }
         System.out.println("1 - draw a card, 2 - buy ship card, 3 - end your turn");
         switch (scanner.nextInt()) {
             case 1:
@@ -109,24 +112,24 @@ public class Controller implements EventListener {
                             sum++;
                             game.getTemporaryStack().add(card);
                             player.removeCard(card);
-                            if (player.getShipsCollected(true).isEmpty()) {
-                                player.setCollectedShipType(null);
-                            }
+                        }
+                        if (player.getShipsCollected(true).size() == 0) {
+                            player.setCollectedShipType(null);
                         }
                         break;
                     default:
                         System.out.println("Choose cards");
-
                 }
             } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
         } else {
             game.getTemporaryStack().addAll(player.getOwnStack());
             player.getOwnStack().clear();
+            player.setCollectedShipType(null);
+            }
         }
-    }
 
     public void endGame(Event event) {
-        System.out.println("Game ends. Player " + event.getPlayer().playerNum + " wins");
+        System.out.println("Game ends. \nPlayer " + event.getPlayer().playerNum + " wins, having collected " + event.getPlayer().getCollectedShipType() + " ship type");
         System.exit(0);
     }
 
@@ -150,7 +153,7 @@ public class Controller implements EventListener {
                 System.out.println("Reakcja na wyciagniecie karty - animacja burzy");
                 doStorm(event.getPlayer());
                 event.getPlayer().showOwnStack();
-                System.out.println(event.getPlayer().getCollectedShipType());
+                System.out.println("Collected ship type: " + event.getPlayer().getCollectedShipType());
                 game.switchToNextPlayer();
             } else if (card.getType().equals(Card.Type.SHIP) && event.getPlayer().isCollectingThisShip(card)) {
                 System.out.println("Animacja przejscia na stos statkow do kolekcjonowania");
