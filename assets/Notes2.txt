@@ -3,6 +3,7 @@
 - robimy odnogę z bieżącego brancha
 
 done:
+- uzupełnione dependencies w pliku build.gradle, dodany zamiast pliku jar, driver (mysql-connecor) z maven central. Plik jar usunięty
 - rewizja kodu
 - nullowanie collectedShipType gdy wyda wszystkie statki kolekcjonowane
 - wyświetlanie zaktualizowanej liczby statków o dotychczas zebrane w przypadku przydzielenia statku do kolekcjoniwania o tym samym typie
