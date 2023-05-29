@@ -9,7 +9,7 @@ public class Card {
         CANNON
     }
     private final Card.Type type;
-    private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4"
+    private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4" // all fields can be final
     private int num;
     private int value;
 
