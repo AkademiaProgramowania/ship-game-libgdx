@@ -23,7 +23,7 @@ public class CardFactory {
 
     private List<Card> createListOfShips() {
         List<Card> ships = new ArrayList<>();
-        // redfactor, every ship - color should be initialized by a loop
+        // TODO refactor, every ship - color should be initialized by a loop
         ships.add(new Card(Card.Type.SHIP,"S1", 1, 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 2, 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 3, 1));

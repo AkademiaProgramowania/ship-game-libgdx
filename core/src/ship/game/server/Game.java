@@ -68,11 +68,10 @@ public class Game implements EventListener {
         Card drawn = draw();
         System.out.println("Drawn: " + drawn);
 
-        if (drawn.getType().equals(Card.Type.SHIP) && shipTypeIsAvailable(drawn)) {
-            getCurrentPlayer().setIfFirstCollected(drawn); // tu tylko zmiana pola collectedShipType
+        if (drawn.getType().equals(Card.Type.SHIP) && shipIsNotCollected(drawn)) {
+            getCurrentPlayer().setCollected(drawn); // tu tylko zmiana pola collectedShipType
             // liczbę dotychczas zebranych statków tego typu pokazuje jako kolekcjonowane w controllerze
             // czy zmienić komunikat na info o przejściu ze staku na handel do kolekcjonowanych?
-
         }
         if (!drawn.getType().equals(Card.Type.STORM)) {
             getCurrentPlayer().addCard(drawn);
@@ -95,10 +94,10 @@ public class Game implements EventListener {
         getCurrentPlayer().showOwnStack(); //to debug
     }
 
-    public boolean shipTypeIsAvailable(Card card) {
+    public boolean shipIsNotCollected(Card shipCard) {
         boolean available = true;
         for (Player player : players) {
-            if (player.isCollectingThisShip(card)) {
+            if (player.isCollectingThisShip(shipCard)) {
                 available = false;
             }
         }
@@ -114,7 +113,7 @@ public class Game implements EventListener {
         Event event = new Event(EventType.PLAYER_SWITCHED);
         event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
         EventBus.notify(event);
-        getCurrentPlayer().stillPlaying(true); // kolejny!
+        getCurrentPlayer().stillPlaying(true); // kolejny! // don't understand
         System.out.println("Ustawienie gracza na: " + getCurrentPlayer().toString());
 
     }
