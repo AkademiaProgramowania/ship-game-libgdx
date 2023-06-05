@@ -7,6 +7,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import ship.game.server.Card;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreen implements Screen {
     final ShipGame game;
@@ -22,10 +26,30 @@ public class GameScreen implements Screen {
         stage = new Stage(new ScreenViewport(camera), game.getBatch());
         Gdx.input.setInputProcessor(stage);
 
-        CardActor cardActor = new CardActor(new Texture(Gdx.files.internal("storm1.jpg")));
+        List<Card> ships = new ArrayList<>();
+        // TODO refactor, every ship - color should be initialized by a loop
+        ships.add(new Card(Card.Type.SHIP,"S1", 1, 1));
+        ships.add(new Card(Card.Type.SHIP,"S1", 2, 1));
+        ships.add(new Card(Card.Type.SHIP,"S1", 3, 1));
+        ships.add(new Card(Card.Type.SHIP,"S1", 4, 1));
+        ships.add(new Card(Card.Type.SHIP,"S1", 5, 1));
+        ships.add(new Card(Card.Type.SHIP,"S1", 6, 1));
+
+        CardActor cardActor = new CardActor(ships.get(0), new Texture(Gdx.files.internal("ships/ship1/S1-1.jpg")));
+        CardActor cardActor1 = new CardActor(ships.get(1), new Texture(Gdx.files.internal("ships/ship1/S1-2.jpg")));
+        CardActor cardActor2 = new CardActor(ships.get(2), new Texture(Gdx.files.internal("ships/ship1/S1-3.jpg")));
+        CardActor cardActor3 = new CardActor(ships.get(3), new Texture(Gdx.files.internal("ships/ship1/S1-4.jpg")));
+        CardActor cardActor4 = new CardActor(ships.get(4), new Texture(Gdx.files.internal("ships/ship1/S1-5.jpg")));
+        CardActor cardActor5 = new CardActor(ships.get(5), new Texture(Gdx.files.internal("ships/ship1/S1-6.jpg")));
+
         CardGroup cardGroup = new CardGroup();
-        cardGroup.addActor(cardActor);
-        cardGroup.setPosition(200, 200);
+        cardGroup.addCard(cardActor);
+        cardGroup.addCard(cardActor1);
+        cardGroup.addCard(cardActor2);
+        cardGroup.addCard(cardActor3);
+        cardGroup.addCard(cardActor4);
+        cardGroup.addCard(cardActor5);
+        cardGroup.setBounds(200, 200, 300, 300);
         stage.addActor(cardGroup);
     }
 

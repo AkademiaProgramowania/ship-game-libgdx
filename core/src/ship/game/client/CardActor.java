@@ -13,11 +13,11 @@ public class CardActor extends Actor {
     public CardActor(Card card, Texture texture) {
         this.card = card;
         this.texture = texture;
+        setBounds(0, 0, 100, 150);
     }
 
-    public CardActor(Texture texture) {
-        this.texture = texture;
-        setBounds(0, 0, 100, 150);
+    public int getCardNum() {
+        return card.getNum();
     }
 
     @Override
@@ -32,4 +32,6 @@ public class CardActor extends Actor {
 
         batch.setColor(Color.WHITE);
     }
+
+
 }
