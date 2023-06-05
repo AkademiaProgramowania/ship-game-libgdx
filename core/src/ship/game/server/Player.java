@@ -87,7 +87,7 @@ public class Player {
         boolean more = false;
         int val = 0;
         for (Card card : ownStack) {
-            val = val + card.getValue();
+            val = val + card.getStormValue();
         }
         if (val > 3) {
             more = true;

@@ -10,13 +10,33 @@ public class CardFactory {
     private static final int cannonCardQuantity = 3;
 
     public List<Card> createCards(){
+        // spr czy w bazie danych są karty, jeśli nie ma to przyg. karty
         List<Card> cards = new ArrayList<>();
         cards.addAll(createListOfShips());
         cards.addAll(createListOfStormCards());
         cards.addAll(createListOfCoinCards());
         cards.addAll(createListOfCannonCards());
+        // każda karta z ArrayList jako insert do bazy danych
+        // ver1 - ze statement
+        // ver2 -  z preprare statement to lepiej
+        // metoda nic nie zwraca
         return cards;
     }
+
+    public List<Card> getCardsFromDatabase() {
+        // select* from cards
+        // wynik - ResultSet
+        // przeglądanie ResultSet
+        // wciągane informacji z każdej z kolumn, tworzenie obiektu Card i dodawanie do listy
+        return null;
+    }
+
+    // TODO przechowywanie w bazie danych zamiast w ArrayLiście.
+    // z arrayList do bazy danych zamiast return
+    // przygotuj bazę danych
+    // wyciągnij karty z bazy
+
+    // next - relacje tabeli
 
     // nie powielać przechowywania obiektów - niepotrzebne przechowywanie w osobnych listach,
     // zwracać metodami listy i dodawać do all od razu.

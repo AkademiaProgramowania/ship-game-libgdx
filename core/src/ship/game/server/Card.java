@@ -10,22 +10,22 @@ public class Card {
     }
     private final Card.Type type;
     private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4" // all fields can be final
-    private int num;
-    private int value;
+    private int pictureIndex;
+    private int stormValue;
 
     // private pole z wstawionym assetem jpg?
 
-    public Card(Card.Type type, int num, int value) { // for storm, coin, cannon
+    public Card(Card.Type type, int pictureIndex, int stormValue) { // for storm, coin, cannon
         this.type = type;
-        this.num = num;
-        this.value = value;
+        this.pictureIndex = pictureIndex;
+        this.stormValue = stormValue;
     }
 
-    public Card(Card.Type type, String secondShipType, int num, int value) { // for ship
+    public Card(Card.Type type, String secondShipType, int pictureIndex, int stormValue) { // for ship
         this.type = type;
         this.secondShipType = secondShipType;
-        this.num = num;
-        this.value = value;
+        this.pictureIndex = pictureIndex;
+        this.stormValue = stormValue;
     }
 
     public Type getType() {
@@ -36,12 +36,12 @@ public class Card {
         return secondShipType;
     }
 
-    public int getNum() {
-        return num;
+    public int getPictureIndex() {
+        return pictureIndex;
     }
 
-    public int getValue() {
-        return value;
+    public int getStormValue() {
+        return stormValue;
     }
 
     @Override
@@ -49,8 +49,8 @@ public class Card {
         return "Card{" +
                 "type=" + type +
                 ", secondShipType='" + secondShipType + '\'' +
-                ", num=" + num +
-                ", value=" + value +
+                ", num=" + pictureIndex +
+                ", value=" + stormValue +
                 '}';
     }
 }
