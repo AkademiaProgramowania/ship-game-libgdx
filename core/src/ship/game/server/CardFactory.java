@@ -10,12 +10,12 @@ public class CardFactory {
     private static final int cannonCardQuantity = 3;
 
     public List<Card> createCards(){
-        // spr czy w bazie danych są karty, jeśli nie ma to przyg. karty
         List<Card> cards = new ArrayList<>();
         cards.addAll(createListOfShips());
         cards.addAll(createListOfStormCards());
         cards.addAll(createListOfCoinCards());
         cards.addAll(createListOfCannonCards());
+        // spr czy w bazie danych są karty, jeśli nie ma to przyg. karty
         // każda karta z ArrayList jako insert do bazy danych
         // ver1 - ze statement
         // ver2 -  z preprare statement to lepiej
