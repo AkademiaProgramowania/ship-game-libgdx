@@ -4,7 +4,12 @@ import java.util.*;
 
 public class CardFactory {
 
-    int shipCardQuantity = 24; // zostawione do przerobienia metody na pętle
+    int shipS1Quantity = 6;
+    int shipS2Quantity = 6;
+    int shipS3Quantity = 6;
+    int shipS4Quantity = 6;
+
+
     private static final int stormCardQuantity = 8;
     private static final int coinCardQuantity = 20;
     private static final int cannonCardQuantity = 3;
@@ -30,21 +35,23 @@ public class CardFactory {
         // wciągane informacji z każdej z kolumn, tworzenie obiektu Card i dodawanie do listy
         return null;
     }
-
-    // TODO przechowywanie w bazie danych zamiast w ArrayLiście.
-    // z arrayList do bazy danych zamiast return
-    // przygotuj bazę danych
-    // wyciągnij karty z bazy
-
     // next - relacje tabeli
-
-    // nie powielać przechowywania obiektów - niepotrzebne przechowywanie w osobnych listach,
-    // zwracać metodami listy i dodawać do all od razu.
 
     private List<Card> createListOfShips() {
         List<Card> ships = new ArrayList<>();
-        // TODO refactor, every ship - color should be initialized by a loop
-        ships.add(new Card(Card.Type.SHIP,"S1", 1, 1));
+        for (int i = 0; i < shipS1Quantity; i++) {
+            ships.add(new Card(Card.Type.SHIP, "S1", i + 1, 1));
+        }
+        for (int i = 0; i < shipS2Quantity ; i++) {
+            ships.add(new Card(Card.Type.SHIP, "S2", i + 1, 1));
+        }
+        for (int i = 0; i < shipS3Quantity; i++) {
+            ships.add(new Card(Card.Type.SHIP, "S3", i + 1, 1));
+        }
+        for (int i = 0; i < shipS4Quantity; i++) {
+            ships.add(new Card(Card.Type.SHIP, "S4", i + 1, 1));
+        }
+/*        ships.add(new Card(Card.Type.SHIP,"S1", 1, 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 2, 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 3, 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 4, 1));
@@ -67,14 +74,14 @@ public class CardFactory {
         ships.add(new Card(Card.Type.SHIP,"S4", 3, 1));
         ships.add(new Card(Card.Type.SHIP,"S4", 4, 1));
         ships.add(new Card(Card.Type.SHIP,"S4", 5, 1));
-        ships.add(new Card(Card.Type.SHIP,"S4", 6, 1));
+        ships.add(new Card(Card.Type.SHIP,"S4", 6, 1));*/
         return ships;
     }
 
     public List<Card> createListOfStormCards() {
         List<Card> storms = new ArrayList<>();
         for (int i = 0; i < stormCardQuantity; i++) {
-            storms.add(new Card(Card.Type.STORM, i + 1, 0)); // i +1 zamiast inicjalizować int index i w pętli index ++
+            storms.add(new Card(Card.Type.STORM, i + 1, 0));
         }
         return storms;
     }

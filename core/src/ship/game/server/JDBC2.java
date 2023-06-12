@@ -18,11 +18,16 @@ public class JDBC2 {
                 Statement statement = connection.createStatement();
                 PreparedStatement preparedStatement = null;
 
+
+
+
 /*                // to działa:
                 String putOneTestCard = "INSERT INTO cards VALUES (0, 'SHIP', 'S1', 1, 1);";
                 statement.executeUpdate(putOneTestCard);
                 System.out.println("done");
                 connection.close();*/
+
+                // dodać przed tworzeniem tabeli if exist
 
 /*                // to działa:
             String createTableCards = "CREATE TABLE cards (\n" +
@@ -36,7 +41,8 @@ public class JDBC2 {
             statement.executeUpdate(createTableCards);
             System.out.println("Table created");*/
 
-/*                for (Card card : cards) {
+/*                    // to działa:
+                for (Card card : cards) {
                     preparedStatement = connection.prepareStatement("INSERT INTO cards VALUES (0,?,?,?,?);");
                     preparedStatement.setString(1, String.valueOf(card.getType()));
                     preparedStatement.setString(2, card.getSecondShipType());
@@ -49,6 +55,7 @@ public class JDBC2 {
                 System.out.println("1 = row affected, 2 = no");
                 connection.close();*/
 
+                // to działa:
                 String select = "SELECT * FROM cards;";
                 resultSet = statement.executeQuery(select);
                 while (resultSet.next()){
@@ -69,10 +76,6 @@ public class JDBC2 {
             }
         }
     }
-// jeśli ich tam jeszcze nie ma: (if exist)
-// tworzyć tabelę
-// CardFactory ma dodawać karty do bazy
-
 
    /* String sql = "CREATE TABLE GamePlayers" +
             "(id INTEGER not null," +
