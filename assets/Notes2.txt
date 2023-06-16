@@ -2,6 +2,24 @@
 - każde zadanie ma mieć osobny branch
 - robimy odnogę z bieżącego brancha
 
+foreign key, relacje one to many, joiny
+- czyścić dane w tabeli przed jej pobieraniem (?)
+
+- dostosować kod - set w karcie playerId po rundzie. Domyślnie 0
+- jak przy tworzeniu tabeli dodać klauzulę foreign key
+- nie można usunąć playera jeśli inna tabela wskazuje go jako foreign key
+- tabela palyers - bez player_index, dodać resultset z id (pobieranie)
+- napisać SQl update który przypisuje kartę playerowi
+- dwa joiny: wyciągnięcie playera znając id karty, wyciągnąć wszystkei karty nalezące do playera
+- wygeneruj wynik w którym widzimy: id playera, id karty, collected ship, typ karty (tylko karty któe nalezą do jakiegokolwiek playera - bez tych nieprzypisanych)
+- dosotsowanie ustawiania ostatniego gracza (lub nie potrzeba gdy zapisywanie stanu gry bedzie przed ruchem kolejnego gracza)
+
+JDBC
+- zamiast pola w Card i setowania ownera w kodzie gry, zapisujemy stan gry przez playera i oba stacki przy savie.
+- save = zapisujemy jakie karty ma gracz/stack (lista)
+- do osobnej tabeli wpisuje sie wszystkie obiekty z listy zaznaczając ze są przyporządkowane do obiektu któy posiada listę za pomocą foreign key
+- tabela kart i graczy
+
 done:
 - uzupełnione dependencies w pliku build.gradle, dodany zamiast pliku jar, driver (mysql-connecor) z maven central. Plik jar usunięty
 - rewizja kodu

@@ -21,7 +21,6 @@ public class Controller implements EventListener {
         EventBus.subscribe(EventType.SELECT_CARDS_TO_RETURN, this);
         EventBus.subscribe(EventType.PLAYER_SWITCHED, this);
         EventBus.subscribe(EventType.SET_SHIP_TYPE_TO_COLLECT, this);
-
     }
 
     public void play() {
@@ -53,11 +52,9 @@ public class Controller implements EventListener {
                     System.out.println("Not enough coins - animacja");
                     break;
                 }
-                System.out.println("Give player number"); //todo żeby się nie zepsuło jak wybierze sam siebie
+                System.out.println("Give player index"); //todo żeby się nie zepsuło jak wybierze sam siebie
                 int requestedPlayer = scanner.nextInt();
-
                 Card purchased = game.getPlayerByIndex(requestedPlayer-1).getSelectedShipCard(game.getCurrentPlayer().getCollectedShipType());
-
                 System.out.println("Selected: " + purchased);
                 if (purchased == null) {
                     break;
@@ -71,12 +68,17 @@ public class Controller implements EventListener {
                 EventBus.notify(new Event(EventType.PASS_DECISION));
                 break;
             case 4:
-                System.out.println("4");
-                game.savePlayers();
+                System.out.println("Save");
+                EventBus.notify(new Event(EventType.SAVE));
                 break;
             case 5:
-                System.out.println("5");
-                System.out.println(game.getPlayersFromDB());
+                System.out.println("Get players table");
+                EventBus.notify(new Event(EventType.GET_PLAYERS));
+                List<Player> playersFromDB = game.getPlayersFromDB();
+                System.out.println("Wyświetlenie z controlelra case 5");
+                for (Player player : playersFromDB) {
+                    System.out.println(player);
+                }
         }
     }
 
@@ -90,13 +92,13 @@ public class Controller implements EventListener {
             do {
                 System.out.println("Select a card and return it. Missing points:  " + (3 - sum));
                 System.out.println("1 - coin, 2 - cannon, 3 - ship, 4 - ship collected");
-                //wyswietlanie ile masz czego
+
                 switch (scanner.nextInt()) {
                     case 1:
                         if (!player.getCards(Card.Type.COIN).isEmpty()) {
                             Card card = player.getCards(Card.Type.COIN).get(0);
-                            sum++;// sumowanie dla pętli
-                            game.addToTemporaryStack(card); // setowanie ownera karty w metodzie
+                            sum++;
+                            game.addToTemporaryStack(card);
                             player.removeCard(card);
                         }
                         break;
@@ -135,7 +137,7 @@ public class Controller implements EventListener {
             List<Card> all = new ArrayList<>(); // robocza lista do skorzystania z metody addToTemporaryStack
             all.addAll(player.getOwnStack());
             for (Card card : all) {
-                game.addToTemporaryStack(card); // setowanie ownera w metodzie
+                game.addToTemporaryStack(card);
             }
             player.getOwnStack().clear();
             player.setCollectedShipType(null);
