@@ -4,10 +4,15 @@ import java.util.*;
 
 public class CardFactory {
 
-    int shipCardQuantity = 24; // zostawione do przerobienia metody na pętle
-    private static final int stormCardQuantity = 8;
-    private static final int coinCardQuantity = 20;
-    private static final int cannonCardQuantity = 3;
+    int shipS1Quantity = 6; // (1 - 6)
+    int shipS2Quantity = 6; // (7 - 12)
+    int shipS3Quantity = 6; // (13 - 18)
+    int shipS4Quantity = 6; // (19 - 24)
+
+
+    private static final int stormCardQuantity = 8; // (25 - 32)
+    private static final int coinCardQuantity = 20; // (33 - 52)
+    private static final int cannonCardQuantity = 3; // (53 - 55)
 
     public List<Card> createCards(){
         List<Card> cards = new ArrayList<>();
@@ -15,16 +20,38 @@ public class CardFactory {
         cards.addAll(createListOfStormCards());
         cards.addAll(createListOfCoinCards());
         cards.addAll(createListOfCannonCards());
+        // spr czy w bazie danych są karty, jeśli nie ma to przyg. karty
+        // każda karta z ArrayList jako insert do bazy danych
+        // ver1 - ze statement
+        // ver2 -  z preprare statement to lepiej
+        // metoda nic nie zwraca
         return cards;
     }
 
-    // nie powielać przechowywania obiektów - niepotrzebne przechowywanie w osobnych listach,
-    // zwracać metodami listy i dodawać do all od razu.
+    public List<Card> getCardsFromDatabase() {
+        // select* from cards
+        // wynik - ResultSet
+        // przeglądanie ResultSet
+        // wciągane informacji z każdej z kolumn, tworzenie obiektu Card i dodawanie do listy
+        return null;
+    }
+    // next - relacje tabeli
 
     private List<Card> createListOfShips() {
         List<Card> ships = new ArrayList<>();
-        // TODO refactor, every ship - color should be initialized by a loop
-        ships.add(new Card(Card.Type.SHIP,"S1", 1, 1));
+        for (int i = 0; i < shipS1Quantity; i++) {
+            ships.add(new Card(Card.Type.SHIP, i + 1, "S1", i + 1, 1, 5));
+        }
+        for (int i = 0; i < shipS2Quantity ; i++) {
+            ships.add(new Card(Card.Type.SHIP, i + 7, "S2", i + 1, 1, 5));
+        }
+        for (int i = 0; i < shipS3Quantity; i++) {
+            ships.add(new Card(Card.Type.SHIP, i + 13, "S3", i + 1, 1, 5));
+        }
+        for (int i = 0; i < shipS4Quantity; i++) {
+            ships.add(new Card(Card.Type.SHIP, i + 19, "S4", i + 1, 1, 5));
+        }
+/*        ships.add(new Card(Card.Type.SHIP,"S1", 1, 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 2, 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 3, 1));
         ships.add(new Card(Card.Type.SHIP,"S1", 4, 1));
@@ -47,14 +74,14 @@ public class CardFactory {
         ships.add(new Card(Card.Type.SHIP,"S4", 3, 1));
         ships.add(new Card(Card.Type.SHIP,"S4", 4, 1));
         ships.add(new Card(Card.Type.SHIP,"S4", 5, 1));
-        ships.add(new Card(Card.Type.SHIP,"S4", 6, 1));
+        ships.add(new Card(Card.Type.SHIP,"S4", 6, 1));*/
         return ships;
     }
 
     public List<Card> createListOfStormCards() {
         List<Card> storms = new ArrayList<>();
         for (int i = 0; i < stormCardQuantity; i++) {
-            storms.add(new Card(Card.Type.STORM, i + 1, 0)); // i +1 zamiast inicjalizować int index i w pętli index ++
+            storms.add(new Card(Card.Type.STORM, i + 25, i + 1, 0, 5));
         }
         return storms;
     }
@@ -62,7 +89,7 @@ public class CardFactory {
     public List<Card> createListOfCoinCards() {
         List<Card> coins = new ArrayList<>();
         for (int i = 0; i < coinCardQuantity; i++) {
-            coins.add(new Card(Card.Type.COIN, i + 1, 1));
+            coins.add(new Card(Card.Type.COIN, i + 33, i + 1, 1, 5));
         }
         return coins;
     }
@@ -70,7 +97,7 @@ public class CardFactory {
     public List<Card> createListOfCannonCards() {
         List<Card> cannons = new ArrayList<>();
         for (int i = 0; i < cannonCardQuantity; i++) {
-            cannons.add(new Card(Card.Type.CANNON, i + 1, 3));
+            cannons.add(new Card(Card.Type.CANNON, i + 53, i + 1, 3, 5));
         }
         return cannons;
     }

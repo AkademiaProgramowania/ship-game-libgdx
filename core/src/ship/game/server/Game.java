@@ -5,6 +5,7 @@ import ship.game.server.events.EventBus;
 import ship.game.server.events.EventListener;
 import ship.game.server.events.EventType;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +56,9 @@ public class Game implements EventListener {
     public void checkIfMainStackIsOutAndShuffle() {
         if (mainStack.isEmpty()) {
             mainStack = shuffle(temporaryStack);
+            for (Card card : mainStack) {
+                card.setOwner(5);
+            }
             System.out.println("Stack shuffled");
         }
     }
@@ -83,7 +87,7 @@ public class Game implements EventListener {
             }
         }
         if (drawn.getType().equals(Card.Type.STORM)) {
-            temporaryStack.add(drawn);
+            addToTemporaryStack(drawn);
         }
 
         Event drawCardEvent = new Event(EventType.DRAW_CARD);
@@ -118,17 +122,66 @@ public class Game implements EventListener {
 
     }
 
-    public void buyCard(Event event) {
-        event.getPlayer().removeCard(event.getCard());
-        getCurrentPlayer().addCard(event.getCard());
+   // uwaga z przypisaniem karty waściwemu graczowi - do testów
+    public void buyCard(Event event) {// player = requested player, card = requested card
+        event.getPlayer().removeCard(event.getCard()); // requested player, requested card
+        getCurrentPlayer().addCard(event.getCard()); // current player, requested card. Setowanie ownera karty w metodzie addCard
         int num = 0;
         do {
-            getCurrentPlayer().getCards(Card.Type.COIN).remove(0);
+            event.getPlayer().addCard(getCurrentPlayer().getCoinCard()); // add coin, nie requested card z eventu
+            // usuwanie COIN ze staka currentPlayera w metodzie
             num++;
         } while (num <= 2);
-        System.out.println("Spr - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
-        System.out.println("Spr - statki: " + getCurrentPlayer().getShipsCollected(true));
+        // todo spr czy karty monet przechodzą ze stacka currentPlayer na stack requestedPlayer
+        System.out.println("current player - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
+        System.out.println("current player - statki: " + getCurrentPlayer().getShipsCollected(true));
+        System.out.println("requested player - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
+    }
 
+    public void savePlayers() {
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
+            PreparedStatement preparedStatement = null;
+            for (Player player : players) {
+
+                preparedStatement = connection.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?);");
+                preparedStatement.setInt(1, 20+player.getPlayerIndex());
+                preparedStatement.setInt(2, player.getPlayerIndex());
+                preparedStatement.setString(3, player.getCollectedShipType());
+                preparedStatement.setInt(4, player.getStackSize());
+                preparedStatement.setString(4, player.getPlayingStatus());
+                //assert preparedStatement != null;
+                System.out.println(preparedStatement.executeUpdate());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Player> getPlayersFromDB(){
+        List<Player> playersFromDB = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
+            Statement statement = connection.createStatement();
+            String select1 = "SELECT * FROM players;";
+            ResultSet resultSet = statement.executeQuery(select1);
+            while (resultSet.next()) {
+                int playerIndex = resultSet.getInt("player_index");
+                String collectedType = resultSet.getString("collected_ship_type");
+                int stackSize = resultSet.getInt("stack_size");
+                String lastTurn = resultSet.getString("last_turn");
+                Player newPlayer = new Player(playerIndex, collectedType); // tworzy obiekt za pomocą drugiego konstrukt.
+                playersFromDB.add(newPlayer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return playersFromDB;
+    }
+
+    public void addToTemporaryStack(Card card) {
+        temporaryStack.add(card);
+        card.setOwner(6);
     }
 
     public Player getCurrentPlayer() {
@@ -142,6 +195,10 @@ public class Game implements EventListener {
 
     public List<Card> getTemporaryStack() {
         return temporaryStack;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 
     @Override

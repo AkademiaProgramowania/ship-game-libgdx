@@ -5,6 +5,8 @@ import ship.game.server.events.EventBus;
 import ship.game.server.events.EventListener;
 import ship.game.server.events.EventType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Controller implements EventListener {
@@ -28,7 +30,7 @@ public class Controller implements EventListener {
     }
 
     public void playTurn(Event event) {
-        System.out.println("Gra gracz " + event.getPlayer().playerNum);
+        System.out.println("Gra gracz " + event.getPlayer().playerIndex);
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
@@ -41,7 +43,7 @@ public class Controller implements EventListener {
         if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
             System.out.println("Collected ships: " + game.getCurrentPlayer().getShipsCollected(true).toString());
         }
-        System.out.println("1 - draw a card, 2 - buy ship card, 3 - end your turn");
+        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save players, 5 - get players from DB");
         switch (scanner.nextInt()) {
             case 1:
                 EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
@@ -55,6 +57,7 @@ public class Controller implements EventListener {
                 int requestedPlayer = scanner.nextInt();
 
                 Card purchased = game.getPlayerByIndex(requestedPlayer-1).getSelectedShipCard(game.getCurrentPlayer().getCollectedShipType());
+
                 System.out.println("Selected: " + purchased);
                 if (purchased == null) {
                     break;
@@ -67,6 +70,13 @@ public class Controller implements EventListener {
             case 3:
                 EventBus.notify(new Event(EventType.PASS_DECISION));
                 break;
+            case 4:
+                System.out.println("4");
+                game.savePlayers();
+                break;
+            case 5:
+                System.out.println("5");
+                System.out.println(game.getPlayersFromDB());
         }
     }
 
@@ -86,7 +96,7 @@ public class Controller implements EventListener {
                         if (!player.getCards(Card.Type.COIN).isEmpty()) {
                             Card card = player.getCards(Card.Type.COIN).get(0);
                             sum++;// sumowanie dla pętli
-                            game.getTemporaryStack().add(card);
+                            game.addToTemporaryStack(card); // setowanie ownera karty w metodzie
                             player.removeCard(card);
                         }
                         break;
@@ -94,7 +104,7 @@ public class Controller implements EventListener {
                         if (!player.getCards(Card.Type.CANNON).isEmpty()) {
                             Card card = player.getCards(Card.Type.CANNON).get(0);
                             sum += 3;
-                            game.getTemporaryStack().add(card);
+                            game.addToTemporaryStack(card);
                             player.removeCard(card);
                         }
                         break;
@@ -102,7 +112,7 @@ public class Controller implements EventListener {
                         if (!player.getShipsCollected(false).isEmpty()) {
                             Card card = player.getShipsCollected(false).get(0);
                             sum++;
-                            game.getTemporaryStack().add(card);
+                            game.addToTemporaryStack(card);
                             player.removeCard(card);
                         }
                         break;
@@ -110,7 +120,7 @@ public class Controller implements EventListener {
                         if (!player.getShipsCollected(true).isEmpty()) {
                             Card card = player.getShipsCollected(true).get(0);
                             sum++;
-                            game.getTemporaryStack().add(card);
+                            game.addToTemporaryStack(card);
                             player.removeCard(card);
                         }
                         if (player.getShipsCollected(true).size() == 0) {
@@ -122,14 +132,18 @@ public class Controller implements EventListener {
                 }
             } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
         } else {
-            game.getTemporaryStack().addAll(player.getOwnStack());
+            List<Card> all = new ArrayList<>(); // robocza lista do skorzystania z metody addToTemporaryStack
+            all.addAll(player.getOwnStack());
+            for (Card card : all) {
+                game.addToTemporaryStack(card); // setowanie ownera w metodzie
+            }
             player.getOwnStack().clear();
             player.setCollectedShipType(null);
             }
         }
 
     public void endGame(Event event) {
-        System.out.println("Game ends. \nPlayer " + event.getPlayer().playerNum + " wins, having collected " + event.getPlayer().getCollectedShipType() + " ship type");
+        System.out.println("Game ends. \nPlayer " + event.getPlayer().playerIndex + " wins, having collected " + event.getPlayer().getCollectedShipType() + " ship type");
         System.exit(0);
     }
 
@@ -162,7 +176,7 @@ public class Controller implements EventListener {
             }
         }
         if (eventType == EventType.PLAYER_SWITCHED) {
-            System.out.println("Player switched. Current: " + event.getPlayer().playerNum);
+            System.out.println("Player switched. Current: " + event.getPlayer().playerIndex);
             playTurn(event);
         }
     }
