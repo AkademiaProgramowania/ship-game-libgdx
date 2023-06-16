@@ -7,16 +7,22 @@ public class Player {
 
     private String collectedShipType;
     private boolean stillPlaying = true;
-    int playerNum;
+    int playerIndex;
 
     private List<Card> ownStack = new ArrayList<>();
 
-    public Player(int playerNum) {
-        this.playerNum = playerNum;
+    public Player(int playerIndex) {
+        this.playerIndex = playerIndex;
+    }
+
+    public Player(int playerIndex, String collectedShipType)  {
+        this.playerIndex = playerIndex;
+        this.collectedShipType = collectedShipType;
     }
 
     public void addCard(Card card) {
         ownStack.add(card);
+        card.setOwner(playerIndex);
     }
 
     public void removeCard(Card card) {
@@ -32,6 +38,17 @@ public class Player {
             }
         }
         return cards;
+    }
+
+    public Card getCoinCard() {
+        Card toReturn = null;
+        for (Card card : ownStack) {
+            if (card.getType().equals(Card.Type.COIN)) {
+                toReturn = card;
+                ownStack.remove(card);
+            }
+        }
+        return toReturn;
     }
 
     public List<Card> getShipsCollected(boolean collected) {
@@ -87,7 +104,7 @@ public class Player {
         boolean more = false;
         int val = 0;
         for (Card card : ownStack) {
-            val = val + card.getValue();
+            val = val + card.getStormValue();
         }
         if (val > 3) {
             more = true;
@@ -109,7 +126,7 @@ public class Player {
     }
 
     public void showOwnStack() {
-        System.out.println("Stack - player " + getPlayerNum() + ":");
+        System.out.println("Stack - player " + getPlayerIndex() + ":");
         for (Card card : ownStack) {
             System.out.println(card);
         }
@@ -123,12 +140,24 @@ public class Player {
         return stillPlaying;
     }
 
+    public String getPlayingStatus() {
+        String status = "F";
+        if (isStillPlaying()) {
+            status = "T";
+        }
+        return status;
+    }
+
     public boolean isStillPlaying() { // geter do metody stillPlaying
         return stillPlaying;
     }
 
-    public int getPlayerNum() {
-        return playerNum;
+    public int getStackSize() {
+        return ownStack.size();
+    }
+
+    public int getPlayerIndex() {
+        return playerIndex;
     }
 
     public String getCollectedShipType() {
@@ -146,9 +175,8 @@ public class Player {
     @Override
     public String toString() {
         return "Player{" +
-                "collectedShipType='" + collectedShipType + '\'' +
-                ", stillPlaying=" + stillPlaying +
-                ", playerNum=" + playerNum +
+                "index=" + playerIndex +
+                ", collectedShipType='" + collectedShipType + '\'' +
                 '}';
     }
 }
