@@ -7,6 +7,7 @@ public class Player {
 
     private String collectedShipType;
     private boolean stillPlaying = true;
+    int id;
     int playerIndex;
 
     private List<Card> ownStack = new ArrayList<>();
@@ -15,14 +16,13 @@ public class Player {
         this.playerIndex = playerIndex;
     }
 
-    public Player(int playerIndex, String collectedShipType)  {
+    public Player(int playerIndex, String collectedShipType) {
         this.playerIndex = playerIndex;
         this.collectedShipType = collectedShipType;
     }
 
     public void addCard(Card card) {
         ownStack.add(card);
-        card.setOwner(playerIndex);
     }
 
     public void removeCard(Card card) {
@@ -40,7 +40,7 @@ public class Player {
         return cards;
     }
 
-    public Card getCoinCard() {
+    public Card getCoinToPay() {
         Card toReturn = null;
         for (Card card : ownStack) {
             if (card.getType().equals(Card.Type.COIN)) {
@@ -50,6 +50,7 @@ public class Player {
         }
         return toReturn;
     }
+
 
     public List<Card> getShipsCollected(boolean collected) {
         List<Card> ships = getCards(Card.Type.SHIP); //wszystkie typu SHIP
@@ -141,9 +142,11 @@ public class Player {
     }
 
     public String getPlayingStatus() {
-        String status = "F";
+        String status = "";
         if (isStillPlaying()) {
             status = "T";
+        } else {
+            status = "F";
         }
         return status;
     }
@@ -158,6 +161,10 @@ public class Player {
 
     public int getPlayerIndex() {
         return playerIndex;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCollectedShipType() {
@@ -176,7 +183,10 @@ public class Player {
     public String toString() {
         return "Player{" +
                 "index=" + playerIndex +
+                ", id=" + id +
                 ", collectedShipType='" + collectedShipType + '\'' +
+                ", stack size=" + ownStack.size() + '\'' +
+                ", last turn=" + getPlayingStatus() + '\'' +
                 '}';
     }
 }

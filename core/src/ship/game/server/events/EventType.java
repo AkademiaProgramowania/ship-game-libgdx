@@ -6,6 +6,8 @@ public enum EventType {
     DRAW_CARD_DECISION,
     GAME_END,
     PASS_DECISION,
+    SAVE,
+    GET_PLAYERS,
     DRAW_CARD,
     CLICK_ON_COIN,
     CLICK_ON_CANNON,
