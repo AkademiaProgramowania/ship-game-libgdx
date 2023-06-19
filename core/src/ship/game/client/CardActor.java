@@ -17,7 +17,7 @@ public class CardActor extends Actor {
     }
 
     public int getCardNum() {
-        return card.getNum();
+        return card.getPictureIndex();
     }
 
     @Override

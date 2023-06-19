@@ -3,7 +3,7 @@ package ship.game.client;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
 
-public class CardGroup extends Group {
+public class CollectedShipGroup extends Group {
     public void addCard(CardActor actor) {
         addActor(actor);
         if (actor.getCardNum() < 4) {

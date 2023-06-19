@@ -28,12 +28,12 @@ public class GameScreen implements Screen {
 
         List<Card> ships = new ArrayList<>();
         // TODO refactor, every ship - color should be initialized by a loop
-        ships.add(new Card(Card.Type.SHIP,"S1", 1, 1));
-        ships.add(new Card(Card.Type.SHIP,"S1", 2, 1));
-        ships.add(new Card(Card.Type.SHIP,"S1", 3, 1));
-        ships.add(new Card(Card.Type.SHIP,"S1", 4, 1));
-        ships.add(new Card(Card.Type.SHIP,"S1", 5, 1));
-        ships.add(new Card(Card.Type.SHIP,"S1", 6, 1));
+        ships.add(new Card(Card.Type.SHIP, 0,"S1", 1, 1, 0));
+        ships.add(new Card(Card.Type.SHIP, 0,"S1", 2, 1, 0));
+        ships.add(new Card(Card.Type.SHIP, 0,"S1", 3, 1, 0));
+        ships.add(new Card(Card.Type.SHIP, 0,"S1", 4, 1, 0));
+        ships.add(new Card(Card.Type.SHIP, 0,"S1", 5, 1, 0));
+        ships.add(new Card(Card.Type.SHIP, 0,"S1", 6, 1, 0));
 
         CardActor cardActor = new CardActor(ships.get(0), new Texture(Gdx.files.internal("ships/ship1/S1-1.jpg")));
         CardActor cardActor1 = new CardActor(ships.get(1), new Texture(Gdx.files.internal("ships/ship1/S1-2.jpg")));
@@ -42,15 +42,18 @@ public class GameScreen implements Screen {
         CardActor cardActor4 = new CardActor(ships.get(4), new Texture(Gdx.files.internal("ships/ship1/S1-5.jpg")));
         CardActor cardActor5 = new CardActor(ships.get(5), new Texture(Gdx.files.internal("ships/ship1/S1-6.jpg")));
 
-        CardGroup cardGroup = new CardGroup();
-        cardGroup.addCard(cardActor);
-        cardGroup.addCard(cardActor1);
-        cardGroup.addCard(cardActor2);
-        cardGroup.addCard(cardActor3);
-        cardGroup.addCard(cardActor4);
-        cardGroup.addCard(cardActor5);
-        cardGroup.setBounds(200, 200, 300, 300);
-        stage.addActor(cardGroup);
+        CollectedShipGroup collectedShipGroup = new CollectedShipGroup();
+        collectedShipGroup.addCard(cardActor);
+        collectedShipGroup.addCard(cardActor1);
+        collectedShipGroup.addCard(cardActor2);
+        collectedShipGroup.addCard(cardActor3);
+        collectedShipGroup.addCard(cardActor4);
+        collectedShipGroup.addCard(cardActor5);
+        collectedShipGroup.setBounds(200, 200, 300, 300);
+        stage.addActor(collectedShipGroup);
+
+        CounterActor counterActor = new CounterActor(Card.Type.COIN, game.getFont());
+        stage.addActor(counterActor);
     }
 
     @Override
