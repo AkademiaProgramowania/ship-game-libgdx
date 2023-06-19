@@ -81,7 +81,7 @@ public class CardFactory {
     public List<Card> createListOfStormCards() {
         List<Card> storms = new ArrayList<>();
         for (int i = 0; i < stormCardQuantity; i++) {
-            storms.add(new Card(Card.Type.STORM, i + 1, 0));
+            storms.add(new Card(Card.Type.STORM, 0, 0));
         }
         return storms;
     }
@@ -89,7 +89,7 @@ public class CardFactory {
     public List<Card> createListOfCoinCards() {
         List<Card> coins = new ArrayList<>();
         for (int i = 0; i < coinCardQuantity; i++) {
-            coins.add(new Card(Card.Type.COIN, i + 1, 1));
+            coins.add(new Card(Card.Type.COIN, 0, 1));
         }
         return coins;
     }
@@ -97,7 +97,7 @@ public class CardFactory {
     public List<Card> createListOfCannonCards() {
         List<Card> cannons = new ArrayList<>();
         for (int i = 0; i < cannonCardQuantity; i++) {
-            cannons.add(new Card(Card.Type.CANNON, i + 1, 3));
+            cannons.add(new Card(Card.Type.CANNON, 0, 3));
         }
         return cannons;
     }

@@ -31,8 +31,6 @@ public class Game implements EventListener {
         EventBus.subscribe(EventType.CLICK_ON_SHIP_COLLECTED, this);
         EventBus.subscribe(EventType.CARD_PURCHASE_DECISION, this);
         EventBus.subscribe(EventType.PASS_DECISION, this);
-        EventBus.subscribe(EventType.SAVE, this);
-        EventBus.subscribe(EventType.GET_PLAYERS, this);
     }
 
     public void addPlayer(Player player) {
@@ -76,7 +74,7 @@ public class Game implements EventListener {
         }
         if (!drawn.getType().equals(Card.Type.STORM)) {
             getCurrentPlayer().addCard(drawn);
-            drawn.setPlayerId(getCurrentPlayer().getPlayerIndex());
+            drawn.setPlayerId(getCurrentPlayer().getId());
             if (getCurrentPlayer().checkIfLastShipCard()) {
                 Event endGame = new Event(EventType.GAME_END);
                 endGame.setPlayer(getCurrentPlayer());
@@ -119,7 +117,7 @@ public class Game implements EventListener {
 
     }
 
-   // uwaga z przypisaniem karty waściwemu graczowi - do testów
+    // uwaga z przypisaniem karty waściwemu graczowi - do testów
     public void buyCard(Event event) {// w evencie jest ustawiony requested player i requested card
         // przekazywanie żądanej karty między playerami:
         getCurrentPlayer().addCard(event.getCard()); // current player, requested card
@@ -159,7 +157,7 @@ public class Game implements EventListener {
         }
     }
 
-    public List<Player> getPlayersFromDB(){
+    public List<Player> getPlayersFromDB() {
         List<Player> playersFromDB = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
@@ -169,9 +167,9 @@ public class Game implements EventListener {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String collectedType = resultSet.getString("collected_ship_type");
-                //int stackSize = resultSet.getInt("stack_size");
-                //String lastTurn = resultSet.getString("last_turn");
-                Player newPlayer = new Player(id, collectedType); // tworzy obiekt za pomocą drugiego konstrukt.
+                int stackSize = resultSet.getInt("stack_size");
+                String lastTurn = resultSet.getString("last_turn");
+                Player newPlayer = new Player(collectedType); // tworzy obiekt za pomocą drugiego konstrukt.
                 newPlayer.setId(id);
                 playersFromDB.add(newPlayer);
             }
@@ -213,14 +211,7 @@ public class Game implements EventListener {
             case PASS_DECISION:
                 switchToNextPlayer();
                 break;
-            case SAVE:
-                savePlayers();
-                break;
-            case GET_PLAYERS:
-                getPlayersFromDB();
-                break;
-
-                default:
+            default:
                 System.out.println("default w game - react");
         }
     }

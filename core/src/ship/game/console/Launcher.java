@@ -8,8 +8,8 @@ public class Launcher {
 
     public void play() {
         Game game = new Game();
-        Player player1 = new Player(1);
-        Player player2 = new Player(2);
+        Player player1 = new Player();
+        Player player2 = new Player();
         Controller controller = new Controller(game);
         game.addPlayer(player1);
         game.addPlayer(player2);

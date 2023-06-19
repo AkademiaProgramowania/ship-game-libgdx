@@ -5,10 +5,10 @@
 foreign key, relacje one to many, joiny
 - czyścić dane w tabeli przed jej pobieraniem (?)
 
-- dostosować kod - set w karcie playerId po rundzie. Domyślnie 0
+- dostosować kod - set w karcie playerId po rundzie. Domyślnie null
 - jak przy tworzeniu tabeli dodać klauzulę foreign key
 - nie można usunąć playera jeśli inna tabela wskazuje go jako foreign key
-- tabela palyers - bez player_index, dodać resultset z id (pobieranie)
+- tabela players - bez player_index, dodać resultset z id (pobieranie)
 - napisać SQl update który przypisuje kartę playerowi
 - dwa joiny: wyciągnięcie playera znając id karty, wyciągnąć wszystkei karty nalezące do playera
 - wygeneruj wynik w którym widzimy: id playera, id karty, collected ship, typ karty (tylko karty któe nalezą do jakiegokolwiek playera - bez tych nieprzypisanych)

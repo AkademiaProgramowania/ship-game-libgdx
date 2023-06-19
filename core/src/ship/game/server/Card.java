@@ -16,7 +16,8 @@ public class Card {
     private int stormValue;
 
     private int id;
-    private int playerId;
+    private Player owner; // zamiast playerId
+    private Integer playerId;
 
 
     // private pole z wstawionym assetem jpg?
@@ -53,11 +54,11 @@ public class Card {
     public void setId(int id) {
         this.id = id;
     }
-    public int getPlayerId() {
+    public Integer getPlayerId() {
         return playerId;
     }
 
-    public void setPlayerId(int playerId) {
+    public void setPlayerId(Integer playerId) {
         this.playerId = playerId;
     }
 

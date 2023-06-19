@@ -8,16 +8,13 @@ public class Player {
     private String collectedShipType;
     private boolean stillPlaying = true;
     int id;
-    int playerIndex;
 
     private List<Card> ownStack = new ArrayList<>();
 
-    public Player(int playerIndex) {
-        this.playerIndex = playerIndex;
+    public Player() {
     }
 
-    public Player(int playerIndex, String collectedShipType) {
-        this.playerIndex = playerIndex;
+    public Player(String collectedShipType) {
         this.collectedShipType = collectedShipType;
     }
 
@@ -50,7 +47,6 @@ public class Player {
         }
         return toReturn;
     }
-
 
     public List<Card> getShipsCollected(boolean collected) {
         List<Card> ships = getCards(Card.Type.SHIP); //wszystkie typu SHIP
@@ -127,7 +123,7 @@ public class Player {
     }
 
     public void showOwnStack() {
-        System.out.println("Stack - player " + getPlayerIndex() + ":");
+        System.out.println("Stack - player " + id + ":");
         for (Card card : ownStack) {
             System.out.println(card);
         }
@@ -159,8 +155,8 @@ public class Player {
         return ownStack.size();
     }
 
-    public int getPlayerIndex() {
-        return playerIndex;
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
@@ -182,10 +178,8 @@ public class Player {
     @Override
     public String toString() {
         return "Player{" +
-                "index=" + playerIndex +
                 ", id=" + id +
                 ", collectedShipType='" + collectedShipType + '\'' +
-                ", stack size=" + ownStack.size() + '\'' +
                 ", last turn=" + getPlayingStatus() + '\'' +
                 '}';
     }

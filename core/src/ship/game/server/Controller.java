@@ -29,7 +29,7 @@ public class Controller implements EventListener {
     }
 
     public void playTurn(Event event) {
-        System.out.println("Gra gracz " + event.getPlayer().playerIndex);
+        System.out.println("Gra gracz " + event.getPlayer());
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
@@ -42,7 +42,7 @@ public class Controller implements EventListener {
         if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
             System.out.println("Collected ships: " + game.getCurrentPlayer().getShipsCollected(true).toString());
         }
-        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save players, 5 - get players from DB");
+        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - end game and save players");
         switch (scanner.nextInt()) {
             case 1:
                 EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
@@ -54,7 +54,7 @@ public class Controller implements EventListener {
                 }
                 System.out.println("Give player index"); //todo żeby się nie zepsuło jak wybierze sam siebie
                 int requestedPlayer = scanner.nextInt();
-                Card purchased = game.getPlayerByIndex(requestedPlayer-1).getSelectedShipCard(game.getCurrentPlayer().getCollectedShipType());
+                Card purchased = game.getPlayerByIndex(requestedPlayer - 1).getSelectedShipCard(game.getCurrentPlayer().getCollectedShipType());
                 System.out.println("Selected: " + purchased);
                 if (purchased == null) {
                     break;
@@ -68,17 +68,9 @@ public class Controller implements EventListener {
                 EventBus.notify(new Event(EventType.PASS_DECISION));
                 break;
             case 4:
-                System.out.println("Save");
-                EventBus.notify(new Event(EventType.SAVE));
+                game.savePlayers();
+                endGameSave();
                 break;
-            case 5:
-                System.out.println("Get players table");
-                EventBus.notify(new Event(EventType.GET_PLAYERS));
-                List<Player> playersFromDB = game.getPlayersFromDB();
-                System.out.println("Wyświetlenie z controlelra case 5");
-                for (Player player : playersFromDB) {
-                    System.out.println(player);
-                }
         }
     }
 
@@ -134,21 +126,34 @@ public class Controller implements EventListener {
                 }
             } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
         } else {
-            List<Card> all = new ArrayList<>(); // robocza lista do skorzystania z metody addToTemporaryStack
-            all.addAll(player.getOwnStack());
+            // robocza lista do skorzystania z metody addToTemporaryStack
+            List<Card> all = new ArrayList<>(player.getOwnStack());
             for (Card card : all) {
                 game.addToTemporaryStack(card);
             }
             player.getOwnStack().clear();
             player.setCollectedShipType(null);
-            }
         }
+    }
 
     public void endGame(Event event) {
-        System.out.println("Game ends. \nPlayer " + event.getPlayer().playerIndex + " wins, having collected " + event.getPlayer().getCollectedShipType() + " ship type");
+        System.out.println("Game ends. \nPlayer " + event.getPlayer() + " wins, having collected " + event.getPlayer().getCollectedShipType() + " ship type");
         System.exit(0);
     }
 
+    public void endGameSave() {
+        System.out.println("Game saved. To restart press 1");
+        if (scanner.nextInt() == 1) {
+            System.out.println("Players table");
+            List<Player> restarted = game.getPlayersFromDB();
+            for (Player player : restarted) {
+                game.addPlayer(player);
+                System.out.println(player);
+            }
+        } else {
+            System.exit(0);
+        }
+    }
     @Override
     public void react(Event event) {
         EventType eventType = event.getType();
@@ -178,7 +183,7 @@ public class Controller implements EventListener {
             }
         }
         if (eventType == EventType.PLAYER_SWITCHED) {
-            System.out.println("Player switched. Current: " + event.getPlayer().playerIndex);
+            System.out.println("Player switched. Current: " + event.getPlayer());
             playTurn(event);
         }
     }
