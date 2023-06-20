@@ -51,9 +51,9 @@ public class GameScreen implements Screen {
         collectedShipGroup.addCard(cardActor5);
         collectedShipGroup.setBounds(200, 200, 300, 300);
         stage.addActor(collectedShipGroup);
-
         CounterActor counterActor = new CounterActor(Card.Type.COIN, game.getFont());
         stage.addActor(counterActor);
+
     }
 
     @Override
