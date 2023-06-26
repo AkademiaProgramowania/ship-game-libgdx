@@ -2,6 +2,7 @@ package ship.game.client;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -51,14 +52,22 @@ public class GameScreen implements Screen {
         collectedShipGroup.addCard(cardActor5);
         collectedShipGroup.setBounds(200, 200, 300, 300);
         stage.addActor(collectedShipGroup);
-        CounterActor counterActor = new CounterActor(Card.Type.COIN, game.getFont());
-        stage.addActor(counterActor);
+        CounterGroup counterGroup = new CounterGroup();
+        counterGroup.addCounter(new CounterActor(Card.Type.COIN, game.getFont()));
+        counterGroup.addCounter(new CounterActor(Card.Type.CANNON, game.getFont()));
+        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S2", game.getFont()));
+        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S3", game.getFont()));
+        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S4", game.getFont()));
+        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S5", game.getFont()));
+        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S6", game.getFont()));
+        counterGroup.setBounds(200, 550, 750, 150);
+        stage.addActor(counterGroup);
 
     }
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0, 0, 0, 1);
+        ScreenUtils.clear(Color.WHITE);
         camera.update();
         game.getBatch().setProjectionMatrix(camera.combined);
         stage.act(delta);

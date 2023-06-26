@@ -24,9 +24,10 @@ public class CounterActor extends Actor {
         setBounds(0, 100, 100, 100);
     }
 
-    public CounterActor(Card.Type type, String shipType) {
+    public CounterActor(Card.Type type, String shipType, BitmapFont font) {
         this.type = type;
         this.shipType = shipType;
+        this.font = font;
         amount = 1;
         setUpTexture();
         setBounds(0, 0, 100, 100);
@@ -60,5 +61,9 @@ public class CounterActor extends Actor {
         float cardCenterX = getX() + getWidth() / 2 - layout.width / 2;
         //float cardCenterY = getY() + getHeight() / 2 - layout.height / 2;
         font.draw(batch, layout, cardCenterX, getY() + font.getLineHeight());
+    }
+
+    public int getAmount() {
+        return amount;
     }
 }
