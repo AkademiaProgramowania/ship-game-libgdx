@@ -7,11 +7,14 @@ public class Player {
 
     private String collectedShipType;
     private boolean stillPlaying = true;
+
+    private int playerIndex;
     int id;
 
     private List<Card> ownStack = new ArrayList<>();
 
-    public Player() {
+    public Player(int playerIndex) {
+        this.playerIndex = playerIndex;
     }
 
     public Player(String collectedShipType) {
@@ -123,7 +126,7 @@ public class Player {
     }
 
     public void showOwnStack() {
-        System.out.println("Stack - player " + id + ":");
+        System.out.println("Stack - gracz " + playerIndex + ":");
         for (Card card : ownStack) {
             System.out.println(card);
         }
@@ -155,6 +158,10 @@ public class Player {
         return ownStack.size();
     }
 
+    public int getPlayerIndex() {
+        return playerIndex;
+    }
+
     public int getId() {
         return id;
     }
@@ -177,10 +184,12 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
-                ", id=" + id +
+        return "Player {" +
+                "playerIndex=" + playerIndex +
                 ", collectedShipType='" + collectedShipType + '\'' +
-                ", last turn=" + getPlayingStatus() + '\'' +
+                ", stillPlaying=" + stillPlaying +
+                ", id=" + id +
+                ", ownStack=" + ownStack +
                 '}';
     }
 }

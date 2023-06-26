@@ -2,9 +2,14 @@
 - każde zadanie ma mieć osobny branch
 - robimy odnogę z bieżącego brancha
 
-foreign key, relacje one to many, joiny
-- czyścić dane w tabeli przed jej pobieraniem (?)
 
+- usunąć podwójne createcards
+- przy zapisie karty pobierać z mainstaka, playerów i temporarystaka
+- update tabeli players:
+- update tabeli cards (po każdej rozgrywce zmienia się owner)
+- joinować osobnym poleceniem (owner w tabeli card)
+-
+-
 - dostosować kod - set w karcie playerId po rundzie. Domyślnie null
 - jak przy tworzeniu tabeli dodać klauzulę foreign key
 - nie można usunąć playera jeśli inna tabela wskazuje go jako foreign key

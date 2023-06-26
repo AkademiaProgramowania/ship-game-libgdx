@@ -13,11 +13,11 @@ import java.util.List;
 public class Game implements EventListener {
 
     private List<Card> mainStack;
-    private List<Card> temporaryStack = new ArrayList<>(); // stos tymczasowy, tu są odkładane karty zanim stos głowny
-    // się skończy i będzie nowe tasowanie
+    private final int mainStackIndex = 5;
+    private final List<Card> temporaryStack = new ArrayList<>();
+    private final int temporaryStackIndex = 6;
 
-    private List<Player> players = new ArrayList<>(); // pole do przechowywania zainicjalizowane w konstruktorze
-
+    private final List<Player> players = new ArrayList<>(); // pole do przechowywania zainicjalizowane w konstruktorze
     private int currentPlayerIndex = 0;
 
     public Game() {
@@ -74,7 +74,7 @@ public class Game implements EventListener {
         }
         if (!drawn.getType().equals(Card.Type.STORM)) {
             getCurrentPlayer().addCard(drawn);
-            drawn.setPlayerId(getCurrentPlayer().getId());
+            drawn.setPlayerIndex(getCurrentPlayer().getPlayerIndex());
             if (getCurrentPlayer().checkIfLastShipCard()) {
                 Event endGame = new Event(EventType.GAME_END);
                 endGame.setPlayer(getCurrentPlayer());
@@ -82,7 +82,7 @@ public class Game implements EventListener {
                 return;
             }
         }
-        if (drawn.getType().equals(Card.Type.STORM)) { // karcie typu STORM nie przypisujemy player_id
+        if (drawn.getType().equals(Card.Type.STORM)) {
             addToTemporaryStack(drawn);
         }
 
@@ -113,7 +113,7 @@ public class Game implements EventListener {
         event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
         EventBus.notify(event);
         getCurrentPlayer().stillPlaying(true); // kolejny! // don't understand
-        System.out.println("Ustawienie gracza na: " + getCurrentPlayer().toString());
+        System.out.println("Ustawienie gracza na: " + getCurrentPlayer().getPlayerIndex());
 
     }
 
@@ -135,29 +135,92 @@ public class Game implements EventListener {
         System.out.println("requested player - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
     }
 
-    public void savePlayers() {
+    public void saveGame() {
+        // przy klażdym savie tworzy tabele (najpierw players potem cards) jeśli jej nie ma
+        // uzupełnia players z collected_ship_type i stack size (orientacyjnie żeby spr czy się zgadza)
+        // uzupełnia karty z owner
+        // nie potrzeba update (gdyby player był, update do ustawienia playera UPDATE cards SET player_id = null WHERE cards.id = 4; (przykładowo)
+
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
-            PreparedStatement preparedStatement = null;
+            String baseStatementPlayers = "INSERT INTO players (collected_ship_type, stack_size, player_index) values ('%s','%o', %o);";
+            String baseStatementCards = "INSERT INTO cards (type, second_ship_type, picture_index, storm_value, owner) values ('%s','%s',%o,%o,%o);";
+            Statement statement = connection.createStatement();
+
+            // tabela players
+            String delete = "DELETE FROM players WHERE player_index BETWEEN 1 AND 2;";
+            statement.execute(delete);
+            String createTablePlayers = "CREATE TABLE IF NOT EXISTS players (\n" +
+                    "id INTEGER not null AUTO_INCREMENT,\n" +
+                    "collected_ship_type VARCHAR(255),\n" +
+                    "stack_size INTEGER,\n" +
+                    "player_index INTEGER, \n" +
+                    "PRIMARY KEY (id));\n";
+            statement.executeUpdate(createTablePlayers);
+            System.out.println("Table players created");
+
+            // uzupełnianie tabeli players
             for (Player player : players) {
-                preparedStatement = connection.prepareStatement("INSERT INTO players VALUES (0,?,?,?);", Statement.RETURN_GENERATED_KEYS);
-                preparedStatement.setString(1, player.getCollectedShipType());
-                preparedStatement.setInt(2, player.getStackSize());
-                preparedStatement.setString(3, player.getPlayingStatus());
-                ResultSet generatedPlayerKeys = preparedStatement.getGeneratedKeys();
-                if (generatedPlayerKeys.next()) {
-                    int id = generatedPlayerKeys.getInt("id");
-                    player.setId(id);
+                String sqlStatement = String.format(baseStatementPlayers, player.getCollectedShipType(),
+                        player.getStackSize(), player.getPlayerIndex());
+                statement.execute(sqlStatement);
+            }
+            System.out.println("table players filled");
+
+            // tabela cards
+            String dropCards = " DROP TABLE IF EXISTS cards;";
+            statement.executeUpdate(dropCards);
+            String createTableCards = "CREATE TABLE cards (\n" +
+                    "id INTEGER not null AUTO_INCREMENT,\n" +
+                    "type VARCHAR(255),\n" +
+                    "second_ship_type VARCHAR(255),\n" +
+                    "picture_index INTEGER,\n" +
+                    "storm_value INTEGER,\n" +
+                    "owner INTEGER, \n" +
+                    "PRIMARY KEY (id));";// +
+                    //"FOREIGN KEY (player_index) REFERENCES players(player_index));";
+            // nie wstawiać foreign key które nie jest unikalne!
+            statement.executeUpdate(createTableCards);
+            System.out.println("Table cards created");
+
+            // uzupełnianie tabeli cards przy każdym savie od nowa - wszystkie karty z właściwym ownerem (1-2 players, 5 mainStack, 6 temporaryStack)
+            // przerobić na pozyskiwanie kart z roznych staków: playerów, mainStack, temporary.
+            // usunąć podwójne card creation i listę allCards z game
+
+            // pozyskiwanie kard z playerów
+            for (Player player : players) { // dla każdego playera
+                List<Card> playerStack = new ArrayList<>(player.getOwnStack()); // tworzy i uzupełnia listę kart
+                for (Card card : playerStack) { // potem każdą kartę z tej listy wstawia do tabeli
+                    String sqlStatement = String.format(baseStatementCards, card.getType().name(),
+                            card.getSecondShipType(), card.getPictureIndex(),
+                            card.getStormValue(), card.getPlayerIndex());
+                    statement.execute(sqlStatement);
                 }
-                preparedStatement.executeUpdate();
+            }
+            // pozyskiwanie kart z mainStacka
+            for (Card card : mainStack) {
+                String sqlStatement = String.format(baseStatementCards, card.getType().name(),
+                        card.getSecondShipType(), card.getPictureIndex(),
+                        card.getStormValue(), mainStackIndex);
+                statement.execute(sqlStatement);
+            }
+            // pozyskiwanie kart z temporaryStacka
+            for (Card card : temporaryStack) {
+                String sqlStatement = String.format(baseStatementCards, card.getType().name(),
+                        card.getSecondShipType(), card.getPictureIndex(),
+                        card.getStormValue(), temporaryStackIndex);
+                statement.execute(sqlStatement);
 
             }
+            System.out.println("Table cards filled");
+            connection.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public List<Player> getPlayersFromDB() {
+    public List<Player> getGameFromDB() {
         List<Player> playersFromDB = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
@@ -167,8 +230,6 @@ public class Game implements EventListener {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String collectedType = resultSet.getString("collected_ship_type");
-                int stackSize = resultSet.getInt("stack_size");
-                String lastTurn = resultSet.getString("last_turn");
                 Player newPlayer = new Player(collectedType); // tworzy obiekt za pomocą drugiego konstrukt.
                 newPlayer.setId(id);
                 playersFromDB.add(newPlayer);

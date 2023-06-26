@@ -29,7 +29,7 @@ public class Controller implements EventListener {
     }
 
     public void playTurn(Event event) {
-        System.out.println("Gra gracz " + event.getPlayer());
+        System.out.println("Gra gracz " + event.getPlayer().getPlayerIndex());
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
@@ -42,7 +42,7 @@ public class Controller implements EventListener {
         if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
             System.out.println("Collected ships: " + game.getCurrentPlayer().getShipsCollected(true).toString());
         }
-        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - end game and save players");
+        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save game");
         switch (scanner.nextInt()) {
             case 1:
                 EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
@@ -68,7 +68,7 @@ public class Controller implements EventListener {
                 EventBus.notify(new Event(EventType.PASS_DECISION));
                 break;
             case 4:
-                game.savePlayers();
+                game.saveGame();
                 endGameSave();
                 break;
         }
@@ -126,13 +126,14 @@ public class Controller implements EventListener {
                 }
             } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
         } else {
+            player.setCollectedShipType(null);
             // robocza lista do skorzystania z metody addToTemporaryStack
             List<Card> all = new ArrayList<>(player.getOwnStack());
             for (Card card : all) {
                 game.addToTemporaryStack(card);
             }
             player.getOwnStack().clear();
-            player.setCollectedShipType(null);
+
         }
     }
 
@@ -145,7 +146,7 @@ public class Controller implements EventListener {
         System.out.println("Game saved. To restart press 1");
         if (scanner.nextInt() == 1) {
             System.out.println("Players table");
-            List<Player> restarted = game.getPlayersFromDB();
+            List<Player> restarted = game.getGameFromDB();
             for (Player player : restarted) {
                 game.addPlayer(player);
                 System.out.println(player);
@@ -154,6 +155,7 @@ public class Controller implements EventListener {
             System.exit(0);
         }
     }
+
     @Override
     public void react(Event event) {
         EventType eventType = event.getType();
@@ -183,7 +185,6 @@ public class Controller implements EventListener {
             }
         }
         if (eventType == EventType.PLAYER_SWITCHED) {
-            System.out.println("Player switched. Current: " + event.getPlayer());
             playTurn(event);
         }
     }

@@ -17,7 +17,7 @@ public class Card {
 
     private int id;
     private Player owner; // zamiast playerId
-    private Integer playerId;
+    private Integer playerIndex;
 
 
     // private pole z wstawionym assetem jpg?
@@ -54,23 +54,24 @@ public class Card {
     public void setId(int id) {
         this.id = id;
     }
-    public Integer getPlayerId() {
-        return playerId;
+    public Integer getPlayerIndex() {
+        return playerIndex;
     }
 
-    public void setPlayerId(Integer playerId) {
-        this.playerId = playerId;
+    public void setPlayerIndex(Integer playerIndex) {
+        this.playerIndex = playerIndex;
     }
 
     @Override
     public String toString() {
         return "Card{" +
-                "id=" + id +
-                ", type=" + type +
+                "type=" + type +
                 ", secondShipType='" + secondShipType + '\'' +
                 ", pictureIndex=" + pictureIndex +
                 ", stormValue=" + stormValue +
-                ", playerId=" + playerId +
+                ", id=" + id +
+                ", owner=" + owner +
+                ", playerIndex=" + playerIndex +
                 '}';
     }
 }
