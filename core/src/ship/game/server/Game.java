@@ -112,7 +112,9 @@ public class Game implements EventListener {
         Event event = new Event(EventType.PLAYER_SWITCHED);
         event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
         EventBus.notify(event);
-        getCurrentPlayer().stillPlaying(true); // kolejny! // don't understand
+        getCurrentPlayer().stillPlaying(true); // kolejny!
+        // todo refactor (should not contain selector argument)
+        // https://rules.sonarsource.com/java/RSPEC-2301
         System.out.println("Ustawienie gracza na: " + getCurrentPlayer().getPlayerIndex());
 
     }
@@ -220,7 +222,7 @@ public class Game implements EventListener {
         }
     }
 
-    public List<Player> getGameFromDB() {
+    public List<Player> getPlayersFromDB() {
         List<Player> playersFromDB = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
@@ -228,11 +230,13 @@ public class Game implements EventListener {
             String select1 = "SELECT * FROM players;";
             ResultSet resultSet = statement.executeQuery(select1);
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
                 String collectedType = resultSet.getString("collected_ship_type");
-                Player newPlayer = new Player(collectedType); // tworzy obiekt za pomocą drugiego konstrukt.
-                newPlayer.setId(id);
+                int playerIndex = resultSet.getInt("player_index"); // player index = owner w tabeli cards
+                Player newPlayer = new Player(playerIndex);
+                newPlayer.setCollectedShipType(collectedType);
                 playersFromDB.add(newPlayer);
+                // todo dopisać setowanie last_turn
+                // poprawić isStillPlaying
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -9,7 +9,6 @@ public class Player {
     private boolean stillPlaying = true;
 
     private int playerIndex;
-    int id;
 
     private List<Card> ownStack = new ArrayList<>();
 
@@ -17,9 +16,6 @@ public class Player {
         this.playerIndex = playerIndex;
     }
 
-    public Player(String collectedShipType) {
-        this.collectedShipType = collectedShipType;
-    }
 
     public void addCard(Card card) {
         ownStack.add(card);
@@ -51,7 +47,7 @@ public class Player {
         return toReturn;
     }
 
-    public List<Card> getShipsCollected(boolean collected) {
+    public List<Card> getShipsCollected(boolean collected) { // todo refactor selector arguments
         List<Card> ships = getCards(Card.Type.SHIP); //wszystkie typu SHIP
         List<Card> result = new ArrayList<>();
         // may be changed to stream filer collect https://www.baeldung.com/java-stream-filter-lambda
@@ -138,7 +134,7 @@ public class Player {
 
     public boolean stillPlaying(boolean stillPlaying) { // don't understand this method and it's usage
         return stillPlaying;
-    }
+    }// todo refactor selector arguments
 
     public String getPlayingStatus() {
         String status = "";
@@ -162,12 +158,8 @@ public class Player {
         return playerIndex;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
     }
 
     public String getCollectedShipType() {
@@ -188,7 +180,6 @@ public class Player {
                 "playerIndex=" + playerIndex +
                 ", collectedShipType='" + collectedShipType + '\'' +
                 ", stillPlaying=" + stillPlaying +
-                ", id=" + id +
                 ", ownStack=" + ownStack +
                 '}';
     }

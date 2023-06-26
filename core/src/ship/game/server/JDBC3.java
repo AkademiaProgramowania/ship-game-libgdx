@@ -12,12 +12,10 @@ public class JDBC3 {
         CardFactory factory = new CardFactory(); // dodatkowy obiekt
         List<Card> cards = factory.createCards();
         Player player1 = new Player(1);
-        player1.setId(1);
         player1.addCard(cards.get(0));
         player1.addCard(cards.get(1));
 
         Player player2 = new Player(2);
-        player2.setId(2);
         player2.addCard(cards.get(2));
         player2.addCard(cards.get(3));
 

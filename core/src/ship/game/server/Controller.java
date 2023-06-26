@@ -146,7 +146,7 @@ public class Controller implements EventListener {
         System.out.println("Game saved. To restart press 1");
         if (scanner.nextInt() == 1) {
             System.out.println("Players table");
-            List<Player> restarted = game.getGameFromDB();
+            List<Player> restarted = game.getPlayersFromDB();
             for (Player player : restarted) {
                 game.addPlayer(player);
                 System.out.println(player);
