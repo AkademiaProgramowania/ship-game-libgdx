@@ -14,13 +14,7 @@ public class Card {
     private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4"
     private int pictureIndex;
     private int stormValue;
-
-    private int id;
-    private Player owner; // zamiast playerId
     private Integer playerIndex;
-
-
-    // private pole z wstawionym assetem jpg?
 
     public Card(Card.Type type, int pictureIndex, int stormValue) { // for storm, coin, cannon
         this.type = type;
@@ -51,17 +45,12 @@ public class Card {
         return stormValue;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
     public Integer getPlayerIndex() {
         return playerIndex;
     }
-
     public void setPlayerIndex(Integer playerIndex) {
         this.playerIndex = playerIndex;
     }
-
     @Override
     public String toString() {
         return "Card{" +
@@ -69,7 +58,6 @@ public class Card {
                 ", secondShipType='" + secondShipType + '\'' +
                 ", pictureIndex=" + pictureIndex +
                 ", stormValue=" + stormValue +
-                ", id=" + id +
                 ", playerIndex=" + playerIndex +
                 '}';
     }

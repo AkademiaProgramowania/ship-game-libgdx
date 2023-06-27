@@ -24,12 +24,12 @@ public class Controller implements EventListener {
     }
 
     public void play() {
-        System.out.println("Widzisz talie i graczy o numerach 1, 2");
+        System.out.println("Poczatek gry");
         EventBus.notify(new Event(EventType.GAME_START));
     }
 
     public void playTurn(Event event) {
-        System.out.println("Gra gracz " + event.getPlayer().getPlayerIndex());
+        System.out.println("\nGra gracz " + event.getPlayer().getPlayerIndex());
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
@@ -39,10 +39,10 @@ public class Controller implements EventListener {
     public void decideOnNextTurn() {
         System.out.println("You need " + game.getCurrentPlayer().checkNumberOfMissingShipCards() + " ship cards");
         System.out.println("Collected ship type: " + game.getCurrentPlayer().getCollectedShipType());
-        if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
+        /*if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
             System.out.println("Collected ships: " + game.getCurrentPlayer().getShipsCollected(true).toString());
-        }
-        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save game, 5 - restore game");
+        }*/
+        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save game");
         switch (scanner.nextInt()) {
             case 1:
                 EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
@@ -69,13 +69,8 @@ public class Controller implements EventListener {
                 break;
             case 4:
                 game.saveGame();
-                System.out.println("game saved");
-                break;
-            case 5:
                 restoreGame();
-                play();
                 break;
-
         }
     }
 
@@ -132,13 +127,11 @@ public class Controller implements EventListener {
             } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
         } else {
             player.setCollectedShipType(null);
-            // robocza lista do skorzystania z metody addToTemporaryStack
             List<Card> all = new ArrayList<>(player.getOwnStack());
             for (Card card : all) {
                 game.addToTemporaryStack(card);
             }
             player.getOwnStack().clear();
-
         }
     }
 
@@ -150,8 +143,11 @@ public class Controller implements EventListener {
     public void restoreGame() {
         System.out.println("Game saved. To restart press 1");
         if (scanner.nextInt() == 1) {
-            game.assignPlayersFromDB();
-            game.assignCardsFromDB();
+            game.assignNewPlayersFromDB();
+            game.assignNewCardsFromDB();
+            System.out.println("Players (sout contr) " + game.getPlayers().toString());
+            System.out.println("MainStack: " + game.getMainStack().toString());
+            System.out.println("TemporaryStack: " + game.getTemporaryStack().toString());
         } else {
             System.exit(0);
         }

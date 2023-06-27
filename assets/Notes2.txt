@@ -2,8 +2,9 @@
 - każde zadanie ma mieć osobny branch
 - robimy odnogę z bieżącego brancha
 
-- póki co save game i restore game
 - poprawić getCurrentPlayer
+- restore game: przypisuje odwrotnie karty playerom, nie przypisuje kart do mainstack i temporary, błąd
+- only one ResultSet object per Statement object can be open at the same time
 
 - refactor selector arguments w metodach (player - stillPlaying, still Palying, game - switchToNextPlayer)
 - dodać w playerze last turn (i zmieniać go w rozgrywce)
@@ -13,8 +14,6 @@
 -
 - dostosować kod - set w karcie playerId po rundzie. Domyślnie null
 - jak przy tworzeniu tabeli dodać klauzulę foreign key
-- nie można usunąć playera jeśli inna tabela wskazuje go jako foreign key
-- tabela players - bez player_index, dodać resultset z id (pobieranie)
 - napisać SQl update który przypisuje kartę playerowi
 - dwa joiny: wyciągnięcie playera znając id karty, wyciągnąć wszystkei karty nalezące do playera
 - wygeneruj wynik w którym widzimy: id playera, id karty, collected ship, typ karty (tylko karty któe nalezą do jakiegokolwiek playera - bez tych nieprzypisanych)
