@@ -2,8 +2,9 @@
 - każde zadanie ma mieć osobny branch
 - robimy odnogę z bieżącego brancha
 
+- póki co save game i restore game
+- poprawić getCurrentPlayer
 
-- usunąć podwójne createcards
 - refactor selector arguments w metodach (player - stillPlaying, still Palying, game - switchToNextPlayer)
 - dodać w playerze last turn (i zmieniać go w rozgrywce)
 - update tabeli players: ship_type, last turn

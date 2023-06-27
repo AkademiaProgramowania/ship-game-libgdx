@@ -42,7 +42,7 @@ public class Controller implements EventListener {
         if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
             System.out.println("Collected ships: " + game.getCurrentPlayer().getShipsCollected(true).toString());
         }
-        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save game");
+        System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save game, 5 - restore game");
         switch (scanner.nextInt()) {
             case 1:
                 EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
@@ -69,8 +69,13 @@ public class Controller implements EventListener {
                 break;
             case 4:
                 game.saveGame();
-                endGameSave();
+                System.out.println("game saved");
                 break;
+            case 5:
+                restoreGame();
+                play();
+                break;
+
         }
     }
 
@@ -142,15 +147,11 @@ public class Controller implements EventListener {
         System.exit(0);
     }
 
-    public void endGameSave() {
+    public void restoreGame() {
         System.out.println("Game saved. To restart press 1");
         if (scanner.nextInt() == 1) {
-            System.out.println("Players table");
-            List<Player> restarted = game.getPlayersFromDB();
-            for (Player player : restarted) {
-                game.addPlayer(player);
-                System.out.println(player);
-            }
+            game.assignPlayersFromDB();
+            game.assignCardsFromDB();
         } else {
             System.exit(0);
         }

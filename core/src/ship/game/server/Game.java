@@ -39,7 +39,7 @@ public class Game implements EventListener {
 
     public void gameStart() { // setowanie playera w evencie
         // event wyciągnięty do zmiennej by móc to zrobić
-        temporaryStack.clear(); //todo raczej nie potrzebne
+        //temporaryStack.clear(); //todo raczej nie potrzebne
         shuffle(mainStack);
         Event event = new Event(EventType.TURN_START);
         event.setPlayer(getCurrentPlayer());
@@ -180,8 +180,7 @@ public class Game implements EventListener {
                     "storm_value INTEGER,\n" +
                     "owner INTEGER, \n" +
                     "PRIMARY KEY (id));";// +
-                    //"FOREIGN KEY (player_index) REFERENCES players(player_index));";
-            // nie wstawiać foreign key które nie jest unikalne!
+                    //"FOREIGN KEY (player_index) REFERENCES players(player_index));"; // nie wstawiać foreign key które nie jest unikalne!
             statement.executeUpdate(createTableCards);
             System.out.println("Table cards created");
 
@@ -189,7 +188,6 @@ public class Game implements EventListener {
             // przerobić na pozyskiwanie kart z roznych staków: playerów, mainStack, temporary.
             // usunąć podwójne card creation i listę allCards z game
 
-            // pozyskiwanie kard z playerów
             for (Player player : players) { // dla każdego playera
                 List<Card> playerStack = new ArrayList<>(player.getOwnStack()); // tworzy i uzupełnia listę kart
                 for (Card card : playerStack) { // potem każdą kartę z tej listy wstawia do tabeli
@@ -199,14 +197,12 @@ public class Game implements EventListener {
                     statement.execute(sqlStatement);
                 }
             }
-            // pozyskiwanie kart z mainStacka
             for (Card card : mainStack) {
                 String sqlStatement = String.format(baseStatementCards, card.getType().name(),
                         card.getSecondShipType(), card.getPictureIndex(),
                         card.getStormValue(), mainStackIndex);
                 statement.execute(sqlStatement);
             }
-            // pozyskiwanie kart z temporaryStacka
             for (Card card : temporaryStack) {
                 String sqlStatement = String.format(baseStatementCards, card.getType().name(),
                         card.getSecondShipType(), card.getPictureIndex(),
@@ -242,6 +238,64 @@ public class Game implements EventListener {
             e.printStackTrace();
         }
         return playersFromDB;
+    }
+
+    public List<Card> getCardsFromDB() {
+        List<Card> cardsFromDB = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
+            Statement statement = connection.createStatement();
+            String select1 = "SELECT * FROM cards;";
+            ResultSet resultSet = statement.executeQuery(select1);
+            while (resultSet.next()) {
+                String collectedType = resultSet.getString("type");
+                String secondShipType = resultSet.getString("second_ship_type");
+                int pictureIndex = resultSet.getInt("picture_index");
+                int stormValue = resultSet.getInt("storm_value");
+                int playerIndex = resultSet.getInt("owner");
+                Card newCard = new Card(Card.Type.valueOf(collectedType), secondShipType, pictureIndex, stormValue);
+                newCard.setPlayerIndex(playerIndex);
+                cardsFromDB.add(newCard);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cardsFromDB;
+    }
+
+    public void assignPlayersFromDB() {
+        players.clear();
+        List<Player> playersFromDB = getPlayersFromDB();
+        for (Player player : playersFromDB) {
+            addPlayer(player);
+            System.out.println(player);
+        }
+    }
+
+    public void assignCardsFromDB() {
+        mainStack.clear();
+        temporaryStack.clear();
+        List<Card> cardsFromDB = getCardsFromDB();
+        for (Card card : cardsFromDB) { // dla każdej karty z DB
+            if (card.getPlayerIndex() == 1) {
+                getPlayerByIndex(0).addCard(card);
+            }
+            if (card.getPlayerIndex() == 2-1) {
+                getPlayerByIndex(1).addCard(card);
+            }
+            if (card.getPlayerIndex() == 5) {
+                mainStack.add(card);
+            }
+            if (card.getPlayerIndex() == 6) {
+                temporaryStack.add(card);
+            }
+        }
+        for (Player player : players) {
+            player.showOwnStack();
+        }
+        System.out.println("Mainstack: " + " size: " + mainStack.size() + " " + mainStack.toString());
+        System.out.println("Temporary: " + " size: " + temporaryStack.size() + " " + temporaryStack.toString());
+
     }
 
     public void addToTemporaryStack(Card card) {

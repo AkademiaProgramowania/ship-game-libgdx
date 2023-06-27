@@ -70,7 +70,6 @@ public class Card {
                 ", pictureIndex=" + pictureIndex +
                 ", stormValue=" + stormValue +
                 ", id=" + id +
-                ", owner=" + owner +
                 ", playerIndex=" + playerIndex +
                 '}';
     }
