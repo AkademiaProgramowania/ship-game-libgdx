@@ -143,13 +143,20 @@ public class Controller implements EventListener {
     public void restoreGame() {
         System.out.println("Game saved. To restart press 1");
         if (scanner.nextInt() == 1) {
+            game.getMainStack().clear();
+            game.getTemporaryStack().clear();
             game.assignNewPlayersFromDB();
             game.assignNewCardsFromDB();
+
+
             System.out.println("Players (sout contr) " + game.getPlayers().toString());
-            System.out.println("MainStack: " + game.getMainStack().toString());
-            System.out.println("TemporaryStack: " + game.getTemporaryStack().toString());
+            System.out.println("player 1 has" + game.getPlayers().get(0).getOwnStack());
+            System.out.println("player 2 has" + game.getPlayers().get(1).getOwnStack());
+            System.out.println("MainStack: " + game.getMainStack().size() + " " + game.getMainStack().toString());
+            System.out.println("TemporaryStack: " + game.getTemporaryStack().size() + " " + game.getTemporaryStack().toString());
         } else {
-            System.exit(0);
+            System.out.println("weszło do elsa");
+            //System.exit(0);
         }
     }
 

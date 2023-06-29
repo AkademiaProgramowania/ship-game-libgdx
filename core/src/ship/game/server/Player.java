@@ -179,8 +179,7 @@ public class Player {
         return "Player {" +
                 "playerIndex=" + playerIndex +
                 ", collectedShipType='" + collectedShipType + '\'' +
-                ", stillPlaying=" + stillPlaying +
-                ", ownStack=" + ownStack +
+                ", ownStack=" + ownStack.size() +
                 '}';
     }
 }
