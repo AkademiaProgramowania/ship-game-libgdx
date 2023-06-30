@@ -1,11 +1,13 @@
 package ship.game.server;
 
+import com.mysql.cj.exceptions.DataTruncationException;
 import ship.game.server.events.Event;
 import ship.game.server.events.EventBus;
 import ship.game.server.events.EventListener;
 import ship.game.server.events.EventType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,9 +20,7 @@ public class Controller implements EventListener {
         EventBus.subscribe(EventType.TURN_START, this);
         EventBus.subscribe(EventType.GAME_END, this);
         EventBus.subscribe(EventType.DRAW_CARD, this);
-        EventBus.subscribe(EventType.SELECT_CARDS_TO_RETURN, this);
         EventBus.subscribe(EventType.PLAYER_SWITCHED, this);
-        EventBus.subscribe(EventType.SET_SHIP_TYPE_TO_COLLECT, this);
     }
 
     public void play() {
@@ -39,7 +39,7 @@ public class Controller implements EventListener {
     public void decideOnNextTurn() {
         System.out.println("You need " + game.getCurrentPlayer().checkNumberOfMissingShipCards() + " ship cards");
         System.out.println("Collected ship type: " + game.getCurrentPlayer().getCollectedShipType());
-        /*if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
+/*        if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
             System.out.println("Collected ships: " + game.getCurrentPlayer().getShipsCollected(true).toString());
         }*/
         System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save game");
@@ -119,6 +119,8 @@ public class Controller implements EventListener {
                         }
                         if (player.getShipsCollected(true).size() == 0) {
                             player.setCollectedShipType(null);
+                            // gdy player nazbierał więcej innych statków niż własny i chce podmienić typ kolekcjonowany
+                            setCollectedFromRemainingShips(player);
                         }
                         break;
                     default:
@@ -135,6 +137,57 @@ public class Controller implements EventListener {
         }
     }
 
+    public void setCollectedFromRemainingShips(Player player) {
+        List<Card> ships = player.getCards(Card.Type.SHIP);
+        List<Card> shipsAvailable = new ArrayList<>();
+        int numS1 = 0;
+        int numS2 = 0;
+        int numS3 = 0;
+        int numS4 = 0;
+        for (Card ship : ships) {
+            if (game.shipIsNotCollected(ship)) {
+                shipsAvailable.add(ship);
+            }
+            if (!shipsAvailable.isEmpty()) {
+                for (Card card : shipsAvailable) { // spr którego typu najwięcej
+                    switch (card.getSecondShipType()) {
+                        case "S1":
+                            numS1++;
+                            break;
+                        case "S2":
+                            numS2++;
+                            break;
+                        case "S3":
+                            numS3++;
+                            break;
+                        default:
+                            numS4++;
+                            break;
+                    }
+                    List<Integer> numOfShips = new ArrayList<>();
+                    numOfShips.add(numS1);
+                    numOfShips.add(numS2);
+                    numOfShips.add(numS3);
+                    numOfShips.add(numS4);
+                    Collections.sort(numOfShips);
+                    int intMax = Collections.max(numOfShips);
+                    if (intMax == numS1) {
+                        player.setCollectedShipType("S1");
+                    } else if (intMax == numS2) {
+                        player.setCollectedShipType("S2");
+                    } else if (intMax == numS3) {
+                        player.setCollectedShipType("S3");
+                    } else {
+                        player.setCollectedShipType("S4");
+                    }
+                }
+            } else {
+                System.out.println("Nie ma dostępnych statków");
+            }
+        }
+        System.out.println("Collected po zmianie: " + player.getCollectedShipType() + " ilosc: " + player.getShipsCollected(true).size());
+    }
+
     public void endGame(Event event) {
         System.out.println("Game ends. \nPlayer " + event.getPlayer() + " wins, having collected " + event.getPlayer().getCollectedShipType() + " ship type");
         System.exit(0);
@@ -143,20 +196,16 @@ public class Controller implements EventListener {
     public void restoreGame() {
         System.out.println("Game saved. To restart press 1");
         if (scanner.nextInt() == 1) {
-            game.getMainStack().clear();
-            game.getTemporaryStack().clear();
             game.assignNewPlayersFromDB();
             game.assignNewCardsFromDB();
 
+            System.out.println("Player (1): " + game.getPlayers().get(0).getOwnStack().size() + " " + game.getPlayers().get(0).getOwnStack());
+            System.out.println("Player (2): " + game.getPlayers().get(1).getOwnStack().size() + " " + game.getPlayers().get(1).getOwnStack());
+            System.out.println("MainStack: " + game.getMainStack().size() + " " + game.getMainStack());
+            System.out.println("TemporaryStack: " + game.getTemporaryStack().size() + " " + game.getTemporaryStack());
 
-            System.out.println("Players (sout contr) " + game.getPlayers().toString());
-            System.out.println("player 1 has" + game.getPlayers().get(0).getOwnStack());
-            System.out.println("player 2 has" + game.getPlayers().get(1).getOwnStack());
-            System.out.println("MainStack: " + game.getMainStack().size() + " " + game.getMainStack().toString());
-            System.out.println("TemporaryStack: " + game.getTemporaryStack().size() + " " + game.getTemporaryStack().toString());
         } else {
-            System.out.println("weszło do elsa");
-            //System.exit(0);
+            System.exit(0);
         }
     }
 

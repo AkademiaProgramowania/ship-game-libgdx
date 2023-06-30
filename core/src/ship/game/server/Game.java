@@ -38,7 +38,7 @@ public class Game implements EventListener {
 
     public void gameStart() { // setowanie playera w evencie
         // event wyciągnięty do zmiennej by móc to zrobić
-        //temporaryStack.clear(); //todo raczej nie potrzebne
+        //temporaryStack.clear();
         shuffle(mainStack);
         Event event = new Event(EventType.TURN_START);
         event.setPlayer(getCurrentPlayer());
@@ -158,7 +158,6 @@ public class Game implements EventListener {
                     "player_index INTEGER, \n" +
                     "PRIMARY KEY (id));\n";
             statement.executeUpdate(createTablePlayers);
-            System.out.println("Table players created");
 
             // uzupełnianie tabeli players
             for (Player player : players) {
@@ -166,7 +165,6 @@ public class Game implements EventListener {
                         player.getStackSize(), player.getPlayerIndex());
                 statement.execute(sqlStatement);
             }
-            System.out.println("Table players filled");
 
             // tabela cards
             String dropCards = " DROP TABLE IF EXISTS cards;";
@@ -181,7 +179,6 @@ public class Game implements EventListener {
                     "PRIMARY KEY (id));";// +
             //"FOREIGN KEY (player_index) REFERENCES players(player_index));"; // nie wstawiać foreign key które nie jest unikalne!
             statement.executeUpdate(createTableCards);
-            System.out.println("Table cards created");
 
             // uzupełnianie tabeli cards przy każdym savie od nowa - wszystkie karty z właściwym ownerem (1-2 players, 5 mainStack, 6 temporaryStack)
             // przerobić na pozyskiwanie kart z roznych staków: playerów, mainStack, temporary.
@@ -209,16 +206,16 @@ public class Game implements EventListener {
                 statement.execute(sqlStatement);
 
             }
-            System.out.println("Table cards filled");
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // działą ok
     public void assignNewPlayersFromDB() {
-        players.clear();
+        for (Player player : players) {
+            player.getOwnStack().clear();
+        }
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
@@ -248,10 +245,11 @@ public class Game implements EventListener {
     }
 
     public void assignNewCardsFromDB() {
-        //mainStack.clear(); // clear w controllerze dla testów
-        //temporaryStack.clear();
-        List<Card> newCards1 = new ArrayList<>();
-        List<Card> newCards2 = new ArrayList<>();
+        mainStack.clear();
+        temporaryStack.clear();
+        List<Card> P1Cards = new ArrayList<>();
+        List<Card> P2Cards = new ArrayList<>();
+
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
@@ -265,7 +263,7 @@ public class Game implements EventListener {
                 int playerIndex = resultSet1.getInt("owner");
                 Card newCard = new Card(Card.Type.valueOf(collectedType), secondShipType, pictureIndex, stormValue);
                 newCard.setPlayerIndex(playerIndex);
-                newCards1.add(newCard);
+                P1Cards.add(newCard);
             }
             connection.close();
         } catch (Exception e) {
@@ -285,96 +283,60 @@ public class Game implements EventListener {
                 int playerIndex = resultSet2.getInt("owner");
                 Card newCard = new Card(Card.Type.valueOf(collectedType), secondShipType, pictureIndex, stormValue);
                 newCard.setPlayerIndex(playerIndex);
-                newCards2.add(newCard);
+                P2Cards.add(newCard);
             }
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("newCards1: " + newCards1.size() + newCards1);
-        System.out.println("newCards2: " + newCards2.size() + newCards2);
 
-        for (Card card : newCards1) {
-            players.get(0).addCard(card);
+        for (Card card : P1Cards) {
+            players.get(0).addCard(card); // uwaga na index!
         }
-        for (Card card : newCards2) {
+        for (Card card : P2Cards) {
             players.get(1).addCard(card);
         }
-    }
 
-            /*String query2 = "SELECT * FROM cards WHERE owner = 2;";
-            ResultSet resultSet2 = statement.executeQuery(query2);
-            while (resultSet2.next()) {
-                String collectedType = resultSet1.getString("type");
-                String secondShipType = resultSet1.getString("second_ship_type");
-                int pictureIndex = resultSet1.getInt("picture_index");
-                int stormValue = resultSet1.getInt("storm_value");
-                int playerIndex = resultSet1.getInt("owner");
-                Card newCard = new Card(Card.Type.valueOf(collectedType), secondShipType, pictureIndex, stormValue);
-                newCard.setPlayerIndex(playerIndex);
-                newCards.add(newCard);
-            }
-            System.out.println("Zawartośc newCards: " + newCards.size());
-            for (Card newCard : newCards) {
-                System.out.println(newCard);
-            }
-*/
-            /*ResultSet resultSet5 = statement.executeQuery(String.format(baseStatementCards, mainStackIndex));
-            while (resultSet5.next()) {
-                String collectedType = resultSet1.getString("type");
-                String secondShipType = resultSet1.getString("second_ship_type");
-                int pictureIndex = resultSet1.getInt("picture_index");
-                int stormValue = resultSet1.getInt("storm_value");
-                int playerIndex = resultSet1.getInt("owner");
+        try{
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
+            Statement statement = connection.createStatement();
+            String query3 = "SELECT * FROM cards WHERE owner = 5;";
+            ResultSet resultSet3 = statement.executeQuery(query3);
+            while (resultSet3.next()) {
+                String collectedType = resultSet3.getString("type");
+                String secondShipType = resultSet3.getString("second_ship_type");
+                int pictureIndex = resultSet3.getInt("picture_index");
+                int stormValue = resultSet3.getInt("storm_value");
+                int playerIndex = resultSet3.getInt("owner");
                 Card newCard = new Card(Card.Type.valueOf(collectedType), secondShipType, pictureIndex, stormValue);
                 newCard.setPlayerIndex(playerIndex);
                 mainStack.add(newCard);
-            }*/
-            /*ResultSet resultSet6 = statement.executeQuery(String.format(baseStatementCards, temporaryStackIndex));
-            while (resultSet6.next()) {
-                String collectedType = resultSet1.getString("type");
-                String secondShipType = resultSet1.getString("second_ship_type");
-                int pictureIndex = resultSet1.getInt("picture_index");
-                int stormValue = resultSet1.getInt("storm_value");
-                int playerIndex = resultSet1.getInt("owner");
+            }
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
+            Statement statement = connection.createStatement();
+            String query4 = "SELECT * FROM cards WHERE owner = 6;";
+            ResultSet resultSet4 = statement.executeQuery(query4);
+            while (resultSet4.next()) {
+                String collectedType = resultSet4.getString("type");
+                String secondShipType = resultSet4.getString("second_ship_type");
+                int pictureIndex = resultSet4.getInt("picture_index");
+                int stormValue = resultSet4.getInt("storm_value");
+                int playerIndex = resultSet4.getInt("owner");
                 Card newCard = new Card(Card.Type.valueOf(collectedType), secondShipType, pictureIndex, stormValue);
                 newCard.setPlayerIndex(playerIndex);
                 temporaryStack.add(newCard);
-            }*/
-    //connection.close();
-
-/*    public void assignPlayersFromDB() {
-        players.clear();
-        List<Player> playersFromDB = getPlayersFromDB();
-        for (Player player : playersFromDB) {
-            addPlayer(player);
+            }
+            connection.close();
+        }  catch (Exception e) {
+            e.printStackTrace();
         }
-    }*/
-
-/*    public void assignCardsFromDB() {
-        mainStack.clear();
-        temporaryStack.clear();
-        List<Card> cardsFromDB = getCardsFromDB();
-        for (Card card : cardsFromDB) { // dla każdej karty z DB
-            if (card.getPlayerIndex() == 1) {
-                getPlayerByIndex(0).addCard(card);
-            }
-            if (card.getPlayerIndex() == 2) {
-                getPlayerByIndex(1).addCard(card);
-            }
-            if (card.getPlayerIndex() == 5) {
-                mainStack.add(card);
-            }
-            if (card.getPlayerIndex() == 6) {
-                temporaryStack.add(card);
-            }
-        }
-        for (Player player : players) {
-            player.showOwnStack();
-        }
-        System.out.println("Mainstack: " + " size: " + mainStack.size() + " " + mainStack.toString());
-        System.out.println("Temporary: " + " size: " + temporaryStack.size() + " " + temporaryStack.toString());
-    }*/
+    }
 
     public void addToTemporaryStack(Card card) {
         temporaryStack.add(card);
