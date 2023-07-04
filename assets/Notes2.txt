@@ -3,15 +3,12 @@
 - robimy odnogę z bieżącego brancha
 
 - poprawić getCurrentPlayer
-- restore game: przypisuje odwrotnie karty playerom, nie przypisuje kart do mainstack i temporary, błąd
 - only one ResultSet object per Statement object can be open at the same time
+- wznawianie poprawić
 
 - refactor selector arguments w metodach (player - stillPlaying, still Palying, game - switchToNextPlayer)
 - dodać w playerze last turn (i zmieniać go w rozgrywce)
-- update tabeli players: ship_type, last turn
-- update tabeli cards (po każdej rozgrywce zmienia się owner)
-- dopisać metody przywracające staki getCardsFormDB() Select * where owner = "x" , rozpakowywac result set tworzac karty i setować im przynależnosć do odp. list
--
+
 - dostosować kod - set w karcie playerId po rundzie. Domyślnie null
 - jak przy tworzeniu tabeli dodać klauzulę foreign key
 - napisać SQl update który przypisuje kartę playerowi

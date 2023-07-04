@@ -144,8 +144,8 @@ public class Game implements EventListener {
 
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
-            String baseStatementPlayers = "INSERT INTO players (collected_ship_type, stack_size, player_index) values ('%s','%o', %o);";
-            String baseStatementCards = "INSERT INTO cards (type, second_ship_type, picture_index, storm_value, owner) values ('%s','%s',%o,%o,%o);";
+            String baseStatementPlayers = "INSERT INTO players (collected_ship_type, stack_size, player_index) values ('%s','%d', %d);";
+            String baseStatementCards = "INSERT INTO cards (type, second_ship_type, picture_index, storm_value, owner) values ('%s','%s',%d,%d,%d);";
             Statement statement = connection.createStatement();
 
             // tabela players
@@ -219,7 +219,7 @@ public class Game implements EventListener {
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
-            String baseStatementPlayers = "SELECT * FROM players WHERE player_index = %o;";
+            String baseStatementPlayers = "SELECT * FROM players WHERE player_index = %d;";
             ResultSet resultSet1 = statement.executeQuery(String.format(baseStatementPlayers, 1));
             while (resultSet1.next()) {
                 String collectedType = resultSet1.getString("collected_ship_type");
@@ -266,6 +266,7 @@ public class Game implements EventListener {
                 P1Cards.add(newCard);
             }
             connection.close();
+            System.out.println("rozmiar listy P1" + P1Cards.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -286,12 +287,13 @@ public class Game implements EventListener {
                 P2Cards.add(newCard);
             }
             connection.close();
+            System.out.println("rozmiar listy P2" + P2Cards.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         for (Card card : P1Cards) {
-            players.get(0).addCard(card); // uwaga na index!
+            players.get(0).addCard(card); // uwaga na indeks!
         }
         for (Card card : P2Cards) {
             players.get(1).addCard(card);
