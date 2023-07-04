@@ -194,7 +194,7 @@ public class Controller implements EventListener {
     }
 
     public void restoreGame() {
-        System.out.println("Game saved. To restart press 1");
+        System.out.println("To restart press 1");
         if (scanner.nextInt() == 1) {
             game.assignNewPlayersFromDB();
             game.assignNewCardsFromDB();

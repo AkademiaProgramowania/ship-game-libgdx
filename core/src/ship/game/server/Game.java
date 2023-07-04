@@ -207,15 +207,15 @@ public class Game implements EventListener {
 
             }
             connection.close();
+            System.out.println("Game saved");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void assignNewPlayersFromDB() {
-        for (Player player : players) {
-            player.getOwnStack().clear();
-        }
+        players.clear();
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
@@ -266,7 +266,7 @@ public class Game implements EventListener {
                 P1Cards.add(newCard);
             }
             connection.close();
-            System.out.println("rozmiar listy P1" + P1Cards.size());
+            System.out.println("rozmiar listy P1: " + P1Cards.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -287,7 +287,7 @@ public class Game implements EventListener {
                 P2Cards.add(newCard);
             }
             connection.close();
-            System.out.println("rozmiar listy P2" + P2Cards.size());
+            System.out.println("rozmiar listy P2: " + P2Cards.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
