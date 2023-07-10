@@ -18,8 +18,10 @@ public class Game implements EventListener {
     private final int temporaryStackIndex = 6;
     private final List<Player> players = new ArrayList<>();
     private int currentPlayerIndex = 0;
+    private Repository repository; // spr
 
-    public Game() {
+    public Game(Repository repository) {
+        this.repository = repository;
         CardFactory factory = new CardFactory();
         mainStack = factory.createCards();
         EventBus.subscribe(EventType.GAME_START, this);
@@ -141,8 +143,14 @@ public class Game implements EventListener {
         // uzupełnia players z collected_ship_type i stack size (orientacyjnie żeby spr czy się zgadza)
         // uzupełnia karty z owner
         // nie potrzeba update (gdyby player był, update do ustawienia playera UPDATE cards SET player_id = null WHERE cards.id = 4; (przykładowo)
+        repository.savePlayers(players);
+        for (Player player: players) {
+            repository.saveCards(player.getOwnStack(), player.getPlayerIndex());
+        }
+        repository.saveCards(mainStack, mainStackIndex);
+        repository.saveCards(temporaryStack, temporaryStackIndex);
 
-        try {
+/*        try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             String baseStatementPlayers = "INSERT INTO players (collected_ship_type, stack_size, player_index) values ('%s','%d', %d);";
             String baseStatementCards = "INSERT INTO cards (type, second_ship_type, picture_index, storm_value, owner) values ('%s','%s',%d,%d,%d);";
@@ -211,7 +219,7 @@ public class Game implements EventListener {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void assignNewPlayersFromDB() {
