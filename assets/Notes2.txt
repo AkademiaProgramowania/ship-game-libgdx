@@ -3,9 +3,6 @@
 - robimy odnogę z bieżącego brancha
 
 - poprawić getCurrentPlayer
-- only one ResultSet object per Statement object can be open at the same time
-- wznawianie poprawić
-
 - refactor selector arguments w metodach (player - stillPlaying, still Palying, game - switchToNextPlayer)
 - dodać w playerze last turn (i zmieniać go w rozgrywce)
 
