@@ -14,9 +14,9 @@ public class Game implements EventListener {
 
     private List<Card> mainStack;
     private final int mainStackIndex = 5;
-    private final List<Card> temporaryStack = new ArrayList<>();
+    private List<Card> temporaryStack = new ArrayList<>();
     private final int temporaryStackIndex = 6;
-    private final List<Player> players = new ArrayList<>();
+    private List<Player> players = new ArrayList<>();
     private int currentPlayerIndex = 0;
     private Repository repository; // spr
 
@@ -144,6 +144,7 @@ public class Game implements EventListener {
         // uzupełnia karty z owner
         // nie potrzeba update (gdyby player był, update do ustawienia playera UPDATE cards SET player_id = null WHERE cards.id = 4; (przykładowo)
         repository.savePlayers(players);
+        repository.clearTableCards();
         for (Player player: players) {
             repository.saveCards(player.getOwnStack(), player.getPlayerIndex());
         }
@@ -224,7 +225,9 @@ public class Game implements EventListener {
 
     public void assignNewPlayersFromDB() {
         players.clear();
-        try {
+        players = repository.getPlayersFromDB();
+
+/*        try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
             String baseStatementPlayers = "SELECT * FROM players WHERE player_index = %d;";
@@ -249,16 +252,27 @@ public class Game implements EventListener {
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void assignNewCardsFromDB() {
         mainStack.clear();
         temporaryStack.clear();
-        List<Card> P1Cards = new ArrayList<>();
-        List<Card> P2Cards = new ArrayList<>();
 
-        try {
+        List<Card> P1Cards = repository.getCardsFromDB(1);
+        for (Card card : P1Cards) {
+            players.get(0).addCard(card); // uwaga na indeks!
+        }
+        List<Card> P2Cards = repository.getCardsFromDB(2);
+        for (Card card : P2Cards) {
+            players.get(1).addCard(card);
+        }
+
+        mainStack = repository.getCardsFromDB(5);
+        temporaryStack = repository.getCardsFromDB(6);
+
+
+/*        try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
             String query1 = "SELECT * FROM cards WHERE owner = 1;";
@@ -277,9 +291,9 @@ public class Game implements EventListener {
             System.out.println("rozmiar listy P1: " + P1Cards.size());
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
-        try {
+/*        try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
             String query2 = "SELECT * FROM cards WHERE owner = 2;";
@@ -298,16 +312,10 @@ public class Game implements EventListener {
             System.out.println("rozmiar listy P2: " + P2Cards.size());
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
-        for (Card card : P1Cards) {
-            players.get(0).addCard(card); // uwaga na indeks!
-        }
-        for (Card card : P2Cards) {
-            players.get(1).addCard(card);
-        }
 
-        try{
+/*        try{
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
             String query3 = "SELECT * FROM cards WHERE owner = 5;";
@@ -325,9 +333,9 @@ public class Game implements EventListener {
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
-        try {
+/*        try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
             Statement statement = connection.createStatement();
             String query4 = "SELECT * FROM cards WHERE owner = 6;";
@@ -345,7 +353,7 @@ public class Game implements EventListener {
             connection.close();
         }  catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void addToTemporaryStack(Card card) {

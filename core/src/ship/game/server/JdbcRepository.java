@@ -2,7 +2,9 @@ package ship.game.server;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcRepository implements Repository {
@@ -13,7 +15,7 @@ public class JdbcRepository implements Repository {
             String baseStatementPlayers = "INSERT INTO players (collected_ship_type, stack_size, player_index) values ('%s','%d', %d);";
             Statement statement = connection.createStatement();
 
-            // tabela players
+            // tworzenie tabela players
             String delete = "DELETE FROM players WHERE player_index BETWEEN 1 AND 2;";
             statement.execute(delete);
             String createTablePlayers = "CREATE TABLE IF NOT EXISTS players (\n" +
@@ -40,14 +42,15 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public int saveCards(List<Card> cards, int index) {
+    public int clearTableCards() {
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
-            String baseStatementCards = "INSERT INTO cards (type, second_ship_type, picture_index, storm_value, owner) values ('%s','%s',%d,%d,%d);";
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor");
             Statement statement = connection.createStatement();
-
             String dropCards = " DROP TABLE IF EXISTS cards;";
             statement.executeUpdate(dropCards);
+            System.out.println("Table cards cleared");
+
+            // tworzenie tabeli cards
             String createTableCards = "CREATE TABLE cards (\n" +
                     "id INTEGER not null AUTO_INCREMENT,\n" +
                     "type VARCHAR(255),\n" +
@@ -57,7 +60,25 @@ public class JdbcRepository implements Repository {
                     "owner INTEGER, \n" +
                     "PRIMARY KEY (id));";// +
             statement.executeUpdate(createTableCards);
+            connection.close();
+            System.out.println("New table cards created");
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+        return 0;
+    }
+
+
+    @Override
+    public int saveCards(List<Card> cards, int index) {
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
+            String baseStatementCards = "INSERT INTO cards (type, second_ship_type, picture_index, storm_value, owner) values ('%s','%s',%d,%d,%d);";
+            Statement statement = connection.createStatement();
+
+            // uzupełnianie tabeli cards
             for (Card card : cards) {
                 String sqlStatement = String.format(baseStatementCards, card.getType().name(),
                         card.getSecondShipType(), card.getPictureIndex(),
@@ -72,5 +93,62 @@ public class JdbcRepository implements Repository {
             return -1;
         }
         return 0;
+    }
+
+    @Override
+    public List<Player> getPlayersFromDB() {
+        List<Player> players = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
+            Statement statement = connection.createStatement();
+            String baseStatementPlayers = "SELECT * FROM players WHERE player_index = %d;";
+            ResultSet resultSet1 = statement.executeQuery(String.format(baseStatementPlayers, 1));
+            while (resultSet1.next()) {
+                String collectedType = resultSet1.getString("collected_ship_type");
+                int playerIndex = resultSet1.getInt("player_index"); // player index = owner w tabeli cards
+                Player newPlayer = new Player(playerIndex);
+                newPlayer.setCollectedShipType(collectedType);
+                players.add(newPlayer);
+                // todo dopisać setowanie last_turn
+                // poprawić isStillPlaying
+            }
+            ResultSet resultSet2 = statement.executeQuery(String.format(baseStatementPlayers, 2));
+            while (resultSet2.next()) {
+                String collectedType = resultSet2.getString("collected_ship_type");
+                int playerIndex = resultSet2.getInt("player_index"); // player index = owner w tabeli cards
+                Player newPlayer = new Player(playerIndex);
+                newPlayer.setCollectedShipType(collectedType);
+                players.add(newPlayer);
+            }
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return players;
+    }
+
+    @Override
+    public List<Card> getCardsFromDB(int ownerIndex) {
+        List<Card> cards = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
+            Statement statement = connection.createStatement();
+            String baseStatementCards = "SELECT * FROM cards WHERE owner = %d;";
+            ResultSet resultSet1 = statement.executeQuery(String.format(baseStatementCards, ownerIndex));
+            while (resultSet1.next()) {
+                String collectedType = resultSet1.getString("type");
+                String secondShipType = resultSet1.getString("second_ship_type");
+                int pictureIndex = resultSet1.getInt("picture_index");
+                int stormValue = resultSet1.getInt("storm_value");
+                int playerIndex = resultSet1.getInt("owner");
+                Card newCard = new Card(Card.Type.valueOf(collectedType), secondShipType, pictureIndex, stormValue);
+                newCard.setPlayerIndex(playerIndex);
+                cards.add(newCard);
+            }
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cards;
     }
 }
