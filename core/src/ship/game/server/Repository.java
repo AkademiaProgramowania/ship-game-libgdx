@@ -5,7 +5,7 @@ import java.util.List;
 public interface Repository {
 
     int savePlayers(List<Player> players);
-    int clearTableCards();
+    int createTableCards();
     int saveCards(List<Card> cards, int index);
 
     List<Player> getPlayersFromDB();

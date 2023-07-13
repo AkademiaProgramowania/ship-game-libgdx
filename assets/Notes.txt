@@ -2,9 +2,9 @@
 - każde zadanie ma mieć osobny branch
 - robimy odnogę z bieżącego brancha
 
-- poprawić getCurrentPlayer
+- poprawić getCurrentPlayer/isStillPlaying
 - only one ResultSet object per Statement object can be open at the same time
-- wznawianie poprawić
+- dopisać zmianę playera po save game
 
 - refactor selector arguments w metodach (player - stillPlaying, still Palying, game - switchToNextPlayer)
 - dodać w playerze last turn (i zmieniać go w rozgrywce)

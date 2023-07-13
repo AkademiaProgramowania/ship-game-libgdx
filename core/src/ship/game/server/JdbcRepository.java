@@ -42,13 +42,12 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public int clearTableCards() {
+    public int createTableCards() {
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor");
             Statement statement = connection.createStatement();
             String dropCards = " DROP TABLE IF EXISTS cards;";
             statement.executeUpdate(dropCards);
-            System.out.println("Table cards cleared");
 
             // tworzenie tabeli cards
             String createTableCards = "CREATE TABLE cards (\n" +
@@ -61,7 +60,6 @@ public class JdbcRepository implements Repository {
                     "PRIMARY KEY (id));";// +
             statement.executeUpdate(createTableCards);
             connection.close();
-            System.out.println("New table cards created");
 
         } catch (Exception e) {
             e.printStackTrace();
