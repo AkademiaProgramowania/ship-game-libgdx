@@ -112,10 +112,9 @@ public class Game implements EventListener {
         } else {
             currentPlayerIndex++;
         }
-/*        for (Player player : players) {
-            player.setStillPlaying(player.getPlayerIndex() == currentPlayerIndex); // w nawiasie jest argument z metody setStillPlaying
-            // czyli setuj true gdy warunek w nawiasie jest spełniony i odwrotnie.
-        }*/
+        for (Player player : players) {
+            player.setStillPlaying(player.equals(getCurrentPlayer())); // setowanie na true gdy warunek w nawiasie = true i odwrotnie
+        }
         Event event = new Event(EventType.PLAYER_SWITCHED);
         event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
         EventBus.notify(event);

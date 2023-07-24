@@ -139,7 +139,7 @@ public class Player {
 
     public String getPlayingStatus() {
         String status = "";
-        if (isStillPlaying()) {
+        if (stillPlaying) {
             status = "T";
         } else {
             status = "F";
@@ -154,10 +154,6 @@ public class Player {
         if (status.equals("F"))
             stillPlaying = false;
         }
-
-    public boolean isStillPlaying() { // geter do metody stillPlaying
-        return stillPlaying;
-    }
 
     public int getStackSize() {
         return ownStack.size();
