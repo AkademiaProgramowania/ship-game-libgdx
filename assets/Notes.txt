@@ -2,15 +2,30 @@
 - każde zadanie ma mieć osobny branch
 - robimy odnogę z bieżącego brancha
 
+- poprawić getCurrentPlayer/isStillPlaying - metody są teraz bez sensu, obecnie status jest aktualizowany przez current player index
+- only one ResultSet object per Statement object can be open at the same time
+
+- refactor selector arguments w metodach (player - stillPlaying, still Palying, game - switchToNextPlayer)
+- dodać w playerze last turn (i zmieniać go w rozgrywce)
+
+- dostosować kod - set w karcie playerId po rundzie. Domyślnie null
+- jak przy tworzeniu tabeli dodać klauzulę foreign key
+- napisać SQl update który przypisuje kartę playerowi
+- dwa joiny: wyciągnięcie playera znając id karty, wyciągnąć wszystkei karty nalezące do playera
+- wygeneruj wynik w którym widzimy: id playera, id karty, collected ship, typ karty (tylko karty któe nalezą do jakiegokolwiek playera - bez tych nieprzypisanych)
+- dosotsowanie ustawiania ostatniego gracza (lub nie potrzeba gdy zapisywanie stanu gry bedzie przed ruchem kolejnego gracza)
+
+JDBC
+- zamiast pola w Card i setowania ownera w kodzie gry, zapisujemy stan gry przez playera i oba stacki przy savie.
+- save = zapisujemy jakie karty ma gracz/stack (lista)
+- do osobnej tabeli wpisuje sie wszystkie obiekty z listy zaznaczając ze są przyporządkowane do obiektu któy posiada listę za pomocą foreign key
+- tabela kart i graczy
+
 done:
 - uzupełnione dependencies w pliku build.gradle, dodany zamiast pliku jar, driver (mysql-connecor) z maven central. Plik jar usunięty
-- rewizja kodu
-- nullowanie collectedShipType gdy wyda wszystkie statki kolekcjonowane
 - wyświetlanie zaktualizowanej liczby statków o dotychczas zebrane w przypadku przydzielenia statku do kolekcjoniwania o tym samym typie
 
-- BAZY DANYCH dodać zapisanie stanu gry + odtworzenie gry. Póki co na drugim projekcie
 - powt. jak robić evaluate expression przy debugowaniu
-- przenieść temporarystack.clear() ?
 
 - constructor dependency injection spr
 - przerobić createListOfShips() na pętle

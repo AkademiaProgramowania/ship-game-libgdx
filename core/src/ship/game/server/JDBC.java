@@ -28,10 +28,6 @@ public class JDBC {
     }
 }
 // jeśli ich tam jeszcze nie ma: (if exist)
-// tworzyć tabelę
-// CardFactory ma dodawać karty do bazy
-
-
 
    /* String sql = "CREATE TABLE GamePlayers" +
             "(id INTEGER not null," +

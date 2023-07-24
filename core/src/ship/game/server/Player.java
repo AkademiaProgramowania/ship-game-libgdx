@@ -7,7 +7,8 @@ public class Player {
 
     private String collectedShipType;
     private boolean stillPlaying = true;
-    int playerIndex;
+
+    private int playerIndex;
 
     private List<Card> ownStack = new ArrayList<>();
 
@@ -15,14 +16,9 @@ public class Player {
         this.playerIndex = playerIndex;
     }
 
-    public Player(int playerIndex, String collectedShipType)  {
-        this.playerIndex = playerIndex;
-        this.collectedShipType = collectedShipType;
-    }
 
     public void addCard(Card card) {
         ownStack.add(card);
-        card.setOwner(playerIndex);
     }
 
     public void removeCard(Card card) {
@@ -40,7 +36,7 @@ public class Player {
         return cards;
     }
 
-    public Card getCoinCard() {
+    public Card getCoinToPay() {
         Card toReturn = null;
         for (Card card : ownStack) {
             if (card.getType().equals(Card.Type.COIN)) {
@@ -51,7 +47,8 @@ public class Player {
         return toReturn;
     }
 
-    public List<Card> getShipsCollected(boolean collected) {
+    public List<Card> getShipsCollected(boolean collected) { // todo refactor selector arguments
+        // https://rules.sonarsource.com/java/RSPEC-2301
         List<Card> ships = getCards(Card.Type.SHIP); //wszystkie typu SHIP
         List<Card> result = new ArrayList<>();
         // may be changed to stream filer collect https://www.baeldung.com/java-stream-filter-lambda
@@ -70,6 +67,40 @@ public class Player {
         setIfFirstCollected(card);
         ownStack.add(card);
     }*/
+
+    public void setAsCollectedMostPopularType() {
+        List<Card> biggestNotCollectedShipsList = getBiggestNotCollectedShipsList();
+        if (biggestNotCollectedShipsList == null || biggestNotCollectedShipsList.isEmpty()) {
+            collectedShipType = null;
+        } else {
+            collectedShipType = biggestNotCollectedShipsList.get(0).getSecondShipType();
+        }
+    }
+
+    private List<Card> getBiggestNotCollectedShipsList() {
+        List<Card> shipsCollected = getShipsCollected(false);
+        String[] types = {"S1", "S2", "S3", "S4"};
+        List<Card> biggestList = null;
+        for (String type : types) {
+            List<Card> shipsInThisType = getByCollectedShipType(shipsCollected, type);
+            if (biggestList == null) {
+                biggestList = shipsInThisType;
+            } else if (biggestList.size() < shipsInThisType.size()) {
+                biggestList = shipsInThisType;
+            }
+        }
+        return biggestList;
+    }
+
+    private List<Card> getByCollectedShipType(List<Card> ships, String type){
+        List<Card> result = new ArrayList<>();
+        for (Card card : ships) {
+            if (card.getSecondShipType().equals(type)) {
+                result.add(card);
+            }
+        }
+        return result;
+    }
 
     public Card getSelectedShipCard(String givenType) {
         List<Card> ships = getCards(Card.Type.SHIP);
@@ -115,7 +146,7 @@ public class Player {
     public boolean isCollectingThisShip(Card card) {
         boolean isCollecting = false;
         // the condition inside if(... ) can be just returned as the method is boolean
-        if ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType))) {
+        if ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType))) { // TODO just return the condition
             isCollecting = true;
         }
         return isCollecting;
@@ -126,7 +157,7 @@ public class Player {
     }
 
     public void showOwnStack() {
-        System.out.println("Stack - player " + getPlayerIndex() + ":");
+        System.out.println("Stack - gracz " + playerIndex + ":");
         for (Card card : ownStack) {
             System.out.println(card);
         }
@@ -136,21 +167,27 @@ public class Player {
         return ownStack.size() > 0;
     }
 
-    public boolean stillPlaying(boolean stillPlaying) { // don't understand this method and it's usage
-        return stillPlaying;
+    public void setStillPlaying(boolean stillPlaying) {
+        this.stillPlaying = stillPlaying;
     }
 
     public String getPlayingStatus() {
-        String status = "F";
-        if (isStillPlaying()) {
+        String status = "";
+        if (stillPlaying) {
             status = "T";
+        } else {
+            status = "F";
         }
         return status;
     }
 
-    public boolean isStillPlaying() { // geter do metody stillPlaying
-        return stillPlaying;
-    }
+    public void setPlayingStatus(String status) {
+        if (status.equals("T")) {
+            stillPlaying = true;
+        }
+        if (status.equals("F"))
+            stillPlaying = false;
+        }
 
     public int getStackSize() {
         return ownStack.size();
@@ -158,6 +195,10 @@ public class Player {
 
     public int getPlayerIndex() {
         return playerIndex;
+    }
+
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
     }
 
     public String getCollectedShipType() {
@@ -174,9 +215,10 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
-                "index=" + playerIndex +
+        return "Player {" +
+                "playerIndex=" + playerIndex +
                 ", collectedShipType='" + collectedShipType + '\'' +
+                ", ownStack=" + ownStack.size() +
                 '}';
     }
 }

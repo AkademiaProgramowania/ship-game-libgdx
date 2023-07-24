@@ -3,46 +3,34 @@ package ship.game.server;
 public class Card {
 
 
-
     public enum Type {
         SHIP,
         STORM,
         COIN,
         CANNON
     }
+
     private final Card.Type type;
-    private final int cardIndex;
-    private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4" // all fields can be final
+    private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4"
     private int pictureIndex;
     private int stormValue;
-    private int owner;
+    private Integer playerIndex;
 
-
-    // private pole z wstawionym assetem jpg?
-
-    public Card(Card.Type type, int cardIndex, int pictureIndex, int stormValue, int owner) { // for storm, coin, cannon
+    public Card(Card.Type type, int pictureIndex, int stormValue) { // for storm, coin, cannon
         this.type = type;
-        this.cardIndex = cardIndex;
         this.pictureIndex = pictureIndex;
         this.stormValue = stormValue;
-        this.owner = owner;
     }
 
-    public Card(Card.Type type, int cardIndex, String secondShipType, int pictureIndex, int stormValue, int owner) { // for ship
+    public Card(Card.Type type, String secondShipType, int pictureIndex, int stormValue) { // for ship
         this.type = type;
-        this.cardIndex = cardIndex;
         this.secondShipType = secondShipType;
         this.pictureIndex = pictureIndex;
         this.stormValue = stormValue;
-        this.owner = owner;
     }
 
     public Type getType() {
         return type;
-    }
-
-    public int getCardIndex() {
-        return cardIndex;
     }
 
     public String getSecondShipType() {
@@ -57,22 +45,20 @@ public class Card {
         return stormValue;
     }
 
-    public int getOwner() {
-        return owner;
+    public Integer getPlayerIndex() {
+        return playerIndex;
     }
-    public void setOwner(int owner) {
-        this.owner = owner;
+    public void setPlayerIndex(Integer playerIndex) {
+        this.playerIndex = playerIndex;
     }
-
     @Override
     public String toString() {
         return "Card{" +
                 "type=" + type +
-                ", cardIndex=" + cardIndex +
                 ", secondShipType='" + secondShipType + '\'' +
                 ", pictureIndex=" + pictureIndex +
                 ", stormValue=" + stormValue +
-                ", owner=" + owner +
+                ", playerIndex=" + playerIndex +
                 '}';
     }
 }

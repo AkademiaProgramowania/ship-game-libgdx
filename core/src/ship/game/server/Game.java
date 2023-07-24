@@ -5,7 +5,6 @@ import ship.game.server.events.EventBus;
 import ship.game.server.events.EventListener;
 import ship.game.server.events.EventType;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,14 +12,15 @@ import java.util.List;
 public class Game implements EventListener {
 
     private List<Card> mainStack;
-    private List<Card> temporaryStack = new ArrayList<>(); // stos tymczasowy, tu są odkładane karty zanim stos głowny
-    // się skończy i będzie nowe tasowanie
-
-    private List<Player> players = new ArrayList<>(); // pole do przechowywania zainicjalizowane w konstruktorze
-
+    private final int mainStackIndex = 5;
+    private List<Card> temporaryStack = new ArrayList<>();
+    private final int temporaryStackIndex = 6;
+    private List<Player> players = new ArrayList<>();
     private int currentPlayerIndex = 0;
+    private Repository repository;
 
-    public Game() {
+    public Game(Repository repository) {
+        this.repository = repository;
         CardFactory factory = new CardFactory();
         mainStack = factory.createCards();
         EventBus.subscribe(EventType.GAME_START, this);
@@ -39,9 +39,12 @@ public class Game implements EventListener {
 
     public void gameStart() { // setowanie playera w evencie
         // event wyciągnięty do zmiennej by móc to zrobić
-        temporaryStack.clear(); //todo raczej nie potrzebne
+        //temporaryStack.clear();
         shuffle(mainStack);
         Event event = new Event(EventType.TURN_START);
+/*        for (Player player : players) {
+            player.setStillPlaying(player.getPlayerIndex() == currentPlayerIndex);
+        }*/
         event.setPlayer(getCurrentPlayer());
         EventBus.notify(event);
     }
@@ -56,9 +59,7 @@ public class Game implements EventListener {
     public void checkIfMainStackIsOutAndShuffle() {
         if (mainStack.isEmpty()) {
             mainStack = shuffle(temporaryStack);
-            for (Card card : mainStack) {
-                card.setOwner(5);
-            }
+            temporaryStack.clear();
             System.out.println("Stack shuffled");
         }
     }
@@ -73,12 +74,11 @@ public class Game implements EventListener {
         System.out.println("Drawn: " + drawn);
 
         if (drawn.getType().equals(Card.Type.SHIP) && shipIsNotCollected(drawn)) {
-            getCurrentPlayer().setCollected(drawn); // tu tylko zmiana pola collectedShipType
-            // liczbę dotychczas zebranych statków tego typu pokazuje jako kolekcjonowane w controllerze
-            // czy zmienić komunikat na info o przejściu ze staku na handel do kolekcjonowanych?
+            getCurrentPlayer().setCollected(drawn);
         }
         if (!drawn.getType().equals(Card.Type.STORM)) {
             getCurrentPlayer().addCard(drawn);
+            drawn.setPlayerIndex(getCurrentPlayer().getPlayerIndex());
             if (getCurrentPlayer().checkIfLastShipCard()) {
                 Event endGame = new Event(EventType.GAME_END);
                 endGame.setPlayer(getCurrentPlayer());
@@ -89,12 +89,10 @@ public class Game implements EventListener {
         if (drawn.getType().equals(Card.Type.STORM)) {
             addToTemporaryStack(drawn);
         }
-
         Event drawCardEvent = new Event(EventType.DRAW_CARD);
         drawCardEvent.setCard(drawn);
         drawCardEvent.setPlayer(getCurrentPlayer());
         EventBus.notify(drawCardEvent);
-
         getCurrentPlayer().showOwnStack(); //to debug
     }
 
@@ -114,21 +112,24 @@ public class Game implements EventListener {
         } else {
             currentPlayerIndex++;
         }
+        for (Player player : players) {
+            player.setStillPlaying(player.equals(getCurrentPlayer())); // setowanie na true gdy warunek w nawiasie = true i odwrotnie
+        }
         Event event = new Event(EventType.PLAYER_SWITCHED);
         event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
         EventBus.notify(event);
-        getCurrentPlayer().stillPlaying(true); // kolejny! // don't understand
-        System.out.println("Ustawienie gracza na: " + getCurrentPlayer().toString());
-
+        System.out.println("Ustawienie gracza na: " + getCurrentPlayer().getPlayerIndex());
     }
 
-   // uwaga z przypisaniem karty waściwemu graczowi - do testów
-    public void buyCard(Event event) {// player = requested player, card = requested card
+    // uwaga z przypisaniem karty waściwemu graczowi - do testów
+    public void buyCard(Event event) {// w evencie jest ustawiony requested player i requested card
+        // przekazywanie żądanej karty między playerami:
+        getCurrentPlayer().addCard(event.getCard()); // current player, requested card
         event.getPlayer().removeCard(event.getCard()); // requested player, requested card
-        getCurrentPlayer().addCard(event.getCard()); // current player, requested card. Setowanie ownera karty w metodzie addCard
+        // płacenie za kartę:
         int num = 0;
         do {
-            event.getPlayer().addCard(getCurrentPlayer().getCoinCard()); // add coin, nie requested card z eventu
+            event.getPlayer().addCard(getCurrentPlayer().getCoinToPay()); // gracz z eventu ma dostać 3 monety od currentPlayera
             // usuwanie COIN ze staka currentPlayera w metodzie
             num++;
         } while (num <= 2);
@@ -138,50 +139,42 @@ public class Game implements EventListener {
         System.out.println("requested player - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
     }
 
-    public void savePlayers() {
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
-            PreparedStatement preparedStatement = null;
-            for (Player player : players) {
-
-                preparedStatement = connection.prepareStatement("INSERT INTO players VALUES (?,?,?,?,?);");
-                preparedStatement.setInt(1, 20+player.getPlayerIndex());
-                preparedStatement.setInt(2, player.getPlayerIndex());
-                preparedStatement.setString(3, player.getCollectedShipType());
-                preparedStatement.setInt(4, player.getStackSize());
-                preparedStatement.setString(4, player.getPlayingStatus());
-                //assert preparedStatement != null;
-                System.out.println(preparedStatement.executeUpdate());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void saveGame() {
+        repository.savePlayers(players);
+        repository.createTableCards();
+        for (Player player: players) {
+            repository.saveCards(player.getOwnStack(), player.getPlayerIndex());
         }
+        repository.saveCards(mainStack, mainStackIndex);
+        repository.saveCards(temporaryStack, temporaryStackIndex);
     }
 
-    public List<Player> getPlayersFromDB(){
-        List<Player> playersFromDB = new ArrayList<>();
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
-            Statement statement = connection.createStatement();
-            String select1 = "SELECT * FROM players;";
-            ResultSet resultSet = statement.executeQuery(select1);
-            while (resultSet.next()) {
-                int playerIndex = resultSet.getInt("player_index");
-                String collectedType = resultSet.getString("collected_ship_type");
-                int stackSize = resultSet.getInt("stack_size");
-                String lastTurn = resultSet.getString("last_turn");
-                Player newPlayer = new Player(playerIndex, collectedType); // tworzy obiekt za pomocą drugiego konstrukt.
-                playersFromDB.add(newPlayer);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void restorePlayersFromDB() {
+        players.clear();
+        players = repository.getPlayersFrom();
+        List<Player> play = players; //debugging help
+    }
+
+    public void restoreCardsFromDB() {
+        mainStack.clear();
+        temporaryStack.clear();
+
+        List<Card> P1Cards = repository.getCardsFrom(1);
+        for (Card card : P1Cards) {
+            players.get(0).addCard(card); // uwaga na indeks!
         }
-        return playersFromDB;
+        List<Card> P2Cards = repository.getCardsFrom(2);
+        for (Card card : P2Cards) {
+            players.get(1).addCard(card);
+        }
+
+        mainStack = repository.getCardsFrom(5);
+        temporaryStack = repository.getCardsFrom(6);
+
     }
 
     public void addToTemporaryStack(Card card) {
         temporaryStack.add(card);
-        card.setOwner(6);
     }
 
     public Player getCurrentPlayer() {
@@ -192,13 +185,16 @@ public class Game implements EventListener {
         return players.get(requiredIndex);
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public List<Card> getMainStack() {
+        return mainStack;
+    }
 
     public List<Card> getTemporaryStack() {
         return temporaryStack;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
     }
 
     @Override
@@ -217,7 +213,6 @@ public class Game implements EventListener {
             case PASS_DECISION:
                 switchToNextPlayer();
                 break;
-
             default:
                 System.out.println("default w game - react");
         }
