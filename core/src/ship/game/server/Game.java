@@ -151,7 +151,7 @@ public class Game implements EventListener {
 
     public void restorePlayersFromDB() {
         players.clear();
-        players = repository.getPlayersFromDB();
+        players = repository.getPlayersFrom();
         List<Player> play = players; //debugging help
     }
 
@@ -159,17 +159,17 @@ public class Game implements EventListener {
         mainStack.clear();
         temporaryStack.clear();
 
-        List<Card> P1Cards = repository.getCardsFromDB(1);
+        List<Card> P1Cards = repository.getCardsFrom(1);
         for (Card card : P1Cards) {
             players.get(0).addCard(card); // uwaga na indeks!
         }
-        List<Card> P2Cards = repository.getCardsFromDB(2);
+        List<Card> P2Cards = repository.getCardsFrom(2);
         for (Card card : P2Cards) {
             players.get(1).addCard(card);
         }
 
-        mainStack = repository.getCardsFromDB(5);
-        temporaryStack = repository.getCardsFromDB(6);
+        mainStack = repository.getCardsFrom(5);
+        temporaryStack = repository.getCardsFrom(6);
 
     }
 

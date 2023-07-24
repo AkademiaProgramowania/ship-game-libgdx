@@ -121,9 +121,9 @@ public class Controller implements EventListener {
                             player.removeCard(card);
                         }
                         if (player.getShipsCollected(true).size() == 0) {
-                            player.setCollectedShipType(null);
                             // gdy player nazbierał więcej innych statków niż własny i chce podmienić typ kolekcjonowany
-                            setCollectedFromRemainingShips(player);
+                            //setCollectedFromRemainingShips(player);
+                            player.setAsCollectedMostPopularType();
                         }
                         break;
                     default:
@@ -141,6 +141,7 @@ public class Controller implements EventListener {
     }
 
     public void setCollectedFromRemainingShips(Player player) {
+        player.setCollectedShipType(null);
         List<Card> ships = player.getCards(Card.Type.SHIP);
         List<Card> shipsAvailable = new ArrayList<>();
         int numS1 = 0;

@@ -68,6 +68,40 @@ public class Player {
         ownStack.add(card);
     }*/
 
+    public void setAsCollectedMostPopularType() {
+        List<Card> biggestNotCollectedShipsList = getBiggestNotCollectedShipsList();
+        if (biggestNotCollectedShipsList == null || biggestNotCollectedShipsList.isEmpty()) {
+            collectedShipType = null;
+        } else {
+            collectedShipType = biggestNotCollectedShipsList.get(0).getSecondShipType();
+        }
+    }
+
+    private List<Card> getBiggestNotCollectedShipsList() {
+        List<Card> shipsCollected = getShipsCollected(false);
+        String[] types = {"S1", "S2", "S3", "S4"};
+        List<Card> biggestList = null;
+        for (String type : types) {
+            List<Card> shipsInThisType = getByCollectedShipType(shipsCollected, type);
+            if (biggestList == null) {
+                biggestList = shipsInThisType;
+            } else if (biggestList.size() < shipsInThisType.size()) {
+                biggestList = shipsInThisType;
+            }
+        }
+        return biggestList;
+    }
+
+    private List<Card> getByCollectedShipType(List<Card> ships, String type){
+        List<Card> result = new ArrayList<>();
+        for (Card card : ships) {
+            if (card.getSecondShipType().equals(type)) {
+                result.add(card);
+            }
+        }
+        return result;
+    }
+
     public Card getSelectedShipCard(String givenType) {
         List<Card> ships = getCards(Card.Type.SHIP);
         Card selected = null;
