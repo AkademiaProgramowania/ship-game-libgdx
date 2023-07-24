@@ -6,8 +6,17 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
+import static ship.game.client.GUIParams.CARD_HEIGHT;
+import static ship.game.client.GUIParams.CARD_WIDTH;
+
 public class CollectedShipGroup extends Group {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
+
+    public CollectedShipGroup() {
+        setWidth(3 * CARD_WIDTH);
+        setHeight(2 * CARD_HEIGHT);
+    }
+
     public void addCard(CardActor actor) {
         addActor(actor);
         if (actor.getCardNum() < 4) {

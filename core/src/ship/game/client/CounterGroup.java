@@ -12,8 +12,7 @@ public class CounterGroup extends Group {
     public void addCounter(CounterActor actor) {
         addActor(actor);
         //TODO zerowe wartosci z getterow
-        actor.setPosition((getChildren().size - 1) * ((int) (0.1 * getWidth() + actor.getWidth())),
-                (int) (0.4 * getHeight()));
+        actor.setPosition(getX(), (getChildren().size - 1) * ((int) (0.1 * getHeight() + actor.getHeight())));
         //System.out.println(getWidth());
     }
 

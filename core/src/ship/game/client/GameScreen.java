@@ -50,19 +50,20 @@ public class GameScreen implements Screen {
         collectedShipGroup.addCard(cardActor3);
         collectedShipGroup.addCard(cardActor4);
         collectedShipGroup.addCard(cardActor5);
-        collectedShipGroup.setBounds(200, 200, 300, 300);
-        stage.addActor(collectedShipGroup);
-        CounterGroup counterGroup = new CounterGroup();
-        counterGroup.addCounter(new CounterActor(Card.Type.COIN, game.getFont()));
-        counterGroup.addCounter(new CounterActor(Card.Type.CANNON, game.getFont()));
-        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S2", game.getFont()));
-        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S3", game.getFont()));
-        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S4", game.getFont()));
-        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S5", game.getFont()));
-        counterGroup.addCounter(new CounterActor(Card.Type.SHIP, "S6", game.getFont()));
-        counterGroup.setBounds(200, 550, 750, 150);
-        stage.addActor(counterGroup);
-
+        //stage.addActor(collectedShipGroup);
+        CounterGroup resourcesGroup = new CounterGroup();
+        CounterGroup tradeGroup = new CounterGroup();
+        resourcesGroup.addCounter(new CounterActor(Card.Type.COIN, game.getFont()));
+        resourcesGroup.addCounter(new CounterActor(Card.Type.CANNON, game.getFont()));
+        tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S2", game.getFont()));
+        tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S3", game.getFont()));
+        tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S4", game.getFont()));
+        //resourcesGroup.setBounds(80, 200, 100, 250);
+        //tradeGroup.setBounds(520, 200, 100, 350);
+        //stage.addActor(resourcesGroup);
+        //stage.addActor(tradeGroup);
+        PlayerGroup playerGroup = new PlayerGroup(collectedShipGroup, resourcesGroup, tradeGroup);
+        stage.addActor(playerGroup);
     }
 
     @Override

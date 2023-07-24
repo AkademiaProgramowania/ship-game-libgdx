@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import ship.game.server.Card;
 
+import static ship.game.client.GUIParams.CARD_HEIGHT;
+import static ship.game.client.GUIParams.CARD_WIDTH;
+
 public class CardActor extends Actor {
     private Card card;
     private Texture texture;
@@ -13,7 +16,7 @@ public class CardActor extends Actor {
     public CardActor(Card card, Texture texture) {
         this.card = card;
         this.texture = texture;
-        setBounds(0, 0, 100, 150);
+        setBounds(0, 0, CARD_WIDTH, CARD_HEIGHT);
     }
 
     public int getCardNum() {
