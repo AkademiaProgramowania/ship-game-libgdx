@@ -1,5 +1,6 @@
 package ship.game.client;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -11,11 +12,14 @@ import static ship.game.client.GUIParams.CARD_WIDTH;
 
 public class CardActor extends Actor {
     private Card card;
-    private Texture texture;
+    private Texture activeTexture;
+    private static Texture cardBack = new Texture(Gdx.files.internal("storm1.jpg"));
+    private Texture cardFace;
 
-    public CardActor(Card card, Texture texture) {
+    public CardActor(Card card, Texture cardFace) {
         this.card = card;
-        this.texture = texture;
+        this.cardFace = cardFace;
+        this.activeTexture = cardBack;
         setBounds(0, 0, CARD_WIDTH, CARD_HEIGHT);
     }
 
@@ -28,9 +32,9 @@ public class CardActor extends Actor {
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
 
-        batch.draw(texture, getX(), getY(), getOriginX(), getOriginY(),
+        batch.draw(activeTexture, getX(), getY(), getOriginX(), getOriginY(),
                 getWidth(), getHeight(), getScaleX(), getScaleY(),
-                getRotation(), 0, 0, texture.getWidth(), texture.getHeight(),
+                getRotation(), 0, 0, activeTexture.getWidth(), activeTexture.getHeight(),
                 false, false);
 
         batch.setColor(Color.WHITE);

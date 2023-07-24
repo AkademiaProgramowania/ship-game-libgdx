@@ -96,6 +96,9 @@ public class GameScreen implements Screen {
             }
             stage.addActor(playerGroup);
         }
+        StackGroup stackGroup = new StackGroup();
+        stackGroup.setPosition(600, 500);
+        stage.addActor(stackGroup);
     }
 
     @Override
