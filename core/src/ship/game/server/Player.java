@@ -63,11 +63,6 @@ public class Player {
         return result; // zwraca jeden result
     }
 
-/*    public void addShipCard(Card card) {
-        setIfFirstCollected(card);
-        ownStack.add(card);
-    }*/
-
     public void setAsCollectedMostPopularType() {
         List<Card> biggestNotCollectedShipsList = getBiggestNotCollectedShipsList();
         if (biggestNotCollectedShipsList == null || biggestNotCollectedShipsList.isEmpty()) {
@@ -109,7 +104,6 @@ public class Player {
             for (Card ship : ships) { // logic can be replaced by Stream and Optional statement
                 // https://www.baeldung.com/java-stream-findfirst-vs-findany - return Optional of given type
                 // https://www.baeldung.com/java-optional
-                //
                 if (ship.getSecondShipType().equals(givenType)) {
                     selected = ship;
                 }
@@ -144,13 +138,8 @@ public class Player {
     }
 
     public boolean isCollectingThisShip(Card card) {
-        boolean isCollecting = false;
-        // the condition inside if(... ) can be just returned as the method is boolean
-        if ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType))) { // TODO just return the condition
-            isCollecting = true;
+        return  ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType)));
         }
-        return isCollecting;
-    }
 
     public int checkNumberOfMissingShipCards() {
         return 6 - getShipsCollected(true).size();
@@ -169,6 +158,10 @@ public class Player {
 
     public void setStillPlaying(boolean stillPlaying) {
         this.stillPlaying = stillPlaying;
+    }
+
+    public boolean isStillPlaying() {
+        return stillPlaying;
     }
 
     public String getPlayingStatus() {

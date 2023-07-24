@@ -42,9 +42,6 @@ public class Game implements EventListener {
         //temporaryStack.clear();
         shuffle(mainStack);
         Event event = new Event(EventType.TURN_START);
-/*        for (Player player : players) {
-            player.setStillPlaying(player.getPlayerIndex() == currentPlayerIndex);
-        }*/
         event.setPlayer(getCurrentPlayer());
         EventBus.notify(event);
     }
@@ -152,7 +149,6 @@ public class Game implements EventListener {
     public void restorePlayersFromDB() {
         players.clear();
         players = repository.getPlayersFrom();
-        List<Player> play = players; //debugging help
     }
 
     public void restoreCardsFromDB() {
@@ -167,10 +163,8 @@ public class Game implements EventListener {
         for (Card card : P2Cards) {
             players.get(1).addCard(card);
         }
-
         mainStack = repository.getCardsFrom(5);
         temporaryStack = repository.getCardsFrom(6);
-
     }
 
     public void addToTemporaryStack(Card card) {

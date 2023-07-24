@@ -37,7 +37,7 @@ public class Controller implements EventListener {
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
-        } while (event.getPlayer().getPlayingStatus().equals("T")); // todo spr czy działa po zmianie warunku
+        } while (event.getPlayer().isStillPlaying()); // todo spr czy działa po zmianie warunku
     }
 
     public void decideOnNextTurn() {
