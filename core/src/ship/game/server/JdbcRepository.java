@@ -12,24 +12,25 @@ public class JdbcRepository implements Repository {
     public int savePlayers(List<Player> players) {
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor");
-            String baseStatementPlayers = "INSERT INTO players (collected_ship_type, stack_size, player_index) values ('%s','%d', %d);";
+            String baseStatementPlayers = "INSERT INTO players (collected_ship_type, stack_size, player_index, playing_status) values ('%s', %d, %d, '%s');";
             Statement statement = connection.createStatement();
 
-            // tworzenie tabela players
-            String delete = "DELETE FROM players WHERE player_index BETWEEN 1 AND 2;";
+            // tworzenie tabeli players
+            String delete = "DELETE FROM players WHERE player_index BETWEEN 1 AND 4;";
             statement.execute(delete);
             String createTablePlayers = "CREATE TABLE IF NOT EXISTS players (\n" +
                     "id INTEGER not null AUTO_INCREMENT,\n" +
                     "collected_ship_type VARCHAR(255),\n" +
                     "stack_size INTEGER,\n" +
                     "player_index INTEGER, \n" +
+                    "playing_status VARCHAR(255), \n" +
                     "PRIMARY KEY (id));\n";
             statement.executeUpdate(createTablePlayers);
 
             // uzupełnianie tabeli players
             for (Player player : players) {
                 String sqlStatement = String.format(baseStatementPlayers, player.getCollectedShipType(),
-                        player.getStackSize(), player.getPlayerIndex());
+                        player.getStackSize(), player.getPlayerIndex(), player.getPlayingStatus());
                 statement.execute(sqlStatement);
             }
             connection.close();
@@ -94,7 +95,7 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public List<Player> getPlayersFromDB() {
+    public List<Player> getPlayersFromDB() { // dopisać opcję dla większej ilości playerów (obecnie 2)
         List<Player> players = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
@@ -104,18 +105,21 @@ public class JdbcRepository implements Repository {
             while (resultSet1.next()) {
                 String collectedType = resultSet1.getString("collected_ship_type");
                 int playerIndex = resultSet1.getInt("player_index"); // player index = owner w tabeli cards
+                String playingStatus = resultSet1.getString("playing_status");
                 Player newPlayer = new Player(playerIndex);
                 newPlayer.setCollectedShipType(collectedType);
+                newPlayer.setPlayingStatus(playingStatus);
                 players.add(newPlayer);
-                // todo dopisać setowanie last_turn
-                // poprawić isStillPlaying
+
             }
             ResultSet resultSet2 = statement.executeQuery(String.format(baseStatementPlayers, 2));
             while (resultSet2.next()) {
                 String collectedType = resultSet2.getString("collected_ship_type");
                 int playerIndex = resultSet2.getInt("player_index"); // player index = owner w tabeli cards
+                String playingStatus = resultSet2.getString("playing_status");
                 Player newPlayer = new Player(playerIndex);
                 newPlayer.setCollectedShipType(collectedType);
+                newPlayer.setPlayingStatus(playingStatus);
                 players.add(newPlayer);
             }
             connection.close();

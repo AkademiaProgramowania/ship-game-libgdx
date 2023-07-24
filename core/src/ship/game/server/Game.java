@@ -42,6 +42,9 @@ public class Game implements EventListener {
         //temporaryStack.clear();
         shuffle(mainStack);
         Event event = new Event(EventType.TURN_START);
+/*        for (Player player : players) {
+            player.setStillPlaying(player.getPlayerIndex() == currentPlayerIndex);
+        }*/
         event.setPlayer(getCurrentPlayer());
         EventBus.notify(event);
     }
@@ -56,6 +59,7 @@ public class Game implements EventListener {
     public void checkIfMainStackIsOutAndShuffle() {
         if (mainStack.isEmpty()) {
             mainStack = shuffle(temporaryStack);
+            temporaryStack.clear();
             System.out.println("Stack shuffled");
         }
     }
@@ -108,12 +112,13 @@ public class Game implements EventListener {
         } else {
             currentPlayerIndex++;
         }
+/*        for (Player player : players) {
+            player.setStillPlaying(player.getPlayerIndex() == currentPlayerIndex); // w nawiasie jest argument z metody setStillPlaying
+            // czyli setuj true gdy warunek w nawiasie jest spełniony i odwrotnie.
+        }*/
         Event event = new Event(EventType.PLAYER_SWITCHED);
         event.setPlayer(getCurrentPlayer()); // kolejny player = current z kodu powyżej
         EventBus.notify(event);
-        getCurrentPlayer().stillPlaying(true); // kolejny!
-        // todo refactor (should not contain selector argument)
-        // https://rules.sonarsource.com/java/RSPEC-2301
         System.out.println("Ustawienie gracza na: " + getCurrentPlayer().getPlayerIndex());
     }
 
@@ -148,6 +153,7 @@ public class Game implements EventListener {
     public void restorePlayersFromDB() {
         players.clear();
         players = repository.getPlayersFromDB();
+        List<Player> play = players; //debugging help
     }
 
     public void restoreCardsFromDB() {

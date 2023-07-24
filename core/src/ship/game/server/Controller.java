@@ -205,7 +205,7 @@ public class Controller implements EventListener {
             System.out.println("Player (2): " + game.getPlayers().get(1).getOwnStack().size() + " " + game.getPlayers().get(1).getOwnStack());
             System.out.println("MainStack: " + game.getMainStack().size() + " " + game.getMainStack());
             System.out.println("TemporaryStack: " + game.getTemporaryStack().size() + " " + game.getTemporaryStack());
-
+            EventBus.notify(new Event(EventType.GAME_START));
         } else {
             System.exit(0);
         }
