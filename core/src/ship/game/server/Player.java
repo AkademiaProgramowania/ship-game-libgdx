@@ -1,7 +1,6 @@
 package ship.game.server;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Player {
@@ -49,6 +48,7 @@ public class Player {
     }
 
     public List<Card> getShipsCollected(boolean collected) { // todo refactor selector arguments
+        // https://rules.sonarsource.com/java/RSPEC-2301
         List<Card> ships = getCards(Card.Type.SHIP); //wszystkie typu SHIP
         List<Card> result = new ArrayList<>();
         // may be changed to stream filer collect https://www.baeldung.com/java-stream-filter-lambda
@@ -67,6 +67,40 @@ public class Player {
         setIfFirstCollected(card);
         ownStack.add(card);
     }*/
+
+    public void setAsCollectedMostPopularType() {
+        List<Card> biggestNotCollectedShipsList = getBiggestNotCollectedShipsList();
+        if (biggestNotCollectedShipsList == null || biggestNotCollectedShipsList.isEmpty()) {
+            collectedShipType = null;
+        } else {
+            collectedShipType = biggestNotCollectedShipsList.get(0).getSecondShipType();
+        }
+    }
+
+    private List<Card> getBiggestNotCollectedShipsList() {
+        List<Card> shipsCollected = getShipsCollected(false);
+        String[] types = {"S1", "S2", "S3", "S4"};
+        List<Card> biggestList = null;
+        for (String type : types) {
+            List<Card> shipsInThisType = getByCollectedShipType(shipsCollected, type);
+            if (biggestList == null) {
+                biggestList = shipsInThisType;
+            } else if (biggestList.size() < shipsInThisType.size()) {
+                biggestList = shipsInThisType;
+            }
+        }
+        return biggestList;
+    }
+
+    private List<Card> getByCollectedShipType(List<Card> ships, String type){
+        List<Card> result = new ArrayList<>();
+        for (Card card : ships) {
+            if (card.getSecondShipType().equals(type)) {
+                result.add(card);
+            }
+        }
+        return result;
+    }
 
     public Card getSelectedShipCard(String givenType) {
         List<Card> ships = getCards(Card.Type.SHIP);
@@ -112,7 +146,7 @@ public class Player {
     public boolean isCollectingThisShip(Card card) {
         boolean isCollecting = false;
         // the condition inside if(... ) can be just returned as the method is boolean
-        if ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType))) {
+        if ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType))) { // TODO just return the condition
             isCollecting = true;
         }
         return isCollecting;
@@ -133,13 +167,13 @@ public class Player {
         return ownStack.size() > 0;
     }
 
-    public boolean stillPlaying(boolean stillPlaying) { // don't understand this method and it's usage
-        return stillPlaying;
-    }// todo refactor selector arguments
+    public void setStillPlaying(boolean stillPlaying) {
+        this.stillPlaying = stillPlaying;
+    }
 
     public String getPlayingStatus() {
         String status = "";
-        if (isStillPlaying()) {
+        if (stillPlaying) {
             status = "T";
         } else {
             status = "F";
@@ -147,9 +181,13 @@ public class Player {
         return status;
     }
 
-    public boolean isStillPlaying() { // geter do metody stillPlaying
-        return stillPlaying;
-    }
+    public void setPlayingStatus(String status) {
+        if (status.equals("T")) {
+            stillPlaying = true;
+        }
+        if (status.equals("F"))
+            stillPlaying = false;
+        }
 
     public int getStackSize() {
         return ownStack.size();

@@ -2,7 +2,9 @@
 - każde zadanie ma mieć osobny branch
 - robimy odnogę z bieżącego brancha
 
-- poprawić getCurrentPlayer
+- poprawić getCurrentPlayer/isStillPlaying - metody są teraz bez sensu, obecnie status jest aktualizowany przez current player index
+- only one ResultSet object per Statement object can be open at the same time
+
 - refactor selector arguments w metodach (player - stillPlaying, still Palying, game - switchToNextPlayer)
 - dodać w playerze last turn (i zmieniać go w rozgrywce)
 
@@ -21,13 +23,9 @@ JDBC
 
 done:
 - uzupełnione dependencies w pliku build.gradle, dodany zamiast pliku jar, driver (mysql-connecor) z maven central. Plik jar usunięty
-- rewizja kodu
-- nullowanie collectedShipType gdy wyda wszystkie statki kolekcjonowane
 - wyświetlanie zaktualizowanej liczby statków o dotychczas zebrane w przypadku przydzielenia statku do kolekcjoniwania o tym samym typie
 
-- BAZY DANYCH dodać zapisanie stanu gry + odtworzenie gry. Póki co na drugim projekcie
 - powt. jak robić evaluate expression przy debugowaniu
-- przenieść temporarystack.clear() ?
 
 - constructor dependency injection spr
 - przerobić createListOfShips() na pętle

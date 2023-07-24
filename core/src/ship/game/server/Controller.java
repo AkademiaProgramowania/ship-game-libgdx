@@ -1,6 +1,5 @@
 package ship.game.server;
 
-import com.mysql.cj.exceptions.DataTruncationException;
 import ship.game.server.events.Event;
 import ship.game.server.events.EventBus;
 import ship.game.server.events.EventListener;
@@ -24,8 +23,13 @@ public class Controller implements EventListener {
     }
 
     public void play() {
-        System.out.println("Poczatek gry");
-        EventBus.notify(new Event(EventType.GAME_START));
+        System.out.println("1 - new game, 2 - restore game");
+        String input = scanner.next();
+        if (input.equals("1")) {
+            EventBus.notify(new Event(EventType.GAME_START));
+        } else {
+            restoreGame();
+        }
     }
 
     public void playTurn(Event event) {
@@ -33,15 +37,14 @@ public class Controller implements EventListener {
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
-        } while (event.getPlayer().isStillPlaying());
+        } while (event.getPlayer().getPlayingStatus().equals("T")); // todo spr czy działa po zmianie warunku
     }
 
     public void decideOnNextTurn() {
+        System.out.println("Gra gracz " + game.getCurrentPlayer().getPlayerIndex());
         System.out.println("You need " + game.getCurrentPlayer().checkNumberOfMissingShipCards() + " ship cards");
         System.out.println("Collected ship type: " + game.getCurrentPlayer().getCollectedShipType());
-/*        if (game.getCurrentPlayer().getShipsCollected(true).size() > 0) {
-            System.out.println("Collected ships: " + game.getCurrentPlayer().getShipsCollected(true).toString());
-        }*/
+
         System.out.println("1 - draw a card, 2 - buy ship, 3 - end turn, 4 - save game");
         switch (scanner.nextInt()) {
             case 1:
@@ -118,9 +121,9 @@ public class Controller implements EventListener {
                             player.removeCard(card);
                         }
                         if (player.getShipsCollected(true).size() == 0) {
-                            player.setCollectedShipType(null);
                             // gdy player nazbierał więcej innych statków niż własny i chce podmienić typ kolekcjonowany
-                            setCollectedFromRemainingShips(player);
+                            //setCollectedFromRemainingShips(player);
+                            player.setAsCollectedMostPopularType();
                         }
                         break;
                     default:
@@ -138,6 +141,7 @@ public class Controller implements EventListener {
     }
 
     public void setCollectedFromRemainingShips(Player player) {
+        player.setCollectedShipType(null);
         List<Card> ships = player.getCards(Card.Type.SHIP);
         List<Card> shipsAvailable = new ArrayList<>();
         int numS1 = 0;
@@ -196,14 +200,13 @@ public class Controller implements EventListener {
     public void restoreGame() {
         System.out.println("To restart press 1");
         if (scanner.nextInt() == 1) {
-            game.assignNewPlayersFromDB();
-            game.assignNewCardsFromDB();
-
+            game.restorePlayersFromDB();
+            game.restoreCardsFromDB();
             System.out.println("Player (1): " + game.getPlayers().get(0).getOwnStack().size() + " " + game.getPlayers().get(0).getOwnStack());
             System.out.println("Player (2): " + game.getPlayers().get(1).getOwnStack().size() + " " + game.getPlayers().get(1).getOwnStack());
             System.out.println("MainStack: " + game.getMainStack().size() + " " + game.getMainStack());
             System.out.println("TemporaryStack: " + game.getTemporaryStack().size() + " " + game.getTemporaryStack());
-
+            EventBus.notify(new Event(EventType.GAME_START));
         } else {
             System.exit(0);
         }

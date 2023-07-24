@@ -7,7 +7,7 @@ import java.util.List;
 public class JDBC2 {
 
     public static void main(String[] args) {
-        CardFactory factory = new CardFactory(); // dodatkowy obiekt
+       /* CardFactory factory = new CardFactory(); // dodatkowy obiekt
         List<Card> cards = factory.createCards();
 
         Game game = new Game(); // dodatkowy obiekt
@@ -19,7 +19,7 @@ public class JDBC2 {
         Player newPlayer = null;
         List<Card> cardsFromDB = new ArrayList<>();
         List<Player> playersFromDB = new ArrayList<>();
-
+*/
 
 /*        try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game",
