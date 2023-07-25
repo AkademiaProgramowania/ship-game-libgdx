@@ -73,15 +73,15 @@ public class Player {
     }
 
     private List<Card> getBiggestNotCollectedShipsList() {
-        List<Card> shipsCollected = getShipsCollected(false);
+        List<Card> shipsNotCollected = getShipsCollected(false); // statki nie zbierane
         String[] types = {"S1", "S2", "S3", "S4"};
         List<Card> biggestList = null;
-        for (String type : types) {
-            List<Card> shipsInThisType = getByCollectedShipType(shipsCollected, type);
-            if (biggestList == null) {
-                biggestList = shipsInThisType;
-            } else if (biggestList.size() < shipsInThisType.size()) {
-                biggestList = shipsInThisType;
+        for (String type : types) { //dla każdego typu
+            List<Card> shipsOfGivenType = getByCollectedShipType(shipsNotCollected, type);  // wszystkie danego typu
+            if (biggestList == null) { // jeśli nie ma największej listy
+                biggestList = shipsOfGivenType; // to są to danego typu
+            } else if (biggestList.size() < shipsOfGivenType.size()) { // jeśli rozmiar zbioru danego typu jest większy niż biggest
+                biggestList = shipsOfGivenType; // to rozmiar danego typu jest teraz największy
             }
         }
         return biggestList;
@@ -188,10 +188,6 @@ public class Player {
 
     public int getPlayerIndex() {
         return playerIndex;
-    }
-
-    public void setPlayerIndex(int playerIndex) {
-        this.playerIndex = playerIndex;
     }
 
     public String getCollectedShipType() {
