@@ -118,28 +118,18 @@ public class Game implements EventListener {
         System.out.println("Ustawienie gracza na: " + getCurrentPlayer().getPlayerIndex());
     }
 
-    // uwaga z przypisaniem karty waściwemu graczowi - do testów
-    public void buyCard(Event event) {// w evencie jest ustawiony requested player i requested card
+    public void buyCard(Event event) {
         // przekazywanie żądanej karty między playerami:
         getCurrentPlayer().addCard(event.getCard()); // current player, requested card
         event.getPlayer().removeCard(event.getCard()); // requested player, requested card
         // płacenie za kartę:
-        int num = 0;
-        do {
-            event.getPlayer().addCard(getCurrentPlayer().getCoinToPay()); // gracz z eventu ma dostać 3 monety od currentPlayera
-            // usuwanie COIN ze staka currentPlayera w metodzie
-            num++;
-        } while (num <= 2);
-        // todo spr czy karty monet przechodzą ze stacka currentPlayer na stack requestedPlayer
-        System.out.println("current player - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
-        System.out.println("current player - statki: " + getCurrentPlayer().getShipsCollected(true));
-        System.out.println("requested player - monety: " + getCurrentPlayer().getCards(Card.Type.COIN));
+        event.getPlayer().addAll(getCurrentPlayer().get3CoinsToPay()); // gracz z eventu ma dostać 3 monety od currentPlayera
     }
 
     public void saveGame() {
         repository.savePlayers(players);
         repository.createTableCards();
-        for (Player player: players) {
+        for (Player player : players) {
             repository.saveCards(player.getOwnStack(), player.getPlayerIndex());
         }
         repository.saveCards(mainStack, mainStackIndex);
@@ -176,6 +166,11 @@ public class Game implements EventListener {
     }
 
     public Player getPlayerByIndex(int requiredIndex) {
+        if (requiredIndex < 0) {
+            System.out.println("required index < 0");
+        } else if (requiredIndex >= players.size()) {
+            System.out.println("required index is bigger than number of players");
+        }
         return players.get(requiredIndex);
     }
 

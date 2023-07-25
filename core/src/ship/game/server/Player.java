@@ -21,6 +21,10 @@ public class Player {
         ownStack.add(card);
     }
 
+    public void addAll(List<Card> list) {
+        ownStack.addAll(list);
+    }
+
     public void removeCard(Card card) {
         ownStack.remove(card);
     }
@@ -36,15 +40,19 @@ public class Player {
         return cards;
     }
 
-    public Card getCoinToPay() {
-        Card toReturn = null;
-        for (Card card : ownStack) {
-            if (card.getType().equals(Card.Type.COIN)) {
-                toReturn = card;
-                ownStack.remove(card);
-            }
+    public List<Card> get3CoinsToPay() {
+        List<Card> coins = getCards(Card.Type.COIN);
+        List<Card> cardsToReturn = new ArrayList<>();
+        if (coins.size() >= 3) {
+            cardsToReturn.add(coins.get(0));
+            cardsToReturn.add(coins.get(1));
+            cardsToReturn.add(coins.get(2));
+            ownStack.removeAll(cardsToReturn);
+        } else {
+            System.out.println("Not enough coins!");
         }
-        return toReturn;
+        System.out.println("Cards to return:" + cardsToReturn);
+        return cardsToReturn;
     }
 
     public List<Card> getShipsCollected(boolean collected) { // todo refactor selector arguments
@@ -87,7 +95,7 @@ public class Player {
         return biggestList;
     }
 
-    private List<Card> getByCollectedShipType(List<Card> ships, String type){
+    private List<Card> getByCollectedShipType(List<Card> ships, String type) {
         List<Card> result = new ArrayList<>();
         for (Card card : ships) {
             if (card.getSecondShipType().equals(type)) {
@@ -138,8 +146,8 @@ public class Player {
     }
 
     public boolean isCollectingThisShip(Card card) {
-        return  ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType)));
-        }
+        return ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType)));
+    }
 
     public int checkNumberOfMissingShipCards() {
         return 6 - getShipsCollected(true).size();
@@ -180,7 +188,7 @@ public class Player {
         }
         if (status.equals("F"))
             stillPlaying = false;
-        }
+    }
 
     public int getStackSize() {
         return ownStack.size();

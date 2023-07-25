@@ -37,7 +37,7 @@ public class Controller implements EventListener {
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
-        } while (event.getPlayer().isStillPlaying()); // todo spr czy działa po zmianie warunku
+        } while (event.getPlayer().isStillPlaying());
     }
 
     public void decideOnNextTurn() {
@@ -55,18 +55,29 @@ public class Controller implements EventListener {
                     System.out.println("Not enough coins - animacja");
                     break;
                 }
-                System.out.println("Give player index"); //todo żeby się nie zepsuło jak wybierze sam siebie
-                int requestedPlayer = scanner.nextInt();
-                Card purchased = game.getPlayerByIndex(requestedPlayer - 1).getSelectedShipCard(game.getCurrentPlayer().getCollectedShipType());
-                System.out.println("Selected: " + purchased);
-                if (purchased == null) {
+                System.out.println("Give player number");
+                int givenNumber = (scanner.nextInt());
+                int requestedPlayerIndex = (scanner.nextInt() - 1);
+                Player requested = game.getPlayerByIndex(requestedPlayerIndex);
+
+                if (givenNumber == game.getCurrentPlayer().getPlayerIndex()) {
+                    System.out.println("podałeś własny numer");
+                }
+                if (requested == null) {
+                    System.out.println("requested = null");
+                } else {
+                    Card purchased = requested.getSelectedShipCard(game.getCurrentPlayer().getCollectedShipType());
+                    System.out.println("Selected: " + purchased);
+                    if (purchased == null) {
+                        break;
+                    }
+                    Event event = new Event(EventType.CARD_PURCHASE_DECISION);
+                    event.setPlayer(game.getPlayerByIndex(requestedPlayerIndex));
+                    event.setCard(purchased);
+                    EventBus.notify(event);
+                    System.out.println("doszło do linii 77");
                     break;
                 }
-                Event event = new Event(EventType.CARD_PURCHASE_DECISION);
-                event.setPlayer(game.getPlayerByIndex(requestedPlayer));
-                event.setCard(purchased);
-                EventBus.notify(event);
-                break;
             case 3:
                 EventBus.notify(new Event(EventType.PASS_DECISION));
                 break;
