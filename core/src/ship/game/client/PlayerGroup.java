@@ -22,6 +22,8 @@ public class PlayerGroup extends Group {
         collectedShipGroup.setPosition(resourcesGroup.getWidth() + getX(), getY());
         tradeGroup.setBounds(collectedShipGroup.getX() + collectedShipGroup.getWidth(), getY(),
                 resourcesGroup.getWidth(), resourcesGroup.getHeight());
+        resourcesGroup.setCountersWithinGroup();
+        tradeGroup.setCountersWithinGroup();
     }
 
 }
