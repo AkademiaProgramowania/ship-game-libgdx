@@ -71,13 +71,13 @@ public class GameScreen implements Screen {
             CardActor cardActor4 = new CardActor(ships.get(4), new Texture(Gdx.files.internal("ships/ship1/S1-5.jpg")));
             CardActor cardActor5 = new CardActor(ships.get(5), new Texture(Gdx.files.internal("ships/ship1/S1-6.jpg")));
 
-            CollectedShipGroup collectedShipGroup = new CollectedShipGroup();
-            collectedShipGroup.addCard(cardActor);
-            collectedShipGroup.addCard(cardActor1);
-            collectedShipGroup.addCard(cardActor2);
-            collectedShipGroup.addCard(cardActor3);
-            collectedShipGroup.addCard(cardActor4);
-            collectedShipGroup.addCard(cardActor5);
+            CollectedCardGroup collectedCardGroup = new CollectedCardGroup();
+            collectedCardGroup.addCard(cardActor);
+            collectedCardGroup.addCard(cardActor1);
+            collectedCardGroup.addCard(cardActor2);
+            collectedCardGroup.addCard(cardActor3);
+            collectedCardGroup.addCard(cardActor4);
+            collectedCardGroup.addCard(cardActor5);
             //stage.addActor(collectedShipGroup);
             CounterGroup resourcesGroup = new CounterGroup();
             CounterGroup tradeGroup = new CounterGroup();
@@ -86,7 +86,7 @@ public class GameScreen implements Screen {
             tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S2", game.getFont()));
             tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S3", game.getFont()));
             tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S4", game.getFont()));
-            PlayerGroup playerGroup = new PlayerGroup(collectedShipGroup, resourcesGroup, tradeGroup);
+            PlayerGroup playerGroup = new PlayerGroup(collectedCardGroup, resourcesGroup, tradeGroup);
             //todo refactor -> kod wylicza pozycje
             if (i > 1) {
                 playerGroup.setX(800);

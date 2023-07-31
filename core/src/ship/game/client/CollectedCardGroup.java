@@ -9,10 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import static ship.game.client.GUIParams.CARD_HEIGHT;
 import static ship.game.client.GUIParams.CARD_WIDTH;
 
-public class CollectedShipGroup extends Group {
+public class CollectedCardGroup extends Group {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
-    public CollectedShipGroup() {
+    public CollectedCardGroup() {
         setWidth(3 * CARD_WIDTH);
         setHeight(2 * CARD_HEIGHT);
     }

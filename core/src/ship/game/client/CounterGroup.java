@@ -26,10 +26,7 @@ public class CounterGroup extends Group {
             currentActor.setHeight(getHeight() / 4);
             currentActor.setWidth(getHeight() / 4);
             spacingX = (int) (getWidth() - currentActor.getWidth()) / 2;
-            System.out.println(spacingX);
-            System.out.println("X: " + getX());
             spacingY = (int) ((getHeight() - getChildren().size * currentActor.getHeight()) / (getChildren().size + 1));
-            System.out.println("sum: " + getX() + spacingX);
             currentActor.setPosition(spacingX, getY() + i * currentActor.getHeight() + (i + 1) * spacingY);
         }
     }

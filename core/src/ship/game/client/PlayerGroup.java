@@ -3,14 +3,14 @@ package ship.game.client;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
 public class PlayerGroup extends Group {
-    private CollectedShipGroup collectedShipGroup;
+    private CollectedCardGroup collectedCardGroup;
     private CounterGroup resourcesGroup, tradeGroup;
 
-    public PlayerGroup(CollectedShipGroup collectedShipGroup, CounterGroup resourcesGroup, CounterGroup tradeGroup) {
-        this.collectedShipGroup = collectedShipGroup;
+    public PlayerGroup(CollectedCardGroup collectedCardGroup, CounterGroup resourcesGroup, CounterGroup tradeGroup) {
+        this.collectedCardGroup = collectedCardGroup;
         this.resourcesGroup = resourcesGroup;
         this.tradeGroup = tradeGroup;
-        addActor(collectedShipGroup);
+        addActor(collectedCardGroup);
         addActor(resourcesGroup);
         addActor(tradeGroup);
 
@@ -18,9 +18,9 @@ public class PlayerGroup extends Group {
     }
 
     private void setGroupsPlacement() {
-        resourcesGroup.setBounds(getX(), getY(), collectedShipGroup.getHeight() / 3, collectedShipGroup.getHeight());
-        collectedShipGroup.setPosition(resourcesGroup.getWidth() + getX(), getY());
-        tradeGroup.setBounds(collectedShipGroup.getX() + collectedShipGroup.getWidth(), getY(),
+        resourcesGroup.setBounds(getX(), getY(), collectedCardGroup.getHeight() / 3, collectedCardGroup.getHeight());
+        collectedCardGroup.setPosition(resourcesGroup.getWidth() + getX(), getY());
+        tradeGroup.setBounds(collectedCardGroup.getX() + collectedCardGroup.getWidth(), getY(),
                 resourcesGroup.getWidth(), resourcesGroup.getHeight());
         resourcesGroup.setCountersWithinGroup();
         tradeGroup.setCountersWithinGroup();
