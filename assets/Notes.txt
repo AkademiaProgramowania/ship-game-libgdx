@@ -1,35 +1,16 @@
-- po zakończonym zadaniu comit i pull request
-- każde zadanie ma mieć osobny branch
-- robimy odnogę z bieżącego brancha
+- aktualizować mastera
+- dorzucić zmiany z mastera do mojego aktualnego brancha
 
-- poprawić getCurrentPlayer/isStillPlaying - metody są teraz bez sensu, obecnie status jest aktualizowany przez current player index
-- only one ResultSet object per Statement object can be open at the same time
 
-- refactor selector arguments w metodach (player - stillPlaying, still Palying, game - switchToNextPlayer)
+- refactor selector arguments w metodach
 - dodać w playerze last turn (i zmieniać go w rozgrywce)
-
-- dostosować kod - set w karcie playerId po rundzie. Domyślnie null
-- jak przy tworzeniu tabeli dodać klauzulę foreign key
-- napisać SQl update który przypisuje kartę playerowi
-- dwa joiny: wyciągnięcie playera znając id karty, wyciągnąć wszystkei karty nalezące do playera
-- wygeneruj wynik w którym widzimy: id playera, id karty, collected ship, typ karty (tylko karty któe nalezą do jakiegokolwiek playera - bez tych nieprzypisanych)
-- dosotsowanie ustawiania ostatniego gracza (lub nie potrzeba gdy zapisywanie stanu gry bedzie przed ruchem kolejnego gracza)
-
-JDBC
-- zamiast pola w Card i setowania ownera w kodzie gry, zapisujemy stan gry przez playera i oba stacki przy savie.
-- save = zapisujemy jakie karty ma gracz/stack (lista)
-- do osobnej tabeli wpisuje sie wszystkie obiekty z listy zaznaczając ze są przyporządkowane do obiektu któy posiada listę za pomocą foreign key
-- tabela kart i graczy
-
-done:
-- uzupełnione dependencies w pliku build.gradle, dodany zamiast pliku jar, driver (mysql-connecor) z maven central. Plik jar usunięty
-- wyświetlanie zaktualizowanej liczby statków o dotychczas zebrane w przypadku przydzielenia statku do kolekcjoniwania o tym samym typie
+- rozdzielić save od wykonywania ruchów
+- przerobić createListOfShips() na pętle
+- przerobić na streamy (find any albo find first)
 
 - powt. jak robić evaluate expression przy debugowaniu
 
 - constructor dependency injection spr
-- przerobić createListOfShips() na pętle
-- przerobić na streamy (find any albo find first)
 - spr wzorzec factory
 
 Card types:
