@@ -27,6 +27,10 @@ public class CardActor extends Actor {
         return card.getPictureIndex();
     }
 
+    public void flipCard() {
+        activeTexture = cardFace;
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();

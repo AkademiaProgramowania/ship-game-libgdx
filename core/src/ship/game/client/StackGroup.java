@@ -19,15 +19,22 @@ public class StackGroup extends Group {
                 new Texture(Gdx.files.internal("ships/ship1/S1-1.jpg")));
         bottomCard = new CardActor(new Card(Card.Type.SHIP, "S1", 1, 1),
                 new Texture(Gdx.files.internal("ships/ship1/S1-2.jpg")));
-        addActor(topCard);
         addActor(bottomCard);
+        addActor(topCard);
         setSize(CARD_WIDTH, CARD_HEIGHT);
+//        StackClickListener stackClickListener = new StackClickListener(this);
+//        addListener(stackClickListener);
         addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("Click stack group");
+                topCard.flipCard();
+                System.out.println("Click");
                 return true;
             }
         });
+    }
+
+    public CardActor getTopCard() {
+        return topCard;
     }
 }
