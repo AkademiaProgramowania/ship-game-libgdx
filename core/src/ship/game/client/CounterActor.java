@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import ship.game.server.Card;
 
 public class CounterActor extends Actor {
@@ -22,6 +24,7 @@ public class CounterActor extends Actor {
         this.font = font;
         setUpTexture();
         setBounds(0, 100, 100, 100);
+        addClickListener();
     }
 
     public CounterActor(Card.Type type, String shipType, BitmapFont font) {
@@ -31,6 +34,7 @@ public class CounterActor extends Actor {
         amount = 1;
         setUpTexture();
         setBounds(0, 0, 100, 100);
+        addClickListener();
     }
 
     private void setUpTexture() {
@@ -43,6 +47,16 @@ public class CounterActor extends Actor {
         } else {
             throw new IllegalStateException("Unexpected card type!");
         }
+    }
+
+    private void addClickListener() {
+        addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("Kliknieto w counter");
+                return true;
+            }
+        });
     }
 
     @Override

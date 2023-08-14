@@ -97,8 +97,10 @@ public class GameScreen implements Screen {
             stage.addActor(playerGroup);
         }
         StackGroup stackGroup = new StackGroup();
-        stackGroup.setPosition(600, 500);
+        stackGroup.setPosition(600, 700);
         stage.addActor(stackGroup);
+
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
