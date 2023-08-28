@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -16,8 +17,10 @@ import static ship.game.client.GUIParams.CARD_WIDTH;
 public class StackGroup extends Group {
     private CardActor topCard;
     private CardActor bottomCard;
+    private ActiveCardGroup activeCardGroup;
 
-    public StackGroup() {
+    public StackGroup(ActiveCardGroup activeCardGroup) {
+        this.activeCardGroup = activeCardGroup;
         topCard = new CardActor(new Card(Card.Type.SHIP, "S1", 1, 1),
                 new Texture(Gdx.files.internal("ships/ship1/S1-1.jpg")));
         bottomCard = new CardActor(new Card(Card.Type.SHIP, "S1", 1, 1),
@@ -30,9 +33,23 @@ public class StackGroup extends Group {
         addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                topCard.flipCard();
-                topCard.addAction(Actions.moveBy(0, -200, 2f));
+                CardActor touchedCard = topCard;
                 topCard = bottomCard;
+                //todo poszukac lepszego sposobu na sprawdzenei jaka karta zostala kliknieta
+//                if (event.getRelatedActor() != touchedCard) {
+//                    return true;
+//                }
+                touchedCard.flipCard();
+                Action moveAction = Actions.moveBy(0, activeCardGroup.getY() - getY(), 2f);
+                Action changeGroup = Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        activeCardGroup.addActor(touchedCard);
+                        System.out.println("Zmiana grupy");
+                        touchedCard.setPosition(0, 0);
+                    }
+                });
+                touchedCard.addAction(Actions.sequence(moveAction, changeGroup));
                 System.out.println("kliknieto w grupe");
                 return true;
             }

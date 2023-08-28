@@ -1,5 +1,7 @@
 package ship.game.client;
 
-public class ActiveCardGroup {
+import com.badlogic.gdx.scenes.scene2d.Group;
+
+public class ActiveCardGroup extends Group {
     private CardActor activeCard;
 }
