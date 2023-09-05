@@ -27,6 +27,10 @@ public class CardActor extends Actor {
         return card.getPictureIndex();
     }
 
+    public Card getCard() {
+        return card;
+    }
+
     public void flipCard() {
         activeTexture = cardFace;
     }

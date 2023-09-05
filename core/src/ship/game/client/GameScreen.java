@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -15,10 +16,10 @@ import java.util.List;
 
 public class GameScreen implements Screen {
     final ShipGame game;
-
     private OrthographicCamera camera;
     private Stage stage;
     private int playerCount = 4;
+    private List<PlayerGroup> players = new ArrayList<>();
 
     public GameScreen(final ShipGame game) {
         this.game = game;
@@ -72,12 +73,12 @@ public class GameScreen implements Screen {
             CardActor cardActor5 = new CardActor(ships.get(5), new Texture(Gdx.files.internal("ships/ship1/S1-6.jpg")));
 
             CollectedCardGroup collectedCardGroup = new CollectedCardGroup();
-            collectedCardGroup.addCard(cardActor);
-            collectedCardGroup.addCard(cardActor1);
-            collectedCardGroup.addCard(cardActor2);
-            collectedCardGroup.addCard(cardActor3);
-            collectedCardGroup.addCard(cardActor4);
-            collectedCardGroup.addCard(cardActor5);
+//            collectedCardGroup.addCard(cardActor);
+//            collectedCardGroup.addCard(cardActor1);
+//            collectedCardGroup.addCard(cardActor2);
+//            collectedCardGroup.addCard(cardActor3);
+//            collectedCardGroup.addCard(cardActor4);
+//            collectedCardGroup.addCard(cardActor5);
             //stage.addActor(collectedShipGroup);
             CounterGroup resourcesGroup = new CounterGroup();
             CounterGroup tradeGroup = new CounterGroup();
@@ -87,6 +88,7 @@ public class GameScreen implements Screen {
             tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S3", game.getFont()));
             tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S4", game.getFont()));
             PlayerGroup playerGroup = new PlayerGroup(collectedCardGroup, resourcesGroup, tradeGroup);
+            players.add(playerGroup);
             //todo refactor -> kod wylicza pozycje
             if (i > 1) {
                 playerGroup.setX(800);
@@ -96,7 +98,7 @@ public class GameScreen implements Screen {
             }
             stage.addActor(playerGroup);
         }
-        ActiveCardGroup activeCardGroup = new ActiveCardGroup();
+        ActiveCardGroup activeCardGroup = new ActiveCardGroup(this);
         activeCardGroup.setPosition(600, 350);
         stage.addActor(activeCardGroup);
 
@@ -106,6 +108,18 @@ public class GameScreen implements Screen {
 
 
         Gdx.input.setInputProcessor(stage);
+    }
+
+    public PlayerGroup getCurrentPlayerGroup() {
+        return players.get(getCurrentPlayerActorIndex());
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    private int getCurrentPlayerActorIndex() {
+        return 1;
     }
 
     @Override
