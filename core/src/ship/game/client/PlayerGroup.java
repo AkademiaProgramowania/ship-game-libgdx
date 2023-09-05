@@ -26,4 +26,15 @@ public class PlayerGroup extends Group {
         tradeGroup.setCountersWithinGroup();
     }
 
+    public CollectedCardGroup getCollectedCardGroup() {
+        return collectedCardGroup;
+    }
+
+    public CounterGroup getResourcesGroup() {
+        return resourcesGroup;
+    }
+
+    public CounterGroup getTradeGroup() {
+        return tradeGroup;
+    }
 }
