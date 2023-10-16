@@ -6,14 +6,19 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class CounterGroup extends Group {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private List<CounterActor> counters = new ArrayList<>();
 
     public void addCounter(CounterActor actor) {
         addActor(actor);
+        counters.add(actor);
         //TODO zerowe wartosci z getterow
-        actor.setPosition(getX(), (getChildren().size - 1) * ((int) (0.1 * getHeight() + actor.getHeight())));
+       // actor.setPosition(getX(), (getChildren().size - 1) * ((int) (0.1 * getHeight() + actor.getHeight()))); //todo  sabotuje nam te countery po prawej
         //System.out.println(getWidth());
     }
 
@@ -31,6 +36,9 @@ public class CounterGroup extends Group {
         }
     }
 
+    public List<CounterActor> getCounters() {
+        return counters;
+    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {

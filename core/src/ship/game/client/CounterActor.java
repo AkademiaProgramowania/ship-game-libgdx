@@ -31,7 +31,7 @@ public class CounterActor extends Actor {
         this.type = type;
         this.shipType = shipType;
         this.font = font;
-        amount = 1;
+        //amount = 1;
         setUpTexture();
         setBounds(0, 0, 100, 100);
         addClickListener();
@@ -59,6 +59,10 @@ public class CounterActor extends Actor {
         });
     }
 
+    public void increaseAmount() {
+        amount++;
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         Color color = getColor();
@@ -79,5 +83,13 @@ public class CounterActor extends Actor {
 
     public int getAmount() {
         return amount;
+    }
+
+    public Card.Type getType() {
+        return type;
+    }
+
+    public String getShipType() {
+        return shipType;
     }
 }

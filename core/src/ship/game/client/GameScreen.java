@@ -84,9 +84,9 @@ public class GameScreen implements Screen {
             CounterGroup tradeGroup = new CounterGroup();
             resourcesGroup.addCounter(new CounterActor(Card.Type.COIN, game.getFont()));
             resourcesGroup.addCounter(new CounterActor(Card.Type.CANNON, game.getFont()));
-            tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S2", game.getFont()));
-            tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S3", game.getFont()));
-            tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S4", game.getFont()));
+            //tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S2", game.getFont()));
+            //tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S3", game.getFont()));
+            //tradeGroup.addCounter(new CounterActor(Card.Type.SHIP, "S4", game.getFont()));
             PlayerGroup playerGroup = new PlayerGroup(collectedCardGroup, resourcesGroup, tradeGroup);
             players.add(playerGroup);
             //todo refactor -> kod wylicza pozycje
@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
     }
 
     private int getCurrentPlayerActorIndex() {
-        return 1;
+        return 2;
     }
 
     @Override
