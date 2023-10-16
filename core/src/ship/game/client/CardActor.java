@@ -31,6 +31,10 @@ public class CardActor extends Actor {
         return card;
     }
 
+    public Card.Type getCardType() {
+        return card.getType();
+    }
+
     public void flipCard() {
         activeTexture = cardFace;
     }
