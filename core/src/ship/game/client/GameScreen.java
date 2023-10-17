@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
     }
 
     private int getCurrentPlayerActorIndex() {
-        return 2;
+        return 0;
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import ship.game.server.Card;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,7 +40,7 @@ public class PlayerGroup extends Group {
 
         if (card.getType() == Card.Type.SHIP && isCollected()) {   // ship parts
             int shipIndex = card.getPictureIndex() - 1;
-            System.out.println("player group X: " + collectedCardGroup.getX());
+            //System.out.println("player group X: " + collectedCardGroup.getX());
             targetX = collectedCardGroup.getX() + (shipIndex % 3) * CARD_WIDTH;
             System.out.println(targetX);
         } else if (card.getType() == Card.Type.CANNON || card.getType() == Card.Type.COIN) {   // left counters
@@ -50,6 +49,8 @@ public class PlayerGroup extends Group {
                     targetX = counter.getX();
                 }
             }
+        } else if (card.getType() == Card.Type.SHIP && !isCollected()) {
+            targetX += tradeGroup.getX();
         }
 
 
@@ -73,10 +74,16 @@ public class PlayerGroup extends Group {
                 }
             }
         } else if (card.getType() == Card.Type.SHIP && !isCollected()) {  // right counters
-            updateShipCounters(card); //?????
+            updateCounters(card); //?????   -> to skomplikowane
+            moveShipCounters();
+            for (CounterActor shipCounter : getTradeCounters()) {
+                if (Objects.equals(shipCounter.getShipType(), card.getSecondShipType())) {
+                    targetY += shipCounter.getY();
+                }
+            }
             // bez ustalania pozycji
         }
-        System.out.println("targetY: " + targetY);
+        //System.out.println("targetY: " + targetY);
         return targetY;
     }
 
@@ -84,19 +91,36 @@ public class PlayerGroup extends Group {
         return false;
     }
 
-    public void updateShipCounters(Card card) {
+    public void updateCounters(Card card) {
         //todo bitmapp font jeden na apke
-        for (CounterActor shipCounter: tradeGroup.getCounters()) {
-            if (Objects.equals(shipCounter.getShipType(), card.getSecondShipType())) {
-                shipCounter.increaseAmount();
-                return;
+        if (card.getType() == Card.Type.COIN || card.getType() == Card.Type.CANNON) {
+            for (CounterActor resourceCounter : resourcesGroup.getCounters()) {
+                if (Objects.equals(card.getType(), resourceCounter.getType())) {
+                    resourceCounter.increaseAmount();
+                    return;
+                }
+            }
+        } else if (card.getType() == Card.Type.SHIP) {
+            for (CounterActor shipCounter : tradeGroup.getCounters()) {
+                if (Objects.equals(shipCounter.getShipType(), card.getSecondShipType())) {
+                    shipCounter.increaseAmount();
+                    return;
+                }
             }
         }
         tradeGroup.addCounter(new CounterActor(card.getType(), card.getSecondShipType(), new BitmapFont()));
     }
 
+    public void moveShipCounters() {
+        tradeGroup.setCountersWithinGroup();
+    }
+
     public List<CounterActor> getResourcesCounters() {
         return resourcesGroup.getCounters();
+    }
+
+    public List<CounterActor> getTradeCounters() {
+        return tradeGroup.getCounters();
     }
 
     public CollectedCardGroup getCollectedCardGroup() {

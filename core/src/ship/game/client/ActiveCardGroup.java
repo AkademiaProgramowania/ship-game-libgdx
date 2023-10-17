@@ -29,12 +29,15 @@ public class ActiveCardGroup extends Group {
 
                 if (activeCard.getCardType() == Card.Type.COIN || activeCard.getCardType() == Card.Type.CANNON) {
                     activeCard.addAction(Actions.sequence(moveAction, fadeAction));
+                    gameScreen.getCurrentPlayerGroup().updateCounters(activeCard.getCard());
                 } else if (activeCard.getCardType() == Card.Type.SHIP && isCollected()) {
                     activeCard.addAction(moveAction);
-                } else if (activeCard.getCardType() == Card.Type.SHIP && !isCollected()) {
-
                 }
-                //todo znikniecie + podzial na zbierany statek i statki na handel -> wyviagnac statek z
+                else if (activeCard.getCardType() == Card.Type.SHIP && !isCollected()) {
+                    //gameScreen.getCurrentPlayerGroup().updateCounters(activeCard.getCard());
+                    //gameScreen.getCurrentPlayerGroup().moveShipCounters();
+                    activeCard.addAction(Actions.sequence(moveAction, fadeAction));
+                }
                 return true;
             }
         });
@@ -66,7 +69,6 @@ public class ActiveCardGroup extends Group {
 //    }
 //
 //    private float findTargetY(Card.Type type) {
-//        //todo mozliwe ze te logike mozna napisac w klasie playergroup
 //        Card card = activeCard.getCard();
 //        PlayerGroup playerGroup = gameScreen.getCurrentPlayerGroup();
 //        List<CounterActor> counters = playerGroup.getResourcesCounters();
