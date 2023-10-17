@@ -21,12 +21,12 @@ public class StackGroup extends Group {
 
     public StackGroup(ActiveCardGroup activeCardGroup) {
         this.activeCardGroup = activeCardGroup;
-        topCard = new CardActor(new Card(Card.Type.SHIP, "S2", 3, 1),       //3
-                new Texture(Gdx.files.internal("ships/ship2/S2-3.jpg")));
+//        topCard = new CardActor(new Card(Card.Type.SHIP, "S2", 3, 1),       //3
+//                new Texture(Gdx.files.internal("ships/ship2/S2-3.jpg")));
         //topCard = new CardActor(new Card(Card.Type.COIN, 1, 1), new Texture(Gdx.files.internal("coin.jpg")));     //2
         //topCard = new CardActor(new Card(Card.Type.CANNON, 1, 1), new Texture(Gdx.files.internal("counter/cannon.png")));  //1
-//        topCard = new CardActor(new Card(Card.Type.SHIP, "S1", 4, 1),     //1
-//                new Texture(Gdx.files.internal("ships/ship1/S1-4.jpg")));
+        topCard = new CardActor(new Card(Card.Type.SHIP, "S1", 4, 1),     //1
+                new Texture(Gdx.files.internal("ships/ship1/S1-4.jpg")));
         bottomCard = new CardActor(new Card(Card.Type.SHIP, "S1", 5, 1),        //1
                 new Texture(Gdx.files.internal("ships/ship1/S1-5.jpg")));
         addActor(bottomCard);

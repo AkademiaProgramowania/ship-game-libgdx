@@ -31,7 +31,7 @@ public class CounterActor extends Actor {
         this.type = type;
         this.shipType = shipType;
         this.font = font;
-        //amount = 1;
+        amount = 1;
         setUpTexture();
         setBounds(0, 0, 100, 100);
         addClickListener();

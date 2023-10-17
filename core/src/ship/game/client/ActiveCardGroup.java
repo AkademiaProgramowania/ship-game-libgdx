@@ -1,14 +1,8 @@
 package ship.game.client;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import ship.game.server.Card;
-
-import java.util.List;
-
-import static ship.game.client.GUIParams.CARD_HEIGHT;
-import static ship.game.client.GUIParams.CARD_WIDTH;
 
 public class ActiveCardGroup extends Group {
     private CardActor activeCard;
@@ -16,31 +10,21 @@ public class ActiveCardGroup extends Group {
 
     public ActiveCardGroup(GameScreen gameScreen) {
         this.gameScreen = gameScreen;
-        addListener(new InputListener(){
+        addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("Grupa aktywna");
-                float targetX = gameScreen.getCurrentPlayerGroup().findTargetX(activeCard.getCard());
-                float targetY = gameScreen.getCurrentPlayerGroup().findTargetY(activeCard.getCard());
-                gameScreen.getStage().addActor(activeCard);
-                activeCard.setPosition(getX(), getY());
-                Action moveAction = Actions.moveTo(targetX, targetY, 1f);
-                Action fadeAction = Actions.fadeOut(1f);
-
-                if (activeCard.getCardType() == Card.Type.COIN || activeCard.getCardType() == Card.Type.CANNON) {
-                    activeCard.addAction(Actions.sequence(moveAction, fadeAction));
-                    gameScreen.getCurrentPlayerGroup().updateCounters(activeCard.getCard());
-                } else if (activeCard.getCardType() == Card.Type.SHIP && isCollected()) {
-                    activeCard.addAction(moveAction);
-                }
-                else if (activeCard.getCardType() == Card.Type.SHIP && !isCollected()) {
-                    //gameScreen.getCurrentPlayerGroup().updateCounters(activeCard.getCard());
-                    //gameScreen.getCurrentPlayerGroup().moveShipCounters();
-                    activeCard.addAction(Actions.sequence(moveAction, fadeAction));
-                }
+                clickAction();
                 return true;
             }
         });
+    }
+
+    private void clickAction(){
+        //odłączenie od grupy
+        gameScreen.getStage().addActor(activeCard);
+        activeCard.setPosition(getX(), getY());
+
+        gameScreen.getCurrentPlayerGroup().obtainCard(activeCard);
     }
 
     private boolean isCollected() {

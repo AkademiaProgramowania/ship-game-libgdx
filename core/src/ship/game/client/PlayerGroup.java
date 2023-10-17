@@ -1,7 +1,9 @@
 package ship.game.client;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import ship.game.server.Card;
 
 import java.util.List;
@@ -35,6 +37,29 @@ public class PlayerGroup extends Group {
         tradeGroup.setCountersWithinGroup();
     }
 
+    public void obtainCard(CardActor cardActor){
+
+        //gdzie ma leciec
+        float targetX = findTargetX(cardActor.getCard());
+        float targetY = findTargetY(cardActor.getCard());
+
+        //przygotowanie animacji
+        Action moveAction = Actions.moveTo(targetX, targetY, 1f);
+        Action fadeAction = Actions.fadeOut(1f);
+
+        //rodzaj animacji zaleznie od miejsca docelowego
+        if (cardActor.getCardType() == Card.Type.COIN || cardActor.getCardType() == Card.Type.CANNON) {  //coin / cannon
+            cardActor.addAction(Actions.sequence(moveAction, fadeAction));
+            updateCounters(cardActor.getCard()); //update counter
+        } else if (cardActor.getCardType() == Card.Type.SHIP) {
+            if (isCollected()) {
+                cardActor.addAction(moveAction);
+            }else{
+                cardActor.addAction(Actions.sequence(moveAction, fadeAction));
+            }
+        }
+    }
+
     public float findTargetX(Card card) {
         float targetX = 0;
 
@@ -59,7 +84,6 @@ public class PlayerGroup extends Group {
     }
 
     public float findTargetY(Card card) {
-        //todo mozliwe ze te logike mozna napisac w klasie playergroup
         float targetY = getY() + collectedCardGroup.getY(); // ????
 
         if (card.getType() == Card.Type.SHIP && isCollected()) { // ship parts
@@ -76,6 +100,7 @@ public class PlayerGroup extends Group {
         } else if (card.getType() == Card.Type.SHIP && !isCollected()) {  // right counters
             updateCounters(card); //?????   -> to skomplikowane
             moveShipCounters();
+            System.out.println("---");
             for (CounterActor shipCounter : getTradeCounters()) {
                 if (Objects.equals(shipCounter.getShipType(), card.getSecondShipType())) {
                     targetY += shipCounter.getY();
@@ -102,6 +127,7 @@ public class PlayerGroup extends Group {
             }
         } else if (card.getType() == Card.Type.SHIP) {
             for (CounterActor shipCounter : tradeGroup.getCounters()) {
+                System.out.println("+++");
                 if (Objects.equals(shipCounter.getShipType(), card.getSecondShipType())) {
                     shipCounter.increaseAmount();
                     return;
