@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class Controller implements EventListener {
     Scanner scanner = new Scanner(System.in);
-    private Game game;  // czy potrzebna tu referencja doi gry skoro mamy eventy?
+    private Game game;
 
     public Controller(Game game) {
         this.game = game;
@@ -37,7 +37,7 @@ public class Controller implements EventListener {
         EventBus.notify(new Event(EventType.DRAW_CARD_DECISION));
         do {
             decideOnNextTurn();
-        } while (event.getPlayer().getPlayingStatus().equals("T")); // todo spr czy działa po zmianie warunku
+        } while (event.getPlayer().getPlayingStatus().equals("T"));
     }
 
     public void decideOnNextTurn() {
@@ -55,7 +55,7 @@ public class Controller implements EventListener {
                     System.out.println("Not enough coins - animacja");
                     break;
                 }
-                System.out.println("Give player index"); //todo żeby się nie zepsuło jak wybierze sam siebie
+                System.out.println("Give player index");
                 int requestedPlayer = scanner.nextInt();
                 Card purchased = game.getPlayerByIndex(requestedPlayer - 1).getSelectedShipCard(game.getCurrentPlayer().getCollectedShipType());
                 System.out.println("Selected: " + purchased);
@@ -121,7 +121,8 @@ public class Controller implements EventListener {
                             player.removeCard(card);
                         }
                         if (player.getShipsCollected(true).size() == 0) {
-                            // gdy player nazbierał więcej innych statków niż własny i chce podmienić typ kolekcjonowany
+                            // when a player has gathered more ships of a different type than their own
+                            // and wants to exchange the collected type
                             //setCollectedFromRemainingShips(player);
                             player.setAsCollectedMostPopularType();
                         }
@@ -129,7 +130,7 @@ public class Controller implements EventListener {
                     default:
                         System.out.println("Choose cards");
                 }
-            } while (sum < 3 && player.hasCards()); //ma mniej niż 3 oraz ma karty
+            } while (sum < 3 && player.hasCards());
         } else {
             player.setCollectedShipType(null);
             List<Card> all = new ArrayList<>(player.getOwnStack());
@@ -153,7 +154,7 @@ public class Controller implements EventListener {
                 shipsAvailable.add(ship);
             }
             if (!shipsAvailable.isEmpty()) {
-                for (Card card : shipsAvailable) { // spr którego typu najwięcej
+                for (Card card : shipsAvailable) {
                     switch (card.getSecondShipType()) {
                         case "S1":
                             numS1++;

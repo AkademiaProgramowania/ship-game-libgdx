@@ -8,7 +8,6 @@ public class Event {
     private Card card;
     private Player player;
 
-
     public Event(EventType type) {
         this.type = type;
     }

@@ -32,7 +32,7 @@ public class JDBC3 {
 
             String baseStatement = "Insert into cards (type, picture_index) values('%s', %o);";
             Statement statement = connection.createStatement();
-            //tatement.execute("Insert into cards (type, picture_index) values('STORM', 0);");
+            //statement.execute("Insert into cards (type, picture_index) values('STORM', 0);");
 
             for (Card card : cards) {
                 /*preparedStatement.setString(1, String.valueOf(card.getType()));

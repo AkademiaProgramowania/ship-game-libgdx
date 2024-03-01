@@ -2,7 +2,6 @@ package ship.game.server;
 
 public class Card {
 
-
     public enum Type {
         SHIP,
         STORM,
@@ -11,7 +10,7 @@ public class Card {
     }
 
     private final Card.Type type;
-    private String secondShipType; // Typy: "S1"/"S2"/"S3"/"S4"
+    private String secondShipType; // Types: "S1"/"S2"/"S3"/"S4"
     private int pictureIndex;
     private int stormValue;
     private Integer playerIndex;
