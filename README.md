@@ -1,4 +1,4 @@
-# Ship game ⚡⚡⚡
+# Ship game
 
 ## Overview
 Collect a full ship before a storm strikes!
