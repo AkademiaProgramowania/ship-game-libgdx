@@ -55,6 +55,10 @@ The game continues until a player collects a six pieces ship of chosen color, be
 ## GUI Client (work in progress)
 Author: https://github.com/xuvei  
 The GUI client utilizes the LibGDX framework to create an immersive graphical interface.
+
+## GUI Client (work in progress)
+Author: https://github.com/xuvei  
+The GUI client utilizes the LibGDX framework to create an immersive graphical interface. 
 It includes various visual components, such as card actors, collected ship groups, counter actors.
 
 ## GUI Client Structure
@@ -72,5 +76,4 @@ The GUI client includes graphical components, such as:
 <li>StackGroup: Represents the stack of cards in the GUI
 
 Current visual component sample:
-
 ![image](https://github.com/AkademiaProgramowania/ship-game-libgdx/assets/110561199/cba544fd-f111-40ab-a455-993547518078)
