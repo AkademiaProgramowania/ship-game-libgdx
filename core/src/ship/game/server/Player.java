@@ -27,7 +27,7 @@ public class Player {
 
 
     public List<Card> getCards(Card.Type type) {
-        List<Card> cards = new ArrayList<>(); // may be change to stream filer collect
+        List<Card> cards = new ArrayList<>();
         for (Card card : ownStack) {
             if (card.getType().equals(type)) {
                 cards.add(card);
@@ -47,12 +47,9 @@ public class Player {
         return toReturn;
     }
 
-    public List<Card> getShipsCollected(boolean collected) { // todo refactor selector arguments
-        // https://rules.sonarsource.com/java/RSPEC-2301
+    public List<Card> getShipsCollected(boolean collected) {
         List<Card> ships = getCards(Card.Type.SHIP); //wszystkie typu SHIP
         List<Card> result = new ArrayList<>();
-        // may be changed to stream filer collect https://www.baeldung.com/java-stream-filter-lambda
-        // (may be hard as we have boolean collected and method isCollectingThisShip
         for (Card card : ships) {
             if (isCollectingThisShip(card) && collected) {
                 result.add(card);
@@ -60,7 +57,7 @@ public class Player {
                 result.add(card);
             }
         }
-        return result; // zwraca jeden result
+        return result;
     }
 
 /*    public void addShipCard(Card card) {
@@ -106,22 +103,19 @@ public class Player {
         List<Card> ships = getCards(Card.Type.SHIP);
         Card selected = null;
         if (!ships.isEmpty()) {
-            for (Card ship : ships) { // logic can be replaced by Stream and Optional statement
-                // https://www.baeldung.com/java-stream-findfirst-vs-findany - return Optional of given type
-                // https://www.baeldung.com/java-optional
-                //
+            for (Card ship : ships) {
                 if (ship.getSecondShipType().equals(givenType)) {
                     selected = ship;
                 }
             }
         } else {
-            System.out.println("Player has no requested card"); // probably bug, we must check if second player has ship of given type
+            System.out.println("Player has no requested card");
         }
         return selected;
     }
 
     public void setCollected(Card card) {
-        if (collectedShipType == null) { // collected u tego playera, a u innych?
+        if (collectedShipType == null) {
             collectedShipType = card.getSecondShipType();
         }
     }
@@ -130,8 +124,7 @@ public class Player {
         return getShipsCollected(true).size() == 6;
     }
 
-    public boolean chceckIfMoreThan3() { // may be replaced by streams and method filter().count
-        // https://www.baeldung.com/java-stream-filter-count
+    public boolean chceckIfMoreThan3() {
         boolean more = false;
         int val = 0;
         for (Card card : ownStack) {
@@ -145,7 +138,6 @@ public class Player {
 
     public boolean isCollectingThisShip(Card card) {
         boolean isCollecting = false;
-        // the condition inside if(... ) can be just returned as the method is boolean
         if ((collectedShipType != null) && (card.getType() == Card.Type.SHIP && card.getSecondShipType().equals(collectedShipType))) { // TODO just return the condition
             isCollecting = true;
         }

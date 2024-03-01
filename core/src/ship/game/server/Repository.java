@@ -8,7 +8,7 @@ public interface Repository { //InMemoryRepository
     int createTableCards(); //todo, repository może samo sobie przygotować wszystko co potrzebuje do zapisywnia
     int saveCards(List<Card> cards, int index);
 
-    List<Player> getPlayersFrom();
+    List<Player> getPlayersFromDB();
 
-    List<Card> getCardsFrom(int ownerIndex);
+    List<Card> getCardsFromDB(int ownerIndex);
 }

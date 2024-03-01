@@ -37,7 +37,7 @@ public class Game implements EventListener {
         players.add(player);
     }
 
-    public void gameStart() { // setowanie playera w evencie
+    public void gameStart() { // player is being set in event
         // event wyciągnięty do zmiennej by móc to zrobić
         //temporaryStack.clear();
         shuffle(mainStack);
@@ -121,7 +121,6 @@ public class Game implements EventListener {
         System.out.println("Ustawienie gracza na: " + getCurrentPlayer().getPlayerIndex());
     }
 
-    // uwaga z przypisaniem karty waściwemu graczowi - do testów
     public void buyCard(Event event) {// w evencie jest ustawiony requested player i requested card
         // przekazywanie żądanej karty między playerami:
         getCurrentPlayer().addCard(event.getCard()); // current player, requested card
@@ -151,25 +150,24 @@ public class Game implements EventListener {
 
     public void restorePlayersFromDB() {
         players.clear();
-        players = repository.getPlayersFrom();
-        List<Player> play = players; //debugging help
+        players = repository.getPlayersFromDB();
     }
 
     public void restoreCardsFromDB() {
         mainStack.clear();
         temporaryStack.clear();
 
-        List<Card> P1Cards = repository.getCardsFrom(1);
+        List<Card> P1Cards = repository.getCardsFromDB(1);
         for (Card card : P1Cards) {
             players.get(0).addCard(card); // uwaga na indeks!
         }
-        List<Card> P2Cards = repository.getCardsFrom(2);
+        List<Card> P2Cards = repository.getCardsFromDB(2);
         for (Card card : P2Cards) {
             players.get(1).addCard(card);
         }
 
-        mainStack = repository.getCardsFrom(5);
-        temporaryStack = repository.getCardsFrom(6);
+        mainStack = repository.getCardsFromDB(5);
+        temporaryStack = repository.getCardsFromDB(6);
 
     }
 

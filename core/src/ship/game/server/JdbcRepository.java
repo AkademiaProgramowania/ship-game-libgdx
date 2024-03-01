@@ -95,7 +95,7 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public List<Player> getPlayersFrom() { // dopisać opcję dla większej ilości playerów (obecnie 2)
+    public List<Player> getPlayersFromDB() {
         List<Player> players = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
@@ -130,7 +130,7 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public List<Card> getCardsFrom(int ownerIndex) {
+    public List<Card> getCardsFromDB(int ownerIndex) {
         List<Card> cards = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/ship_game", "root", "toor"); // user password to insert manually
