@@ -3,8 +3,8 @@
 ## Overview
 Collect a full ship before a storm strikes!
 
-This application serves as a learning implementation of a card game designed for kids, featuring ships, storms, coins, and cannons. 
-2 players aim to gain a 6 pieces ship of chosen color. A project offers both console and graphical user interface (GUI) versions.
+This application serves as a learning implementation of a card game designed for kids, featuring ships, storms, coins, and cannons.  
+Two players aim to gain a 6 pieces ship of chosen color. A project offers both console and graphical user interface (GUI) versions.  
 Choose preferred mode of play based on the provided launchers.
 
 ## Gameplay
