@@ -1,37 +1,36 @@
 # Ship game application
 
 ## Overview
-Collect a full ship before a storm attacks!
+⚡⚡⚡ Collect a full ship before a storm strikes! ⚡⚡⚡
 
-This application is a trainingg implementation of a simple card game involving ships, storms, coins, and cannons. 
-Players take turns drawing cards, making strategic decisions and collecting ships. 
-This project offers both console and graphical user interface (GUI) versions, choose preferred mode of play based on the provided launchers.
+This application serves as a learning implementation of a card game designed for kids, featuring ships, storms, coins, and cannons. 
+Players aim to gain a 6 pieces ship of chosen color. A project offers both console and graphical user interface (GUI) versions.
+Choose preferred mode of play based on the provided launchers.
 
 ## Gameplay
-Players can start a new game or restore a saved one.
-During a turn, players can draw cards, buy ships, end their turn, or save the game
-The game involves collecting ship cards and making strategic decisions, such as dealing with storms and managing resources (coins and cannons)
-Both versions of the game share the same core gameplay mechanics, involving ship collection, resource management, and strategic decision-making. 
-The GUI version (in progress) will provide an interface with graphical components such as cards, counters, and player groups.
+During a turn, players can draw cards, buy ships, end their turn, or save the game.
+The game revolves around collecting ship cards and making strategic decisions, including dealing with storms, buying missing ship pieces and managing resources (coins and cannons).
+Both versions of the game (console/GUI) share the same core gameplay mechanics. 
+The GUI version, currently in progress, will offer an interface featuring graphical components such as cards, counters, and player groups.
 
 ## Game flow
 Turn Structure  
-On a player's turn, a player can either draw a card, purchase a ship or pass
+On a player's turn, a player choose to draw a card, purchase a ship or pass.
 
 Card Drawing  
-First drawn ship card - this ship color is to be collected.
-If drawn ship, coin or cannon, cards are added to the player's account.
+When a player draws a ship card, the chosen ship's color becomes the target for collection.
+Drawing ship, coin or cannon cards adds them to the player's account.
 
 Storm  
-If a storm card is drawn, the player must choose to surrender three cards or sacrifice a cannon.
+If a storm card is drawn, the player must decide to surrender three cards or sacrifice a cannon.
 After resolving the storm event, play passes to the next player.
 
 Ship Purchase  
-Once a player accumulates three coins, he can choose to purchase a ship card of his color choice from any player's stack.
-A goal is to collect all 6 ship pieces of a color of first drawn ship card.
+Once a player accumulates three coins, they can opt to purchase a ship card of their color choice from any player's stack.
+The objective is to collect all six ship pieces of the color of the first drawn ship card.
 
 Winning the Game  
-The game continues until a player collects a 6 pieces ship of chosen color, becoming the winner.
+The game continues until a player collects a six pieces ship of chosen color, becoming the winner.
 
 ## How to run the application
 1. Clone or download the repository to your local machine
@@ -72,7 +71,7 @@ The GUI client includes graphical components, such as:
 <li>PlayerGroup: Groups the collected ships, resources, and trade groups for each player
 <li>StackGroup: Represents the stack of cards in the GUI
 
-Current GUI sample: 
+Current visual component sample: 
 
 ![image](https://github.com/AkademiaProgramowania/ship-game-libgdx/assets/110561199/cba544fd-f111-40ab-a455-993547518078)
 
