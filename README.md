@@ -10,7 +10,7 @@ Choose preferred mode of play based on the provided launchers.
 ## Gameplay
 During a turn, players can draw cards, buy ships, end their turn, or save the game.
 The game revolves around collecting ship cards and making strategic decisions, including dealing with storms, buying missing ship pieces and managing resources (coins and cannons).
-Both versions of the game (console/GUI) share the same core gameplay mechanics. 
+Both versions of the game (console/GUI) share the same core gameplay mechanics.
 The GUI version, currently in progress, will offer an interface featuring graphical components such as cards, counters, and player groups.
 
 ## Game flow
@@ -50,7 +50,11 @@ The game continues until a player collects a six pieces ship of chosen color, be
 **Game:** Represents the game state, including players, stacks of cards, and the main gameplay logic  
 **CardFactory:** Generates various types of cards used in the game  
 **EventBus:** Implements a simple event system for communication between components  
-**JDBC connection classes:** Provides a basic example of connecting to a MySQL database for storing game data  
+**JDBC connection classes:** Provides a basic example of connecting to a MySQL database for storing game data
+
+## GUI Client (work in progress)
+Author: https://github.com/xuvei  
+The GUI client utilizes the LibGDX framework to create an immersive graphical interface.
 
 ## GUI Client (work in progress)
 Author: https://github.com/xuvei  
@@ -59,7 +63,7 @@ It includes various visual components, such as card actors, collected ship group
 
 ## GUI Client Structure
 Author: https://github.com/xuvei  
-In addition to the console application, there is a basic work-in-progress GUI client to enhance the gaming experience. 
+In addition to the console application, there is a basic work-in-progress GUI client to enhance the gaming experience.
 The GUI client includes graphical components, such as:
 
 <li>CardActor: Represents a card in the GUI, displaying textures and handling rendering
@@ -71,11 +75,5 @@ The GUI client includes graphical components, such as:
 <li>PlayerGroup: Groups the collected ships, resources, and trade groups for each player
 <li>StackGroup: Represents the stack of cards in the GUI
 
-Current visual component sample: 
-
+Current visual component sample:
 ![image](https://github.com/AkademiaProgramowania/ship-game-libgdx/assets/110561199/cba544fd-f111-40ab-a455-993547518078)
-
-
-
-
-
