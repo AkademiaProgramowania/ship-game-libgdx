@@ -21,6 +21,10 @@ public class StackGroup extends Group {
 
     public StackGroup(ActiveCardGroup activeCardGroup) {
         this.activeCardGroup = activeCardGroup;
+
+        //PRZYGOTOWANIE KART DO TESTU - TYMCZASOWO
+
+
 //        topCard = new CardActor(new Card(Card.Type.SHIP, "S2", 3, 1),       //3
 //                new Texture(Gdx.files.internal("ships/ship2/S2-3.jpg")));
         //topCard = new CardActor(new Card(Card.Type.COIN, 1, 1), new Texture(Gdx.files.internal("coin.jpg")));     //2
@@ -29,8 +33,11 @@ public class StackGroup extends Group {
                 new Texture(Gdx.files.internal("ships/ship1/S1-4.jpg")));
         bottomCard = new CardActor(new Card(Card.Type.SHIP, "S1", 5, 1),        //1
                 new Texture(Gdx.files.internal("ships/ship1/S1-5.jpg")));
+
         addActor(bottomCard);
         addActor(topCard);
+
+
        // setSize(CARD_WIDTH, CARD_HEIGHT);
 //        StackClickListener stackClickListener = new StackClickListener(this);
 //        addListener(stackClickListener);
@@ -39,6 +46,7 @@ public class StackGroup extends Group {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 CardActor touchedCard = topCard;
                 topCard = bottomCard;
+
                 //todo poszukac lepszego sposobu na sprawdzenei jaka karta zostala kliknieta
 //                if (event.getRelatedActor() != touchedCard) {
 //                    return true;
@@ -49,12 +57,10 @@ public class StackGroup extends Group {
                     @Override
                     public void run() {
                         activeCardGroup.addActor(touchedCard);
-                        System.out.println("Zmiana grupy");
                         touchedCard.setPosition(0, 0);
                     }
                 });
                 touchedCard.addAction(Actions.sequence(moveAction, changeGroup));
-                System.out.println("kliknieto w grupe");
                 return true;
             }
         });
@@ -79,4 +85,7 @@ public class StackGroup extends Group {
     public CardActor getTopCard() {
         return topCard;
     }
+
+
+
 }

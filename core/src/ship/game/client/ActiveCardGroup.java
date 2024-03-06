@@ -27,9 +27,22 @@ public class ActiveCardGroup extends Group {
         gameScreen.getCurrentPlayerGroup().obtainCard(activeCard);
     }
 
-    private boolean isCollected() {
-        return false;
+    void obtainCard(CardActor cardActor, Group source){
+        cardActor.flipCard();
+        Action moveAction = Actions.moveBy(0, cardActor.getY() - source.getY(), 2f); //getY nie działa
+        Action changeGroup = Actions.run(new Runnable() {
+            @Override
+            public void run() {
+               addActor(cardActor);
+                cardActor.setPosition(0, 0);
+            }
+        });
+        cardActor.addAction(Actions.sequence(moveAction, changeGroup));
     }
+
+
+
+
 
 //    private float findTargetX(Card.Type type) {
 //        float targetX = 0;

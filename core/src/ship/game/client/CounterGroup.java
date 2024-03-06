@@ -36,10 +36,6 @@ public class CounterGroup extends Group {
         }
     }
 
-    public List<CounterActor> getCounters() {
-        return counters;
-    }
-
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
@@ -51,5 +47,9 @@ public class CounterGroup extends Group {
         shapeRenderer.end();
 
         batch.begin();
+    }
+
+    public List<CounterActor> getCounters() {
+        return counters;
     }
 }

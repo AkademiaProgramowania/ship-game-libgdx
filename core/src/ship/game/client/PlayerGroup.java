@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import ship.game.server.Card;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,8 +38,7 @@ public class PlayerGroup extends Group {
         tradeGroup.setCountersWithinGroup();
     }
 
-    public void obtainCard(CardActor cardActor){
-
+    public void obtainCard(CardActor cardActor) {
         //gdzie ma leciec
         float targetX = findTargetX(cardActor.getCard());
         float targetY = findTargetY(cardActor.getCard());
@@ -54,62 +54,78 @@ public class PlayerGroup extends Group {
         } else if (cardActor.getCardType() == Card.Type.SHIP) {
             if (isCollected()) {
                 cardActor.addAction(moveAction);
-            }else{
+            } else {
                 cardActor.addAction(Actions.sequence(moveAction, fadeAction));
             }
         }
     }
 
+
+    private CounterGroup prepareCounter(CardActor cardActor) {   //
+        return null;
+    }
+
+
     public float findTargetX(Card card) {
         float targetX = 0;
 
-        if (card.getType() == Card.Type.SHIP && isCollected()) {   // ship parts
-            int shipIndex = card.getPictureIndex() - 1;
-            //System.out.println("player group X: " + collectedCardGroup.getX());
-            targetX = collectedCardGroup.getX() + (shipIndex % 3) * CARD_WIDTH;
-            System.out.println(targetX);
-        } else if (card.getType() == Card.Type.CANNON || card.getType() == Card.Type.COIN) {   // left counters
-            for (CounterActor counter : getResourcesCounters()) {
-                if (counter.getType() == card.getType()) {
-                    targetX = counter.getX();
+        switch (card.getType()) {
+            case CANNON:
+            case COIN:
+                for (CounterActor counter : getResourcesCounters()) {
+                    if (counter.getType() == card.getType()) {
+                        targetX = counter.getX();
+                    }
                 }
-            }
-        } else if (card.getType() == Card.Type.SHIP && !isCollected()) {
-            targetX += tradeGroup.getX();
+                break;
+            case SHIP:
+                if (isCollected()) {
+                    int shipIndex = card.getPictureIndex() - 1;
+                    targetX = collectedCardGroup.getX() + (shipIndex % 3) * CARD_WIDTH;
+                } else {
+                    targetX += tradeGroup.getX();
+                }
+                break;
+            case STORM:
+                throw new NotImplementedException();
         }
 
-
-        // right counters ???
         return targetX + getX();
     }
 
     public float findTargetY(Card card) {
-        float targetY = getY() + collectedCardGroup.getY(); // ????
+        float targetY = 0;
 
-        if (card.getType() == Card.Type.SHIP && isCollected()) { // ship parts
-            int shipIndex = card.getPictureIndex() - 1;
-            if (shipIndex < 3) {
-                targetY += CARD_HEIGHT;
-            }
-        } else if (card.getType() == Card.Type.CANNON || card.getType() == Card.Type.COIN) {  // left counters
-            for (CounterActor counter : getResourcesCounters()) {
-                if (counter.getType() == card.getType()) {
-                    targetY += counter.getY();
+        switch (card.getType()) {
+            case CANNON:
+            case COIN:
+                for (CounterActor counter : getResourcesCounters()) { // same
+                    if (counter.getType() == card.getType()) {
+                        targetY += counter.getY();
+                    }
                 }
-            }
-        } else if (card.getType() == Card.Type.SHIP && !isCollected()) {  // right counters
-            updateCounters(card); //?????   -> to skomplikowane
-            moveShipCounters();
-            System.out.println("---");
-            for (CounterActor shipCounter : getTradeCounters()) {
-                if (Objects.equals(shipCounter.getShipType(), card.getSecondShipType())) {
-                    targetY += shipCounter.getY();
+                break;
+            case SHIP:
+                if (isCollected()) { // inaczej
+                    int shipIndex = card.getPictureIndex() - 1;
+                    if (shipIndex < 3) {
+                        targetY += CARD_HEIGHT;
+                    }
+                } else {
+                    updateCounters(card); //?????!!!!!! pilniejesze, jak tego sie pozbedziemy to szukamy miejsca dla tych findów
+                    moveShipCounters(); // updatuje countery
+                    for (CounterActor shipCounter : getTradeCounters()) {
+                        if (Objects.equals(shipCounter.getShipType(), card.getSecondShipType())) {
+                            targetY += shipCounter.getY();
+                        }
+                    }
                 }
-            }
-            // bez ustalania pozycji
+                break;
+            case STORM:
+                throw new NotImplementedException();
         }
-        //System.out.println("targetY: " + targetY);
-        return targetY;
+
+        return targetY + getY() + collectedCardGroup.getY();
     }
 
     private boolean isCollected() {
@@ -127,7 +143,6 @@ public class PlayerGroup extends Group {
             }
         } else if (card.getType() == Card.Type.SHIP) {
             for (CounterActor shipCounter : tradeGroup.getCounters()) {
-                System.out.println("+++");
                 if (Objects.equals(shipCounter.getShipType(), card.getSecondShipType())) {
                     shipCounter.increaseAmount();
                     return;
