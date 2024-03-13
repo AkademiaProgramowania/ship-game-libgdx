@@ -1,10 +1,11 @@
 package ship.game.client;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import ship.game.server.Card;
 
-public class ActiveCardGroup extends Group {
+public class ActiveCardGroup extends CardTransporterGroup {
     private CardActor activeCard;
     private GameScreen gameScreen;
 
@@ -21,8 +22,10 @@ public class ActiveCardGroup extends Group {
 
     private void clickAction(){
         //odłączenie od grupy
-        gameScreen.getStage().addActor(activeCard);
-        activeCard.setPosition(getX(), getY());
+//        Vector2 stagePosition = activeCard.localToStageCoordinates(new Vector2(0 ,0));
+//        gameScreen.getStage().addActor(activeCard);
+//        activeCard.setPosition(stagePosition.x, stagePosition.y);
+        //jesli karta to STORM to ?
 
         gameScreen.getCurrentPlayerGroup().obtainCard(activeCard);
     }

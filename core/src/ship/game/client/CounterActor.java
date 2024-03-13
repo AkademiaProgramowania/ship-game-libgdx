@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import ship.game.server.Card;
 
-public class CounterActor extends Actor {
+public class CounterActor extends CardTransporterGroup {
     private Texture texture;
     private Card.Type type;
     private String shipType;
@@ -63,8 +63,16 @@ public class CounterActor extends Actor {
         amount++;
     }
 
+    boolean obtainCard(CardActor cardActor) {
+        if (cardActor.getCardType() == type) {
+            return super.obtainCard(cardActor);
+        }
+        return false;
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
         Color color = getColor();
         batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
 

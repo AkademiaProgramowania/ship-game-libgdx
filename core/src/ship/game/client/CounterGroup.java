@@ -10,14 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CounterGroup extends Group {
+public class CounterGroup extends CardTransporterGroup {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
     private List<CounterActor> counters = new ArrayList<>();
 
     public void addCounter(CounterActor actor) {
         addActor(actor);
         counters.add(actor);
-        //TODO zerowe wartosci z getterow
        // actor.setPosition(getX(), (getChildren().size - 1) * ((int) (0.1 * getHeight() + actor.getHeight()))); //todo  sabotuje nam te countery po prawej
         //System.out.println(getWidth());
     }
@@ -34,6 +33,15 @@ public class CounterGroup extends Group {
             spacingY = (int) ((getHeight() - getChildren().size * currentActor.getHeight()) / (getChildren().size + 1));
             currentActor.setPosition(spacingX, getY() + i * currentActor.getHeight() + (i + 1) * spacingY);
         }
+    }
+
+    boolean obtainCard(CardActor cardActor) {
+        for (CardTransporterGroup counter : counters) {
+            if(counter.obtainCard(cardActor)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

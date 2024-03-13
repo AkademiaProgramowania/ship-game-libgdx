@@ -13,7 +13,7 @@ import java.util.Objects;
 import static ship.game.client.GUIParams.CARD_HEIGHT;
 import static ship.game.client.GUIParams.CARD_WIDTH;
 
-public class PlayerGroup extends Group {
+public class PlayerGroup extends CardTransporterGroup {
     private CollectedCardGroup collectedCardGroup;
     private CounterGroup resourcesGroup, tradeGroup;
 
@@ -38,7 +38,17 @@ public class PlayerGroup extends Group {
         tradeGroup.setCountersWithinGroup();
     }
 
-    public void obtainCard(CardActor cardActor) {
+    boolean obtainCard(CardActor cardActor) {
+        CardTransporterGroup[] groups = {resourcesGroup, collectedCardGroup, tradeGroup};
+        for (CardTransporterGroup group : groups) {
+            if(group.obtainCard(cardActor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void obtainCardOld(CardActor cardActor) {
         //gdzie ma leciec
         float targetX = findTargetX(cardActor.getCard());
         float targetY = findTargetY(cardActor.getCard());

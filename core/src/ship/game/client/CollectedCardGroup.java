@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import static ship.game.client.GUIParams.CARD_HEIGHT;
 import static ship.game.client.GUIParams.CARD_WIDTH;
 
-public class CollectedCardGroup extends Group {
+public class CollectedCardGroup extends CardTransporterGroup {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     public CollectedCardGroup() {
@@ -23,6 +23,16 @@ public class CollectedCardGroup extends Group {
             actor.setPosition((actor.getCardNum() - 1) * actor.getWidth(), actor.getHeight());
         } else {
             actor.setPosition((actor.getCardNum() - 1) % 3 * actor.getWidth(), 0);
+        }
+    }
+
+    boolean obtainCard(CardActor cardActor) {
+        //todo czy karta jest zbierana
+        boolean collected = true;
+        if (collected) {
+            return super.obtainCard(cardActor);
+        } else {
+            return false;
         }
     }
 
