@@ -4,6 +4,7 @@ package ship.game.client;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
 import static ship.game.client.GUIParams.CARD_HEIGHT;
@@ -17,15 +18,6 @@ public class CollectedCardGroup extends CardTransporterGroup {
         setHeight(2 * CARD_HEIGHT);
     }
 
-    public void addCard(CardActor actor) {
-        addActor(actor);
-        if (actor.getCardNum() < 4) {
-            actor.setPosition((actor.getCardNum() - 1) * actor.getWidth(), actor.getHeight());
-        } else {
-            actor.setPosition((actor.getCardNum() - 1) % 3 * actor.getWidth(), 0);
-        }
-    }
-
     boolean obtainCard(CardActor cardActor) {
         //todo czy karta jest zbierana
         boolean collected = true;
@@ -34,6 +26,19 @@ public class CollectedCardGroup extends CardTransporterGroup {
         } else {
             return false;
         }
+    }
+
+    @Override
+    Vector2 getDestination(CardActor cardActor) {
+        int x, y;
+        if (cardActor.getCardNum() < 4) {
+            x = (cardActor.getCardNum() - 1) * CARD_WIDTH;
+            y = CARD_HEIGHT;
+        } else {
+            x = (cardActor.getCardNum() - 1) % 3 * CARD_WIDTH;
+            y = 0;
+        }
+        return new Vector2(x, y);
     }
 
     @Override
